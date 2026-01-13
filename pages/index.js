@@ -65,6 +65,13 @@ export default function Home() {
       const data = await response.json()
 
       if (response.ok && data.success) {
+        // Track Google Ads conversion event - HK_Valuation_Submit
+        if (typeof window !== 'undefined' && window.gtag) {
+          window.gtag('event', 'conversion', {
+            'send_to': 'AW-17861479339/BI_iCLfbm-IbEKuXgsVC'
+          })
+        }
+        
         setIsSuccess(true)
       } else {
         throw new Error(data.error || 'Submission failed')
