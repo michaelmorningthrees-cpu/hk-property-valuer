@@ -92,6 +92,29 @@ export default function Privacy() {
                     </p>
                   </section>
 
+                  {/* 第三方分析與追蹤 */}
+                  <section className="mb-8">
+                    <h3 className="text-deep-navy text-xl sm:text-2xl font-semibold mb-4">
+                      第三方分析與追蹤
+                    </h3>
+                    <p className="text-gray-700 leading-relaxed mb-4">
+                      我們使用第三方分析工具來了解用戶與網站的互動情況，以改善服務體驗：
+                    </p>
+                    <ul className="list-disc pl-6 space-y-2 text-gray-700 mb-4">
+                      <li><strong className="text-deep-navy">Microsoft Clarity</strong>：記錄網頁瀏覽過程中的點擊、捲動及滑動行為，但會自動遮蔽敏感個人資料。如欲了解更多，請參閱 <a href="https://privacy.microsoft.com/zh-hk/privacystatement" target="_blank" rel="noopener noreferrer" className="text-emerald-green hover:text-emerald-700 font-medium">Microsoft 的私隱聲明</a>。</li>
+                    </ul>
+                  </section>
+
+                  {/* 廣告及追蹤技術 */}
+                  <section className="mb-8">
+                    <h3 className="text-deep-navy text-xl sm:text-2xl font-semibold mb-4">
+                      廣告及追蹤技術
+                    </h3>
+                    <p className="text-gray-700 leading-relaxed">
+                      我們使用 Google Ads 及其追蹤技術（如 Google Tag 和轉換追蹤）來衡量廣告成效並改善服務。Google 會使用 Cookie（小文字檔案）來收集用戶與本網站互動的數據。這些數據幫助我們分析哪些廣告最有效，並向合適的對象展示相關內容。閣下可以透過 <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-emerald-green hover:text-emerald-700 font-medium">Google 的廣告設定</a> 隨時停止 Cookie 追蹤或選擇停用個人化廣告。
+                    </p>
+                  </section>
+
                   {/* 資料披露 */}
                   <section className="mb-8">
                     <h3 className="text-deep-navy text-xl sm:text-2xl font-semibold mb-4">
