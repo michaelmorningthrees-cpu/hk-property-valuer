@@ -2,6 +2,8 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 
+const MAX_QUOTA = 10
+
 export default function Home() {
   const [formData, setFormData] = useState({
     address: '',
@@ -12,6 +14,29 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [purposeError, setPurposeError] = useState('')
+  const [remainingQuota, setRemainingQuota] = useState(MAX_QUOTA)
+
+  // Initialize daily quota from localStorage
+  useEffect(() => {
+    const initializeQuota = () => {
+      if (typeof window === 'undefined') return
+
+      const today = new Date().toDateString()
+      const storedDate = localStorage.getItem('quotaDate')
+      const storedQuota = localStorage.getItem('remainingQuota')
+
+      // If it's a new day or no stored data, reset quota
+      if (storedDate !== today || !storedQuota) {
+        localStorage.setItem('quotaDate', today)
+        localStorage.setItem('remainingQuota', MAX_QUOTA.toString())
+        setRemainingQuota(MAX_QUOTA)
+      } else {
+        setRemainingQuota(parseInt(storedQuota, 10))
+      }
+    }
+
+    initializeQuota()
+  }, [])
 
   // Check Hong Kong time to determine service status
   useEffect(() => {
@@ -70,6 +95,13 @@ export default function Home() {
           window.gtag('event', 'conversion', {
             'send_to': 'AW-17861479339/BI_iCLfbm-IbEKuXgsVC'
           })
+        }
+        
+        // Decrease remaining quota
+        const newQuota = Math.max(0, remainingQuota - 1)
+        setRemainingQuota(newQuota)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('remainingQuota', newQuota.toString())
         }
         
         setIsSuccess(true)
@@ -137,19 +169,41 @@ export default function Home() {
 
             {/* Form Card */}
             <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 lg:p-10 relative">
-              {/* Service Status Indicator - Top Right (Desktop) / Above Button (Mobile) */}
-              <div className="hidden sm:flex absolute top-4 right-4 lg:top-6 lg:right-6 items-center space-x-2 text-xs lg:text-sm max-w-xs">
-                <div className={`flex-shrink-0 w-2 h-2 rounded-full ${isServiceActive ? 'bg-emerald-green animate-pulse' : 'bg-gray-400'}`}></div>
-                <span className="text-gray-600 leading-tight">
-                  {isServiceActive 
-                    ? '服務中：分析師在線 | 承諾 30 分鐘內發送'
-                    : '休息中：非辦公時間 | 報告將於翌日 10:30 前發送'
-                  }
-                </span>
-              </div>
-
               {!isSuccess ? (
                 <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+                  {/* Service Status Indicator - Above Quota Card */}
+                  <div className="flex items-center justify-end space-x-2 text-xs text-gray-600 mb-2">
+                    <div className={`flex-shrink-0 w-1.5 h-1.5 rounded-full ${isServiceActive ? 'bg-emerald-green animate-pulse' : 'bg-gray-400'}`}></div>
+                    <span className="leading-tight">
+                      {isServiceActive 
+                        ? '服務中：分析師在線 | 承諾 30 分鐘內發送'
+                        : '休息中：非辦公時間 | 報告將於翌日 10:30 前發送'
+                      }
+                    </span>
+                  </div>
+
+                  {/* Daily Quota Banner */}
+                  <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-deep-navy text-sm font-semibold">
+                        每日限量深度報告
+                      </h4>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-1.5 h-1.5 bg-emerald-green rounded-full animate-pulse"></div>
+                        <span className="text-emerald-700 text-xs font-medium">
+                          今日尚餘名額: {remainingQuota} 份
+                        </span>
+                      </div>
+                    </div>
+                    {/* Progress Bar */}
+                    <div className="w-full bg-emerald-200 rounded-full h-2.5 overflow-hidden shadow-inner">
+                      <div 
+                        className="bg-emerald-green h-2.5 rounded-full transition-all duration-500 ease-out shadow-sm"
+                        style={{ width: `${(remainingQuota / MAX_QUOTA) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
                   {/* Property Address Input */}
                   <div>
                     <label htmlFor="address" className="block text-deep-navy text-sm font-medium mb-2">
@@ -216,24 +270,19 @@ export default function Home() {
                     )}
                   </div>
 
-                  {/* Service Status Indicator - Mobile (Above Button) */}
-                  <div className="flex sm:hidden items-center space-x-2 text-xs text-gray-600 pb-2">
-                    <div className={`flex-shrink-0 w-2 h-2 rounded-full ${isServiceActive ? 'bg-emerald-green animate-pulse' : 'bg-gray-400'}`}></div>
-                    <span>
-                      {isServiceActive 
-                        ? '服務中：分析師在線 | 承諾 30 分鐘內發送'
-                        : '休息中：非辦公時間 | 報告將於翌日 10:30 前發送'
-                      }
-                    </span>
-                  </div>
 
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || remainingQuota === 0}
                     className="w-full bg-emerald-green text-white py-3 sm:py-4 px-6 rounded-md text-base sm:text-lg font-semibold hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-green focus:ring-offset-2 transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? 'Loading...' : '立即獲取免費報告'}
+                    {isSubmitting 
+                      ? 'Loading...' 
+                      : remainingQuota === 0 
+                        ? '今日名額已滿，請明天再試' 
+                        : '立即獲取免費報告'
+                    }
                   </button>
 
                   {/* Trust Note */}
