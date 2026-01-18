@@ -1,0 +1,39 @@
+name: Valuation Scraper Worker
+
+on:
+  schedule:
+    # 設定自動運行時間 (例如每 6 小時一次)
+    # 時間係 UTC，香港時間要 +8
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # 允許你在 GitHub Actions 頁面手動按按鈕測試
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15 # 設定超時，防止卡死
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        # 安裝 package.json 裡面所有嘢 (包括 Next.js 同 Scraper 依賴)
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        # 只安裝 Chromium 以節省時間
+        run: npx playwright install chromium --with-deps
+
+      - name: Run Scraper Script
+        env:
+          # 讀取 GitHub Secrets
+          GOOGLE_SCRIPT_URL: ${{ secrets.GOOGLE_SCRIPT_URL }}
+          GS_SECRET_TOKEN: ${{ secrets.GS_SECRET_TOKEN }}
+          CI: true # 讓 scraper.js 知道要用 Headless mode
+        run: node scraper.js

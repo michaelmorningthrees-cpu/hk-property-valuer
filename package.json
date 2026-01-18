@@ -11,8 +11,13 @@
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",
     "@vercel/analytics": "^1.6.1",
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
     "gray-matter": "^4.0.3",
     "next": "14.0.4",
+    "playwright": "^1.57.0",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "remark": "^15.0.1",
