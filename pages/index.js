@@ -136,7 +136,7 @@ export default function Home() {
     <>
       <Head>
         <title>HK Property Valuer - 一鍵對比四大銀行估價</title>
-        <meta name="description" content="只需輸入地址，30 分鐘內收到深度分析報告" />
+        <meta name="description" content="只需輸入地址，30 分鐘內收到估價報告" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -186,7 +186,7 @@ export default function Home() {
                   <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-4 mb-4">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="text-deep-navy text-sm font-semibold">
-                        每日限量深度報告
+                        每日限量估價報告
                       </h4>
                       <div className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-emerald-green rounded-full animate-pulse"></div>
@@ -210,7 +210,7 @@ export default function Home() {
                       物業地址
                     </label>
                     <p className="text-xs text-red-500 mb-1">
-           * 必須使用中文，並包含地區、座數、樓層、室號 (如：荃灣)，否則無法估價
+           * 必須使用中文，並包含地區、屋苑名稱、座數、樓層、室號，否則無法估價
                       </p>
                     <input
                       type="text"
