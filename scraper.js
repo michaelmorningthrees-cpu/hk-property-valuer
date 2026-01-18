@@ -50,6 +50,7 @@ function chineseToArabic(chinese) {
 }
 
 function normalizeAddress(address) {
+  if (!address) return '';
   let normalized = address.toLowerCase();
   for (const [alias, zh] of Object.entries(englishDistrictAliases)) {
     if (normalized.includes(alias)) {
@@ -900,19 +901,36 @@ async function startWorker() {
     console.error('❌ 缺少 GOOGLE_SCRIPT_URL');
     process.exit(1);
   }
+  const isGitHubAction = !!process.env.CI;
 
   while (true) {
     try {
       console.log('\n📊 [Worker] 檢查待處理 Leads...');
       const leads = await getPendingLeads();
+      console.log('🔍 DEBUG - Raw Leads:', JSON.stringify(leads));
 
       if (!leads || leads.length === 0) {
         console.log('[Worker] 無待處理項目，休眠 60 秒...');
+        if (isGitHubAction) {
+          console.log('✅ No leads pending. CI job finished.');
+          process.exit(0);
+        }
         await new Promise(r => setTimeout(r, 60000));
         continue;
       }
 
       const lead = leads[0];
+      if (!lead || !lead.address) {
+        console.error('❌ Error: Received invalid lead data (missing address). Skipping...');
+        if (lead && lead.row) {
+          await updateValuation(lead.row, { status: 'failed_invalid_address' });
+        }
+        if (isGitHubAction) {
+          process.exit(0);
+        }
+        await new Promise(r => setTimeout(r, 60000));
+        continue;
+      }
       console.log(`\n🎯 處理 Lead #${lead.row}: ${lead.address}`);
       const propertyData = parseAddress(lead.address);
       console.log(`   解析: Block=${propertyData.block}, Floor=${propertyData.floor}, Unit=${propertyData.unit}`);
@@ -959,10 +977,18 @@ async function startWorker() {
         await updateValuation(lead.row, { status: 'failed' });
       }
 
+      if (isGitHubAction) {
+        console.log('✅ CI job processed one lead. Exiting to save resources.');
+        process.exit(0);
+      }
+
       console.log('[Worker] 休息 30 秒...');
       await new Promise(r => setTimeout(r, 30000));
     } catch (error) {
       console.error('❌ Worker 錯誤:', error);
+      if (isGitHubAction) {
+        process.exit(1);
+      }
       await new Promise(r => setTimeout(r, 30000));
     }
   }
