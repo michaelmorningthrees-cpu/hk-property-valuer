@@ -1,12 +1,18 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import EstateAutocomplete from '../components/EstateAutocomplete'
 
 const MAX_QUOTA = 10
 
 export default function Home() {
   const [formData, setFormData] = useState({
-    address: '',
+    district: '',
+    estate: '',
+    estateId: '',
+    block: '',
+    floor: '',
+    flat: '',
     email: '',
     purpose: ''
   })
@@ -71,7 +77,7 @@ export default function Home() {
     }
 
     // Only proceed if all fields are valid
-    if (!formData.address || !formData.email || !formData.purpose) {
+    if (!formData.district || !formData.estate || !formData.block || !formData.floor || !formData.flat || !formData.email || !formData.purpose) {
       return
     }
 
@@ -204,25 +210,160 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Property Address Input */}
+                  {/* District Select */}
                   <div>
-                    <label htmlFor="address" className="block text-deep-navy text-sm font-medium mb-2">
-                      物業地址
+                    <label htmlFor="district" className="block text-deep-navy text-sm font-medium mb-2">
+                      地區
                     </label>
-                    <p className="text-xs text-red-500 mb-1">
-           * 必須使用中文，並包含地區、屋苑名稱、座數、樓層、室號，否則無法估價
-                      </p>
-                    <input
-                      type="text"
-                      id="address"
-                      name="address"
-                      value={formData.address}
+                    <select
+                      id="district"
+                      name="district"
+                      value={formData.district}
                       onChange={handleChange}
-                      placeholder="例如：太古城金楓閣 10 樓 A"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-green focus:border-emerald-green transition-colors text-gray-900 placeholder-gray-400"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-green focus:border-emerald-green transition-colors text-gray-900 bg-white"
                       required
                       disabled={isSubmitting}
+                    >
+                      <option value="">請選擇區域</option>
+                      <optgroup label="香港島">
+                        <option value="堅尼地城/西營盤">堅尼地城 / 西營盤</option>
+                        <option value="中環/上環">中環 / 上環</option>
+                        <option value="半山">半山</option>
+                        <option value="山頂">山頂</option>
+                        <option value="灣仔">灣仔</option>
+                        <option value="銅鑼灣">銅鑼灣</option>
+                        <option value="跑馬地/黃泥涌">跑馬地 / 黃泥涌</option>
+                        <option value="大坑/渣甸山">大坑 / 渣甸山</option>
+                        <option value="北角">北角</option>
+                        <option value="鰂魚涌">鰂魚涌</option>
+                        <option value="太古城">太古城</option>
+                        <option value="西灣河">西灣河</option>
+                        <option value="筲箕灣">筲箕灣</option>
+                        <option value="柴灣">柴灣</option>
+                        <option value="小西灣">小西灣</option>
+                        <option value="薄扶林">薄扶林</option>
+                        <option value="香港仔/鴨脷洲">香港仔 / 鴨脷洲</option>
+                        <option value="南區">南區 (其他)</option>
+                      </optgroup>
+                      <optgroup label="九龍">
+                        <option value="尖沙咀">尖沙咀</option>
+                        <option value="佐敦">佐敦</option>
+                        <option value="油麻地">油麻地</option>
+                        <option value="旺角/何文田">旺角 / 何文田</option>
+                        <option value="太子">太子</option>
+                        <option value="大角咀">大角咀</option>
+                        <option value="深水埗">深水埗</option>
+                        <option value="長沙灣/荔枝角">長沙灣 / 荔枝角</option>
+                        <option value="石硤尾/又一村">石硤尾 / 又一村</option>
+                        <option value="九龍塘">九龍塘</option>
+                        <option value="九龍城">九龍城</option>
+                        <option value="土瓜灣">土瓜灣</option>
+                        <option value="紅磡">紅磡</option>
+                        <option value="啟德">啟德</option>
+                        <option value="黃大仙/橫頭磡">黃大仙 / 橫頭磡</option>
+                        <option value="鑽石山">鑽石山</option>
+                        <option value="新蒲崗/慈雲山">新蒲崗 / 慈雲山</option>
+                        <option value="牛池灣/彩虹">牛池灣 / 彩虹</option>
+                        <option value="九龍灣">九龍灣</option>
+                        <option value="牛頭角">牛頭角</option>
+                        <option value="觀塘/秀茂坪">觀塘 / 秀茂坪</option>
+                        <option value="藍田">藍田</option>
+                        <option value="油塘/茶果嶺">油塘 / 茶果嶺</option>
+                      </optgroup>
+                      <optgroup label="新界及離島">
+                        <option value="將軍澳">將軍澳</option>
+                        <option value="西貢/清水灣">西貢 / 清水灣</option>
+                        <option value="沙田">沙田</option>
+                        <option value="馬鞍山">馬鞍山</option>
+                        <option value="火炭">火炭</option>
+                        <option value="大圍">大圍</option>
+                        <option value="大埔">大埔</option>
+                        <option value="粉嶺">粉嶺</option>
+                        <option value="上水">上水</option>
+                        <option value="葵涌">葵涌</option>
+                        <option value="青衣">青衣</option>
+                        <option value="荃灣">荃灣</option>
+                        <option value="深井/青龍頭">深井 / 青龍頭</option>
+                        <option value="馬灣">馬灣</option>
+                        <option value="屯門">屯門</option>
+                        <option value="元朗/天水圍">元朗 / 天水圍</option>
+                        <option value="大嶼山/離島">大嶼山 / 離島 (其他)</option>
+                      </optgroup>
+                    </select>
+                  </div>
+
+                  {/* Estate Name */}
+                  <div>
+                    <label htmlFor="estate" className="block text-deep-navy text-sm font-medium mb-2">
+                      屋苑名稱
+                    </label>
+                    <EstateAutocomplete
+                      district={formData.district}
+                      value={formData.estate}
+                      estateId={formData.estateId}
+                      onChange={({ name, id }) => setFormData({ ...formData, estate: name, estateId: id })}
+                      disabled={isSubmitting}
                     />
+                    <p className="mt-2 text-xs text-gray-500">
+                      如找不到屋苑，可直接輸入自訂名稱
+                    </p>
+                  </div>
+
+                  {/* Block / Floor / Flat */}
+                  <div>
+                    <label className="block text-deep-navy text-sm font-medium mb-2">
+                      座數 / 樓層 / 單位
+                    </label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label htmlFor="block" className="block text-xs text-gray-500 mb-1">
+                          座
+                        </label>
+                        <input
+                          type="text"
+                          id="block"
+                          name="block"
+                          value={formData.block}
+                          onChange={handleChange}
+                          placeholder="座"
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-green focus:border-emerald-green transition-colors text-gray-900 placeholder-gray-400"
+                          required
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="floor" className="block text-xs text-gray-500 mb-1">
+                          樓
+                        </label>
+                        <input
+                          type="text"
+                          id="floor"
+                          name="floor"
+                          value={formData.floor}
+                          onChange={handleChange}
+                          placeholder="樓"
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-green focus:border-emerald-green transition-colors text-gray-900 placeholder-gray-400"
+                          required
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="flat" className="block text-xs text-gray-500 mb-1">
+                          室
+                        </label>
+                        <input
+                          type="text"
+                          id="flat"
+                          name="flat"
+                          value={formData.flat}
+                          onChange={handleChange}
+                          placeholder="室"
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-green focus:border-emerald-green transition-colors text-gray-900 placeholder-gray-400"
+                          required
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   {/* Email Address Input */}

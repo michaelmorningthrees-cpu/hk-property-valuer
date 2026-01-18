@@ -1,11 +1,35 @@
 require('dotenv').config({ path: '.env.local' });
 const axios = require('axios');
 const fs = require('fs');
+const path = require('path');
 const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 chromium.use(StealthPlugin());
 const isCIEnv = !!process.env.CI || !!process.env.GITHUB_ACTIONS;
+const loadJson = (relativePath) => {
+  try {
+    const fullPath = path.join(__dirname, relativePath);
+    return JSON.parse(fs.readFileSync(fullPath, 'utf-8'));
+  } catch (e) {
+    console.warn(`⚠️ [Data] 無法載入 ${relativePath}: ${e.message}`);
+    return [];
+  }
+};
+
+const CITI_DATA = loadJson('data/citi.json');
+const DBS_DATA = loadJson('data/dbs.json');
+const HASE_DATA = loadJson('data/hangseng.json');
+let openccConverter = null;
+let openccWarned = false;
+try {
+  const OpenCC = require('opencc-js');
+  if (OpenCC && OpenCC.Converter) {
+    openccConverter = OpenCC.Converter({ from: 'cn', to: 'hk' });
+  }
+} catch (e) {
+  openccConverter = null;
+}
 
 // ==========================================
 // 1. 地址解析工具函數
@@ -30,29 +54,30 @@ const simplifiedToTraditional = {
   '层': '層', '栋': '棟', '园': '園', '厦': '廈',
 };
 
-const chineseNumerals = {
-  '一': 1, '二': 2, '三': 3, '四': 4, '五': 5,
-  '六': 6, '七': 7, '八': 8, '九': 9, '十': 10,
-};
+function toTraditional(text) {
+  if (text === null || text === undefined) return '';
+  const rawText = String(text);
+  let result = rawText;
+  if (openccConverter) {
+    try {
+      result = openccConverter(rawText);
+    } catch (e) {
+      // ignore
+    }
+  } else if (!openccWarned) {
+    console.warn('⚠️ [Address] opencc-js 未安裝，改用簡單字表轉換。');
+    openccWarned = true;
+  }
 
-function chineseToArabic(chinese) {
-  if (!chinese) return null;
-  if (chinese === '十') return '10';
-  if (chinese.length === 2 && chinese.startsWith('十')) {
-    const unit = chineseNumerals[chinese[1]] || 0;
-    return String(10 + unit);
-  }
-  if (chinese.length === 2 && chinese.endsWith('十')) {
-    const tens = chineseNumerals[chinese[0]] || 0;
-    return String(tens * 10);
-  }
-  const value = chineseNumerals[chinese];
-  return value ? String(value) : null;
+  const map = { '蓝': '藍', '湾': '灣', '邨': '村', '号': '號', '楼': '樓', '层': '層', '座': '座' };
+  result = result.replace(/./g, char => map[char] || char);
+
+  return result.replace(/東湧/g, '東涌');
 }
 
 function normalizeAddress(address) {
-  if (!address) return '';
-  let normalized = address.toLowerCase();
+  if (address === null || address === undefined) return '';
+  let normalized = toTraditional(address).toLowerCase();
   for (const [alias, zh] of Object.entries(englishDistrictAliases)) {
     if (normalized.includes(alias)) {
       normalized = normalized.replace(new RegExp(alias, 'g'), zh);
@@ -62,73 +87,177 @@ function normalizeAddress(address) {
   return normalized;
 }
 
-function cleanAddress(address) {
-  const normalized = normalizeAddress(address);
-  return normalized
-    .replace(/\s+/g, '')
-    .replace(/[樓室座號層棟]/g, '')
-    .replace(/[,-]/g, '');
-}
+function parseAddress(rawString) {
+  if (!rawString) return { district: '', estate: '', block: '', floor: '', unit: '' };
+  const raw = toTraditional(String(rawString)).replace(/\s+/g, '');
+  const districtMatch = (() => {
+    const allDistricts = Object.values(BANK_DISTRICT_MAP).flat();
+    const sorted = allDistricts.sort((a, b) => b.length - a.length);
+    return sorted.find(d => raw.startsWith(d)) || null;
+  })();
 
-function extractFloorAndUnit(address) {
-  const normalized = normalizeAddress(address).toUpperCase();
-  let remainder = normalized;
+  let district = districtMatch || '';
+  let remainder = district ? raw.slice(district.length) : raw;
 
-  const blockMatch = normalized.match(/(\d+)\s*(座|棟)/);
-  if (blockMatch && blockMatch.index !== undefined) {
-    remainder = normalized.slice(blockMatch.index + blockMatch[0].length);
-  }
-  remainder = remainder.replace(/^\s*[,，\-]*/, '').trim();
+  let block = '';
+  let floor = '';
+  let unit = '';
+  const blockMatch = remainder.match(/(\d+)\s*座/);
+  if (blockMatch) block = blockMatch[1];
+  const floorMatch = remainder.match(/(\d+)\s*(樓|層|\/?F)/);
+  if (floorMatch) floor = floorMatch[1];
+  const unitMatch = remainder.match(/([A-Z]?\d{0,4})\s*室/i);
+  if (unitMatch) unit = unitMatch[1];
+  const compactMatch = remainder.match(/(\d+)\s*([A-Z]\d{0,4})/i);
+  if (!floor && compactMatch) floor = compactMatch[1];
+  if (!unit && compactMatch) unit = compactMatch[2];
 
-  let match = remainder.match(/FLAT\s*([A-Z]?\d{0,4})\s*(\d{1,3})\s*(\/?F|樓|層)/i);
-  if (match && match[1] && match[2]) return { floor: match[2], unit: match[1] };
+  const estateMatch = remainder.match(/^([A-Za-z一-龥0-9\-]+?)(?=\d|座|樓|層|室|$)/);
+  const estate = estateMatch ? estateMatch[1] : remainder;
 
-  match = remainder.match(/(\d{1,3})\s*(樓|層|\/?F)\s*([A-Z]?\d{0,4})?/i);
-  if (match && match[1]) return { floor: match[1], unit: match[3] || null };
-
-  match = remainder.match(/([一二三四五六七八九十])\s*(樓|層)\s*([A-Z]?\d{0,4})?/i);
-  if (match && match[1]) return { floor: chineseToArabic(match[1]), unit: match[3] || null };
-
-  match = remainder.match(/(\d{1,3})\s*([A-Z]\d{0,4})/i);
-  if (match && match[1] && match[2]) return { floor: match[1], unit: match[2] };
-
-  match = remainder.match(/(\d{2,4})\s*室/);
-  if (match && match[1]) return { floor: null, unit: match[1] };
-
-  match = remainder.match(/([A-Z])\s*室/);
-  if (match && match[1]) return { floor: null, unit: match[1] };
-
-  return { floor: null, unit: null };
-}
-
-function extractBlock(address) {
-  const normalized = normalizeAddress(address);
-  const blockMatch = normalized.match(/(\d+)\s*(座|棟)/);
-  if (blockMatch) return blockMatch[1];
-  const chineseMatch = normalized.match(/([一二三四五六七八九十])\s*(座|棟)/);
-  if (chineseMatch) return chineseToArabic(chineseMatch[1]);
-  return null;
-}
-
-function parseAddress(address) {
-  const floorUnit = extractFloorAndUnit(address);
   return {
-    address,
-    cleanedAddress: cleanAddress(address),
-    block: extractBlock(address),
-    floor: floorUnit.floor,
-    unit: floorUnit.unit
+    district,
+    estate,
+    block,
+    floor,
+    unit
+  };
+}
+
+function scoreTextSimple(target, candidate) {
+  const normalize = (s) => toTraditional(String(s || ''))
+    .replace(/\s+/g, '')
+    .replace(/[座期苑樓室層棟]/g, '')
+    .toUpperCase();
+  const t = normalize(target);
+  const c = normalize(candidate);
+  if (!t || !c) return 0;
+  if (t === c) return 999;
+  if (c.startsWith(t) || t.startsWith(c)) return 200 + Math.min(t.length, c.length);
+  if (c.includes(t) || t.includes(c)) return 150 + Math.min(t.length, c.length);
+  const tSet = new Set(t.split(''));
+  let matchCount = 0;
+  for (const ch of c) if (tSet.has(ch)) matchCount += 1;
+  return (matchCount / Math.max(t.length, c.length)) * 100;
+}
+
+function pickBestEstate(data, estateName) {
+  if (!estateName || data.length === 0) return null;
+  let best = null;
+  let bestScore = 0;
+  for (const item of data) {
+    const score = scoreTextSimple(estateName, item.name);
+    if (score > bestScore) {
+      bestScore = score;
+      best = item;
+    }
+  }
+  return bestScore >= 80 ? best : null;
+}
+
+function mapToBankData(propertyData) {
+  const district = toTraditional(propertyData.district || '');
+  const estate = toTraditional(propertyData.estate || '');
+  const bankDistrict = mapDistrictToBankOption(district);
+
+  const citiCandidates = CITI_DATA.filter(item =>
+    (!bankDistrict?.district || item.district === bankDistrict.district)
+  );
+  const dbsCandidates = DBS_DATA.filter(item =>
+    (!bankDistrict?.district || item.district === bankDistrict.district)
+  );
+  const haseCandidates = HASE_DATA;
+
+  const citiEstate = pickBestEstate(citiCandidates, estate);
+  const dbsEstate = pickBestEstate(dbsCandidates, estate);
+  const haseEstate = pickBestEstate(haseCandidates, estate);
+
+  return {
+    citi: {
+      region: bankDistrict?.region,
+      district: bankDistrict?.district || district,
+      estate: citiEstate?.name || estate,
+      estateValue: citiEstate?.value || null
+    },
+    dbs: {
+      region: bankDistrict?.region,
+      district: bankDistrict?.district || district,
+      estate: dbsEstate?.name || estate,
+      estateValue: dbsEstate?.value || null
+    },
+    hase: {
+      estate: haseEstate?.name || estate,
+      estateValue: propertyData.estateId || haseEstate?.value || null
+    }
   };
 }
 
 const districtToRegion = {
-  '新界': ['屯門', '元朗', '粉嶺', '上水', '大埔', '沙田', '馬鞍山', '將軍澳', '西貢', '荃灣', '葵涌', '青衣', '離島'],
-  '九龍': ['尖沙咀', '油麻地', '旺角', '深水埗', '長沙灣', '九龍城', '何文田', '黃大仙', '新蒲崗', '觀塘', '藍田'],
-  '香港': ['中環', '上環', '西環', '灣仔', '銅鑼灣', '北角', '鰂魚涌', '太古', '柴灣', '香港仔', '薄扶林'],
+  '新界': ['東涌', '屯門', '元朗', '粉嶺', '上水', '大埔', '沙田', '馬鞍山', '將軍澳', '西貢', '荃灣', '葵涌', '青衣', '離島', '葵青', '北區'],
+  '九龍': ['油尖旺', '深水埗', '九龍城', '黃大仙', '觀塘', '尖沙咀', '油麻地', '旺角', '長沙灣', '何文田', '新蒲崗', '藍田'],
+  '香港': ['中西區', '灣仔', '東區', '南區', '中環', '上環', '西環', '銅鑼灣', '北角', '鰂魚涌', '太古', '柴灣', '香港仔', '薄扶林'],
 };
+
+// DBS/Cushman & Wakefield 專用區域/分區清單（精確字串）
+const BANK_DISTRICT_MAP = {
+  '香港': [
+    '鰂魚涌', '大坑/渣甸山', '中環/上環', '北角', '半山', '西灣河', '南區',
+    '香港仔/鴨脷洲', '柴灣', '堅尼地城/西營盤', '跑馬地/黃泥涌', '黃竹坑',
+    '筲箕灣', '銅鑼灣', '薄扶林', '灣仔'
+  ],
+  '九龍': [
+    '九龍城', '九龍塘', '九龍灣', '土瓜灣', '大角咀', '牛池灣/彩虹', '牛頭角',
+    '石硤尾/又一村', '尖沙咀', '旺角/何文田', '油麻地', '油塘/茶果嶺',
+    '長沙灣/荔枝角', '紅磡', '啟德', '深水埗', '黃大仙/橫頭磡', '新蒲崗/慈雲山',
+    '藍田', '觀塘/秀茂坪', '鑽石山'
+  ],
+  '新界/離島': [
+    '上水', '大埔', '大嶼山/離島', '元朗/天水圍', '屯門', '西貢/清水灣',
+    '沙田', '青衣', '粉嶺', '荃灣', '馬鞍山', '將軍澳', '深井/青龍頭', '葵涌'
+  ]
+};
+
+function mapDistrictToBankOption(district) {
+  if (!district) return null;
+  const normalized = normalizeAddress(district);
+  if (normalized === '東涌' || normalized === '東湧') {
+    return { region: '新界/離島', district: '大嶼山/離島' };
+  }
+  const normalize = (s) => normalizeAddress(s).replace(/\s+/g, '');
+
+  for (const [region, districts] of Object.entries(BANK_DISTRICT_MAP)) {
+    for (const option of districts) {
+      const optionNorm = normalize(option);
+      const targetNorm = normalize(normalized);
+      if (optionNorm === targetNorm || optionNorm.includes(targetNorm) || targetNorm.includes(optionNorm)) {
+        return { region, district: option };
+      }
+    }
+  }
+
+  if (normalized.includes('元朗')) {
+    return { region: '新界/離島', district: '元朗/天水圍' };
+  }
+
+  return null;
+}
+
+function findDistrictPrefix(address) {
+  const normalized = normalizeAddress(address);
+  for (const [region, districts] of Object.entries(districtToRegion)) {
+    for (const district of districts) {
+      if (normalized.startsWith(district)) {
+        return { region, district };
+      }
+    }
+  }
+  return null;
+}
 
 function findDistrictAndRegion(address) {
   const normalized = normalizeAddress(address);
+  const prefix = findDistrictPrefix(normalized);
+  if (prefix) return prefix;
   for (const [region, districts] of Object.entries(districtToRegion)) {
     for (const district of districts) {
       if (normalized.includes(district)) {
@@ -139,16 +268,15 @@ function findDistrictAndRegion(address) {
   return null;
 }
 
-function extractAddressKeywords(address) {
-  const keywords = new Set();
-  const cleaned = normalizeAddress(address)
-    .replace(/[0-9]/g, '')
-    .replace(/[樓室座號層棟]/g, '');
-  const matches = cleaned.match(/[一-龥]{2,6}/g) || [];
-  for (const word of matches) {
-    if (word.length >= 2) keywords.add(word);
+function getRegionByDistrict(district) {
+  if (!district) return null;
+  const normalized = normalizeAddress(district);
+  for (const [region, districts] of Object.entries(districtToRegion)) {
+    if (districts.some(d => normalized.includes(d))) {
+      return region;
+    }
   }
-  return Array.from(keywords);
+  return null;
 }
 
 // ==========================================
@@ -162,7 +290,7 @@ async function fillSelect2(page, containerId, targetText, label) {
   }
 
   const calculateScore = (target, candidate) => {
-    const normalize = (s) => s.replace(/\s+/g, '').replace(/[座期苑樓室]/g, '').toUpperCase();
+    const normalize = (s) => String(s || '').replace(/\s+/g, '').replace(/[座期苑樓室]/g, '').toUpperCase();
     const t = normalize(target);
     const c = normalize(candidate);
 
@@ -288,18 +416,11 @@ async function scrapeHangSengValuation(propertyData) {
     console.log(`📄 前往恆生搜尋頁: ${targetUrl}`);
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
 
-    const regionDistrict = findDistrictAndRegion(propertyData.address);
-    if (!regionDistrict) {
+    const district = toTraditional(propertyData.bankMap?.hase?.district || propertyData.district || '');
+    const region = getRegionByDistrict(district) || '新界';
+    const estateKeyword = toTraditional(propertyData.bankMap?.hase?.estate || propertyData.estate || '');
+    if (!district || !estateKeyword) {
       throw new Error('ESTATE_NOT_FOUND');
-    }
-
-    const keywords = extractAddressKeywords(propertyData.address);
-    let estateKeyword = propertyData.address;
-    if (keywords.length > 0) {
-      const chineseKeywords = keywords.filter(k => /[\u4e00-\u9fa5]/.test(k));
-      estateKeyword = chineseKeywords.length > 0 ? chineseKeywords[0] : keywords[0];
-    } else {
-      estateKeyword = propertyData.cleanedAddress.substring(0, 4);
     }
 
     console.log('⏳ 等待區域資料載入...');
@@ -316,17 +437,30 @@ async function scrapeHangSengValuation(propertyData) {
       await page.waitForTimeout(3000);
     }
 
-    await fillSelect2(page, 'select2-areaValue-container', regionDistrict.region, '區域');
+    await fillSelect2(page, 'select2-areaValue-container', region, '區域');
     await page.waitForTimeout(800);
 
-    await fillSelect2(page, 'select2-districtValue-container', regionDistrict.district, '分區');
+    await fillSelect2(page, 'select2-districtValue-container', district, '分區');
     await page.waitForTimeout(800);
 
-    await fillSelect2(page, 'select2-estateValue-container', estateKeyword, '屋苑');
+    const haseEstateValue = propertyData.bankMap?.hase?.estateValue || null;
+    if (haseEstateValue) {
+      await page.evaluate((val) => {
+        const sel = document.querySelector('#estateValue');
+        if (sel) {
+          sel.value = val;
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+          sel.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }, haseEstateValue);
+      await page.waitForTimeout(800);
+    } else {
+      await fillSelect2(page, 'select2-estateValue-container', estateKeyword, '屋苑');
+    }
     await page.waitForTimeout(800);
 
     if (propertyData.block) {
-      await fillSelect2(page, 'select2-blockValue-container', propertyData.block, '座數');
+      await fillSelect2(page, 'select2-blockValue-container', String(propertyData.block), '座數');
     } else {
       try {
         const blockText = await page.innerText('#select2-blockValue-container');
@@ -342,10 +476,10 @@ async function scrapeHangSengValuation(propertyData) {
     }
     await page.waitForTimeout(800);
 
-    await fillSelect2(page, 'select2-floorValue-container', propertyData.floor, '樓層');
+    await fillSelect2(page, 'select2-floorValue-container', String(propertyData.floor || ''), '樓層');
     await page.waitForTimeout(800);
 
-    await fillSelect2(page, 'select2-flatValue-container', propertyData.unit, '單位');
+    await fillSelect2(page, 'select2-flatValue-container', String(propertyData.unit || ''), '單位');
     await page.waitForTimeout(800);
 
     // 1. Skip Carpark (車位) - Do nothing
@@ -435,7 +569,7 @@ async function scrapeDBSValuation(page, propertyData) {
     return (matchCount / Math.max(t.length, c.length)) * 100;
   };
 
-  const selectDivOption = async (containerId, targetText, label) => {
+  const selectDivOption = async (containerId, targetText, label, targetValue = null) => {
     if (!targetText) {
       console.log(`⚠️ [DBS] 跳過 ${label} (無數值)`);
       return false;
@@ -450,6 +584,17 @@ async function scrapeDBSValuation(page, propertyData) {
     await page.waitForSelector(citeSelector, { state: 'visible', timeout: 10000 });
     await page.click(citeSelector);
     await page.waitForSelector(listSelector, { state: 'visible', timeout: 10000 });
+
+    if (targetValue) {
+      const exactSelector = `${optionSelector}[selectid="${targetValue}"]`;
+      const exactExists = await page.$(exactSelector);
+      if (exactExists) {
+        console.log(`   ✅ [DBS] 直接選取 ${label} (ID: ${targetValue})`);
+        await page.click(exactSelector);
+        await page.waitForTimeout(waitAfterSelectMs);
+        return true;
+      }
+    }
 
     const optionsText = await page.$$eval(optionSelector, options =>
       options.map(o => o.innerText.trim()).filter(t => t.length > 0)
@@ -493,17 +638,15 @@ async function scrapeDBSValuation(page, propertyData) {
     console.log(`📄 [DBS] 前往估價頁: ${targetUrl}`);
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
 
-    const regionDistrict = findDistrictAndRegion(propertyData.address || '');
-    const keywords = extractAddressKeywords(propertyData.address || '');
-    const estateKeyword = propertyData.estate
-      || (keywords.length > 0 ? keywords[0] : propertyData.cleanedAddress?.substring(0, 4));
-
-    const area = propertyData.area || regionDistrict?.region || '新界';
-    const district = propertyData.district || regionDistrict?.district;
+    const district = toTraditional(propertyData.bankMap?.dbs?.district || propertyData.district || '');
+    const estateKeyword = toTraditional(propertyData.bankMap?.dbs?.estate || propertyData.estate || '');
+    const bankDistrict = mapDistrictToBankOption(district);
+    const area = bankDistrict?.region || getRegionByDistrict(district) || '新界/離島';
+    const districtForSelect = bankDistrict?.district || district;
 
     await selectDivOption('divselect_area', area, '區域');
-    await selectDivOption('divselect_dist', district, '分區');
-    await selectDivOption('divselect_est', estateKeyword, '屋苑');
+    await selectDivOption('divselect_dist', districtForSelect, '分區');
+    await selectDivOption('divselect_est', estateKeyword, '屋苑', propertyData.bankMap?.dbs?.estateValue || null);
     await selectDivOption('divselect_block', propertyData.block, '座數');
     await selectDivOption('divselect_floor', propertyData.floor, '樓層');
     await selectDivOption('divselect_flat', propertyData.unit, '單位');
@@ -571,7 +714,6 @@ async function scrapeCitibankValuation(propertyData) {
     console.log(`📄 [Citi] 前往估價頁: ${targetUrl}`);
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
 
-    const regionDistrict = findDistrictAndRegion(propertyData.address || '');
     const normalizeCitiRegion = (value) => {
       if (!value) return '新界/離島';
       if (value === '新界') return '新界/離島';
@@ -579,11 +721,9 @@ async function scrapeCitibankValuation(propertyData) {
       return value;
     };
 
-    const region = normalizeCitiRegion(regionDistrict?.region);
-    const district = regionDistrict?.district || '';
-    const keywords = extractAddressKeywords(propertyData.address || '');
-    const estateKeyword = propertyData.estate
-      || (keywords.length > 0 ? keywords[0] : propertyData.cleanedAddress?.substring(0, 4));
+    const district = toTraditional(propertyData.bankMap?.citi?.district || propertyData.district || '');
+    const region = normalizeCitiRegion(propertyData.bankMap?.citi?.region || getRegionByDistrict(district || '')) || '新界/離島';
+    const estateKeyword = toTraditional(propertyData.bankMap?.citi?.estate || propertyData.estate || '');
 
     const waitReady = async (selector) => {
       await page.waitForSelector(`${selector}:not([disabled])`, { timeout: 20000 });
@@ -671,6 +811,36 @@ async function scrapeCitibankValuation(propertyData) {
       return false;
     };
 
+    const selectCiti = async (selector, text, value = null) => {
+      if (!text) return false;
+      if (value) {
+        const selected = await page.selectOption(selector, { value }).catch(() => null);
+        if (selected && selected.length > 0) {
+          console.log(`   ✅ [Citi] 直接選取 value: "${value}"`);
+          await page.waitForTimeout(1000);
+          return true;
+        }
+      }
+      const options = await page.$$eval(`${selector} option`, opts =>
+        opts.map(o => ({ val: o.value, txt: (o.textContent || '').trim() }))
+      );
+      let match = options.find(o => o.txt === text);
+      if (!match) {
+        match = options.find(o => o.txt.startsWith(text));
+      }
+      if (!match) {
+        match = options.find(o => o.txt.includes(text) || text.includes(o.txt));
+      }
+      if (match) {
+        console.log(`   ✅ [Citi] 精確選取: "${match.txt}" (目標: "${text}")`);
+        await page.selectOption(selector, match.val);
+        await page.waitForTimeout(1000);
+        return true;
+      }
+      console.warn(`   ⚠️ [Citi] 找不到選項: "${text}"`);
+      return false;
+    };
+
     const logSelected = async (selector, label) => {
       const selectedText = await page.$eval(selector, (sel) => {
         const opt = sel.selectedOptions && sel.selectedOptions[0];
@@ -694,14 +864,14 @@ async function scrapeCitibankValuation(propertyData) {
 
     console.log(`👇 [Citi] 區域: ${region}`);
     await waitReady('#zone');
-    await selectByScore('#zone', region);
+    await selectCiti('#zone', region);
     await logSelected('#zone', '區域');
     await page.waitForTimeout(2000);
 
     if (district) {
       console.log(`👇 [Citi] 地區: ${district}`);
       await waitReady('#district');
-      await selectByScore('#district', district);
+      await selectCiti('#district', district);
       await logSelected('#district', '地區');
       await page.waitForTimeout(2000);
     }
@@ -719,7 +889,7 @@ async function scrapeCitibankValuation(propertyData) {
       return nonPlaceholders.length > 0;
     }, '#estName', { timeout: 20000 });
 
-    const estateSelected = await selectByScore('#estName', estateKeyword);
+    const estateSelected = await selectCiti('#estName', estateKeyword, propertyData.bankMap?.citi?.estateValue || null);
     await logSelected('#estName', '屋苑');
     await page.waitForTimeout(2000);
 
@@ -728,7 +898,7 @@ async function scrapeCitibankValuation(propertyData) {
     if (propertyData.block) {
       console.log(`👇 [Citi] 座數: ${propertyData.block}`);
       await waitReady('#bckBuilding');
-      await selectByScore('#bckBuilding', propertyData.block);
+      await selectCiti('#bckBuilding', propertyData.block);
       await logSelected('#bckBuilding', '座數');
       await page.waitForTimeout(2000);
     }
@@ -736,7 +906,7 @@ async function scrapeCitibankValuation(propertyData) {
     if (propertyData.floor) {
       console.log(`👇 [Citi] 樓層: ${propertyData.floor}`);
       await waitReady('#floor');
-      await selectByScore('#floor', propertyData.floor);
+      await selectCiti('#floor', propertyData.floor);
       await logSelected('#floor', '樓層');
       await page.waitForTimeout(2000);
     }
@@ -744,46 +914,60 @@ async function scrapeCitibankValuation(propertyData) {
     if (propertyData.unit) {
       console.log(`👇 [Citi] 單位: ${propertyData.unit}`);
       await waitReady('#flatUnit');
-      await selectByScore('#flatUnit', String(propertyData.unit).toUpperCase());
+      await selectCiti('#flatUnit', String(propertyData.unit).toUpperCase());
       await logSelected('#flatUnit', '單位');
       await page.waitForTimeout(2000);
     }
 
-    console.log('🔘 [Citi] 點擊進行物業估價...');
+    console.log('🔘 [Citi] 準備點擊估價按鈕...');
     await page.evaluate(() => {
       const banner = document.querySelector('#onetrust-banner-sdk');
       if (banner) banner.remove();
-      document.querySelectorAll('footer, .cmp-container').forEach(el => el.remove());
+      document.querySelectorAll('footer, .cmp-container, .navbar').forEach(el => el.remove());
     });
 
-    await page.keyboard.press('Tab');
-    await page.keyboard.press('Tab');
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForTimeout(1000);
 
-    const submitBtn = page.getByText('進行物業估價', { exact: false }).last();
-    const box = await submitBtn.boundingBox();
-    if (box) {
-      const x = box.x + box.width / 2;
-      const y = box.y + box.height / 2;
-      await page.mouse.move(x, y);
-      await page.waitForTimeout(500);
-      await page.mouse.down();
-      await page.mouse.up();
-    } else {
-      console.warn('⚠️ [Citi] 找不到估價按鈕座標，略過物理點擊');
+    const possibleSelectors = [
+      'text=進行物業估價',
+      'text=估價',
+      'text=Get Valuation',
+      'text=Submit',
+      'a:has-text("進行物業估價")',
+      'button:has-text("進行物業估價")',
+      'div[role="button"]:has-text("估價")',
+      '.citi-btn',
+      'button.primary',
+      'input[type="submit"]'
+    ];
+
+    let clicked = false;
+    for (const selector of possibleSelectors) {
+      try {
+        const btn = page.locator(selector).first();
+        const count = await btn.count();
+        if (!count) continue;
+        if (await btn.isVisible()) {
+          console.log(`   👉 [Citi] 嘗試點擊: ${selector}`);
+          await btn.scrollIntoViewIfNeeded().catch(() => {});
+          await btn.hover().catch(() => {});
+          await page.waitForTimeout(200);
+          await btn.click({ force: true, timeout: 3000 });
+          clicked = true;
+          break;
+        }
+      } catch (e) {
+        // ignore and try next selector
+      }
+    }
+
+    if (!clicked) {
+      console.warn('⚠️ [Citi] 找不到明確按鈕，改用 Enter 嘗試提交...');
+      await page.keyboard.press('Enter');
     }
 
     await page.waitForTimeout(3000);
-    const hasResult = await page.evaluate(() => {
-      const text = document.body.innerText || '';
-      return text.includes('估值') || text.includes('估價');
-    });
-    if (!hasResult) {
-      await page.evaluate(() => {
-        const targets = Array.from(document.querySelectorAll('a, button, div'));
-        const target = targets.find(el => (el.textContent || '').includes('進行物業估價'));
-        if (target) target.click();
-      });
-    }
 
     console.log('⏳ [Citi] 等待結果...');
     try {
@@ -921,7 +1105,8 @@ async function startWorker() {
       }
 
       const lead = leads[0];
-      if (!lead || !lead.address) {
+      const hasStructured = lead && (lead.district || lead.estate || lead.block || lead.floor || lead.flat);
+      if (!lead || (!lead.address && !hasStructured)) {
         console.error('❌ Error: Received invalid lead data (missing address). Skipping...');
         if (lead && lead.row) {
           await updateValuation(lead.row, { status: 'failed_invalid_address' });
@@ -932,9 +1117,19 @@ async function startWorker() {
         await new Promise(r => setTimeout(r, 60000));
         continue;
       }
-      console.log(`\n🎯 處理 Lead #${lead.row}: ${lead.address}`);
-      const propertyData = parseAddress(lead.address);
-      console.log(`   解析: Block=${propertyData.block}, Floor=${propertyData.floor}, Unit=${propertyData.unit}`);
+      console.log(`\n🎯 處理 Lead #${lead.row}: ${lead.address || ''}`);
+      const parsed = lead.address ? parseAddress(lead.address) : {};
+      const propertyData = {
+        address: lead.address || '',
+        district: lead.district || parsed.district || '',
+        estate: toTraditional(lead.estate || parsed.estate || ''),
+        estateId: lead.estateId || '',
+        block: lead.block || parsed.block || '',
+        floor: lead.floor || parsed.floor || '',
+        unit: lead.flat || lead.unit || parsed.unit || ''
+      };
+      propertyData.bankMap = mapToBankData(propertyData);
+      console.log(`   解析: District=${propertyData.district}, Estate=${propertyData.estate}, Block=${propertyData.block}, Floor=${propertyData.floor}, Unit=${propertyData.unit}`);
 
       let citiValuation = null;
       let dbsValuation = null;
@@ -1000,6 +1195,5 @@ if (require.main === module) {
 }
 
 module.exports = {
-  scrapeHangSengValuation,
-  parseAddress
+  scrapeHangSengValuation
 };

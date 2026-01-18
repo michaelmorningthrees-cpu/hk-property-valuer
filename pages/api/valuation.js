@@ -3,10 +3,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { address, email, purpose } = req.body
+  const { district, estate, estateId, block, floor, flat, email, purpose } = req.body
 
   // Validate required fields
-  if (!address || !email || !purpose) {
+  if (!district || !estate || !block || !floor || !flat || !email || !purpose) {
     return res.status(400).json({ error: 'Missing required fields' })
   }
 
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     console.log('GOOGLE_SCRIPT_URL value:', GOOGLE_SCRIPT_URL ? `${GOOGLE_SCRIPT_URL.substring(0, 50)}...` : 'NOT SET')
     console.log('GS_SECRET_TOKEN exists:', !!GS_SECRET_TOKEN)
     console.log('GS_SECRET_TOKEN length:', GS_SECRET_TOKEN ? GS_SECRET_TOKEN.length : 0)
-    console.log('Request body:', { address, email, purpose })
+    console.log('Request body:', { district, estate, estateId, block, floor, flat, email, purpose })
 
     // Check if environment variables are set
     if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === 'YOUR_DEPLOYED_WEB_APP_URL') {
@@ -42,7 +42,13 @@ export default async function handler(req, res) {
 
     // Prepare request payload
     const payload = {
-      address,
+      action: 'submit_valuation',
+      district,
+      estate,
+      estateId,
+      block,
+      floor,
+      flat,
       email,
       purpose,
       timestamp: new Date().toISOString(),
@@ -50,7 +56,7 @@ export default async function handler(req, res) {
     }
 
     console.log('📤 Sending request to Google Script...')
-    console.log('Payload (without token):', { address, email, purpose, timestamp: payload.timestamp })
+    console.log('Payload (without token):', { district, estate, estateId, block, floor, flat, email, purpose, timestamp: payload.timestamp })
 
     // Submit to Google Sheets via Web App with security token
     const response = await fetch(GOOGLE_SCRIPT_URL, {
