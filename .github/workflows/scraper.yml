@@ -2,9 +2,8 @@ name: Valuation Scraper Worker
 
 on:
   schedule:
-    # 設定自動運行時間 (例如每 6 小時一次)
-    # 時間係 UTC，香港時間要 +8
-    - cron: '0 */6 * * *'
+    # 修改這裡：設定每 30 分鐘運行一次
+    - cron: '*/30 * * * *'
   workflow_dispatch: # 允許你在 GitHub Actions 頁面手動按按鈕測試
 
 jobs:
