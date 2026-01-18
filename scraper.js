@@ -5,6 +5,7 @@ const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 chromium.use(StealthPlugin());
+const isCIEnv = !!process.env.CI || !!process.env.GITHUB_ACTIONS;
 
 // ==========================================
 // 1. 地址解析工具函數
@@ -272,7 +273,7 @@ async function scrapeHangSengValuation(propertyData) {
   try {
     console.log('🚀 啟動 Hang Seng 瀏覽器...');
     browser = await chromium.launch({
-      headless: false,
+      headless: isCIEnv ? true : false,
       slowMo: 100,
     });
 
@@ -559,7 +560,7 @@ async function scrapeCitibankValuation(propertyData) {
   let browser = null;
   try {
     console.log('🚀 [Citi] 啟動瀏覽器...');
-    browser = await chromium.launch({ headless: false, slowMo: 100 });
+    browser = await chromium.launch({ headless: isCIEnv ? true : false, slowMo: 100 });
     const context = await browser.newContext({
       viewport: { width: 1280, height: 800 },
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -946,7 +947,7 @@ async function startWorker() {
         let dbsBrowser = null;
         try {
           console.log('🔍 [Worker] 開始爬取 DBS 估價...');
-          dbsBrowser = await chromium.launch({ headless: false, slowMo: 100 });
+          dbsBrowser = await chromium.launch({ headless: isCIEnv ? true : false, slowMo: 100 });
           const dbsContext = await dbsBrowser.newContext({
             viewport: { width: 1280, height: 800 },
             userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
