@@ -163,7 +163,7 @@ export default function Home() {
                 一鍵對比四大銀行估價
               </h2>
               <p className="text-gray-600 text-base sm:text-lg lg:text-xl max-w-xl mx-auto">
-                只需輸入地址，30 分鐘內收到深度分析報告。
+                只需輸入地址，30 分鐘內收到估價報告。
               </p>
             </div>
 
