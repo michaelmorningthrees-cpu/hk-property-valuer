@@ -209,6 +209,9 @@ export default function Home() {
                     <label htmlFor="address" className="block text-deep-navy text-sm font-medium mb-2">
                       物業地址
                     </label>
+                    <p className="text-xs text-red-500 mb-1">
+           * 必須使用中文，並包含地區、座數、樓層、室號 (如：荃灣)，否則無法估價
+                      </p>
                     <input
                       type="text"
                       id="address"
