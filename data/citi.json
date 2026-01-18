@@ -1,6 +1,7118 @@
 [
   {
     "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "珍寶閣",
+    "value": "2929"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "福群大樓",
+    "value": "1259"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "香港仔中心",
+    "value": "861"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "鴨脷洲中心",
+    "value": "1319"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "海峰華軒",
+    "value": "271"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "利豐大廈 - 香港仔/鴨脷洲",
+    "value": "1287"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "雅濤閣",
+    "value": "2769"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "高寶閣",
+    "value": "1855"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "港暉中心",
+    "value": "1261"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "僑民大廈",
+    "value": "2540"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "永穩大廈",
+    "value": "1262"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "利是大廈 - 鴨脷洲",
+    "value": "2551"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "富澤大廈",
+    "value": "1263"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "金寶花園 - 香港仔/鴨脷洲",
+    "value": "2169"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "倚南",
+    "value": "2848"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "海滙大廈",
+    "value": "1063"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "協勝大廈",
+    "value": "1061"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "海暉大廈",
+    "value": "907"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "海利大廈 - 香港仔/鴨脷洲",
+    "value": "1286"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "鴻福閣",
+    "value": "1265"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "鴻勝大廈",
+    "value": "1850"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "南灣御園",
+    "value": "2820"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "景惠花園",
+    "value": "742"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "珍寶大廈",
+    "value": "1851"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "嘉福閣",
+    "value": "1266"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "嘉隆苑",
+    "value": "1026"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "嘉和大廈 - 香港仔/鴨脷洲",
+    "value": "1318"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "建輝大廈 - 香港仔/鴨脷洲",
+    "value": "1267"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "金利豐大廈",
+    "value": "2412"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "港基大廈",
+    "value": "1268"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "南灣",
+    "value": "2783"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "悅海華庭",
+    "value": "2924"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "南區 左岸",
+    "value": "2826"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "深灣9號",
+    "value": "2849"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "美倫閣",
+    "value": "918"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "銀豐大廈",
+    "value": "1067"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "海洋大廈",
+    "value": "1274"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "安輝大廈",
+    "value": "1270"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "安泰大廈 - 香港仔/鴨脷洲",
+    "value": "1852"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "百良大廈",
+    "value": "1272"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "碧麗大廈",
+    "value": "1496"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "利港中心",
+    "value": "1269"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "海光閣",
+    "value": "1069"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "深灣軒",
+    "value": "2688"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "順豐大廈 - 香港仔/鴨脷洲",
+    "value": "1279"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "順景閣",
+    "value": "1276"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "兆暉大廈",
+    "value": "1278"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "兆群大廈",
+    "value": "1275"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "登峰 南岸",
+    "value": "2846"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "海怡半島",
+    "value": "229"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "南景花園",
+    "value": "1853"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "田灣畔",
+    "value": "2107"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "東寶閣",
+    "value": "1285"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "偉景大廈",
+    "value": "953"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "港麗豪園",
+    "value": "640"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "怡慶大廈",
+    "value": "1854"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "怡安大廈",
+    "value": "1283"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "益添大廈",
+    "value": "1849"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "仁正大廈",
+    "value": "1284"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "仁勝大廈",
+    "value": "1280"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "漁暉苑",
+    "value": "345"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "香港仔/鴨脷洲",
+    "name": "漁安苑",
+    "value": "488"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "加路連花園",
+    "value": "2192"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "高威樓",
+    "value": "893"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "昌盛洋樓",
+    "value": "1424"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "莊苑",
+    "value": "894"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "COHO",
+    "value": "2884"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "登龍閣",
+    "value": "897"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "伊利莎伯大廈",
+    "value": "652"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "玉山大廈",
+    "value": "1433"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "清琳閣",
+    "value": "2500"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "雋琚",
+    "value": "2877"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "敬誠閣",
+    "value": "913"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "利發大廈",
+    "value": "919"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "駱克大廈",
+    "value": "663"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "樂聲大廈",
+    "value": "916"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "八達大廈",
+    "value": "923"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "曦巒",
+    "value": "2870"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "栢景臺",
+    "value": "283"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "珠城大廈",
+    "value": "2992"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "肇明大廈",
+    "value": "1412"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "新豪閣",
+    "value": "929"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "金輝閣",
+    "value": "925"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "第一閣",
+    "value": "932"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "瑆華",
+    "value": "2907"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "維景花園",
+    "value": "646"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "華英大廈",
+    "value": "939"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "(Yoo Residence)",
+    "value": "2827"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "銅鑼灣",
+    "name": "悅華閣",
+    "value": "766"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "AVA 128",
+    "value": "2891"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "景怡居",
+    "value": "1583"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "尚賢居",
+    "value": "2887"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "聚賢居",
+    "value": "2693"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "高樂花園",
+    "value": "354"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "匡景居",
+    "value": "2541"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "俊陞華庭",
+    "value": "2544"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "裕利大廈",
+    "value": "2574"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "富來閣",
+    "value": "2166"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "福陞閣",
+    "value": "2547"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "嘉利大廈",
+    "value": "2559"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "恒昌泰大廈",
+    "value": "1516"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "荷里活華庭",
+    "value": "716"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "康威花園",
+    "value": "1327"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "僑發大廈",
+    "value": "2629"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "麗雅苑",
+    "value": "2927"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "家樂花園",
+    "value": "1229"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "-",
+    "value": "2731"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "中源中心",
+    "value": "1604"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "萬城閣",
+    "value": "1582"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "My Central",
+    "value": "3148"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "盈峰一號",
+    "value": "2801"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "普頓臺",
+    "value": "2496"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "帝后華庭",
+    "value": "2633"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "豪景臺",
+    "value": "2867"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "西浦",
+    "value": "2866"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "No.1 加冕臺",
+    "value": "2909"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "中環/上環",
+    "name": "兆和軒",
+    "value": "1581"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "雅麗閣",
+    "value": "1392"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "雅景閣",
+    "value": "1391"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "灣景園",
+    "value": "2572"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "富怡花園",
+    "value": "2331"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "富景花園",
+    "value": "1699"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "金源洋樓",
+    "value": "1241"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "康翠臺 - 柴灣",
+    "value": "325"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "杏翠苑",
+    "value": "2363"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "富欣花園 - 柴灣",
+    "value": "2302"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "杏花邨",
+    "value": "1918"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "曉翠苑",
+    "value": "1294"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "藍灣半島",
+    "value": "2043"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "佳翠苑",
+    "value": "1297"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "景翠苑",
+    "value": "438"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "高威閣",
+    "value": "725"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "樂軒臺",
+    "value": "2374"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "樂翠臺",
+    "value": "341"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "新翠花園",
+    "value": "319"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "山翠苑",
+    "value": "736"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "新德樓",
+    "value": "1415"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "華泰大廈",
+    "value": "1569"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "宏德居",
+    "value": "741"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "永利中心",
+    "value": "1928"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "茵翠苑",
+    "value": "1293"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "柴灣",
+    "name": "怡翠苑",
+    "value": "694"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "東山台18號",
+    "value": "2516"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "雅谷大廈",
+    "value": "867"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "雅詩大廈",
+    "value": "876"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "Ascot Tower",
+    "value": "837"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "嘉美閣",
+    "value": "2522"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "比華利山",
+    "value": "455"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "千葉居",
+    "value": "1530"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "藍塘花園",
+    "value": "2525"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "樂景園",
+    "value": "869"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "柏樂苑",
+    "value": "1220"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "蟠龍苑",
+    "value": "1324"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "嘉園",
+    "value": "2674"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "蔚雲閣",
+    "value": "1193"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "愉昇閣",
+    "value": "2533"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "嘉樂居",
+    "value": "879"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "東園",
+    "value": "1534"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "豪軒",
+    "value": "840"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "華苑",
+    "value": "2222"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "富雅閣 - 跑馬地/黃泥涌",
+    "value": "1189"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "松柏新邨",
+    "value": "898"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "怡景閣 - 跑馬地/黃泥涌",
+    "value": "1044"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "豐和苑",
+    "value": "2356"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "永光苑",
+    "value": "875"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "友誼大廈",
+    "value": "1123"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "豐榮苑",
+    "value": "2555"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "嘉逸居",
+    "value": "2557"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "嘉蘭閣 - 跑馬地/黃泥涌",
+    "value": "868"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "翠壁",
+    "value": "1533"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "嘉苑",
+    "value": "962"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "匯翠臺",
+    "value": "2121"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "海怡閣 - 跑馬地/黃泥涌",
+    "value": "1048"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "荷塘苑",
+    "value": "1046"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "學談花園",
+    "value": "1126"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "康蘭苑",
+    "value": "812"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "冬青閣",
+    "value": "874"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "愉寶大廈",
+    "value": "2936"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "華翠臺",
+    "value": "2409"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "啟蔭閣",
+    "value": "815"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "景光樓",
+    "value": "2649"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "景怡大廈",
+    "value": "2336"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "晶輝大廈",
+    "value": "2313"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "利華閣",
+    "value": "877"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "麗成大廈",
+    "value": "1053"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "嘉逸軒",
+    "value": "873"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "駿愉居",
+    "value": "2425"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "帝華閣",
+    "value": "559"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "名仕花園",
+    "value": "871"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "文華新邨",
+    "value": "917"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "梅林大廈",
+    "value": "872"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "美華閣",
+    "value": "1561"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "明麗閣",
+    "value": "818"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "名仕閣",
+    "value": "1165"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "美麗邨",
+    "value": "920"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "雅苑",
+    "value": "819"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "蔚豪苑",
+    "value": "679"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "聚安閣",
+    "value": "1537"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "鵬麗閣",
+    "value": "1050"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "柏莉園",
+    "value": "983"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "寶輝大廈",
+    "value": "1129"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "駿馬閣",
+    "value": "825"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "壹鑾",
+    "value": "2869"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "豐盛苑",
+    "value": "2246"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "樂榮閣",
+    "value": "2294"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "雅緻苑",
+    "value": "1027"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "金山花園",
+    "value": "989"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "山光苑 (第一期)",
+    "value": "1190"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "山光苑 (第二期)",
+    "value": "1191"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "山勝大廈",
+    "value": "2001"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "誠和閣 - 跑馬地/黃泥涌",
+    "value": "1155"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "銀星閣",
+    "value": "870"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "晉寶大廈",
+    "value": "1257"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "力生軒",
+    "value": "2052"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "愉輝洋樓",
+    "value": "1060"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "山景閣",
+    "value": "1540"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "泰苑",
+    "value": "2260"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "紀雲峰",
+    "value": "2797"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "樂活臺",
+    "value": "2053"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "逸怡居",
+    "value": "992"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "禮頓山",
+    "value": "2596"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "威利閣",
+    "value": "878"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "雲地利閣",
+    "value": "2248"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "聚文樓",
+    "value": "2903"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "旭逸閣",
+    "value": "1042"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "雲地利台",
+    "value": "996"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "雲臺別墅",
+    "value": "1130"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "樂陶苑",
+    "value": "677"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "玫瑰新邨",
+    "value": "1111"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "樂翠台",
+    "value": "697"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "慧莉苑 - 跑馬地/黃泥涌",
+    "value": "2207"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "匯文樓",
+    "value": "880"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "瑩景閣",
+    "value": "1545"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "雲暉大廈",
+    "value": "1037"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "永安新村",
+    "value": "2486"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "怡發大廈",
+    "value": "1057"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "怡苑",
+    "value": "2226"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "跑馬地/黃泥涌",
+    "name": "毓成大廈",
+    "value": "2897"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "輝百閣",
+    "value": "2399"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "華景園",
+    "value": "718"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "陽明山莊",
+    "value": "1136"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "龍德苑",
+    "value": "2973"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "龍欣苑",
+    "value": "2326"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "浪琴園",
+    "value": "609"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "雅柏苑",
+    "value": "1409"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "麗景園",
+    "value": "1221"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "淺水灣道37號",
+    "value": "883"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "聚豪居",
+    "value": "2002"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "嘉麟閣",
+    "value": "722"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "南灣花園",
+    "value": "700"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "南灣大廈",
+    "value": "648"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "旭日居",
+    "value": "2160"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "南區",
+    "name": "紅山半島",
+    "value": "1385"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "薄扶林道63號",
+    "value": "3099"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "懿山",
+    "value": "2847"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "安達中心",
+    "value": "2517"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "瑧蓺",
+    "value": "3140"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "楊華閣",
+    "value": "2519"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "雅福台",
+    "value": "1862"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "寶翠閣",
+    "value": "2621"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "寶雅山",
+    "value": "2744"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "碧華閣",
+    "value": "1345"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "瑧璈",
+    "value": "3074"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "加多近山",
+    "value": "2889"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "加惠臺",
+    "value": "2040"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "匯賢居",
+    "value": "3147"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "嘉盛閣",
+    "value": "1342"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "昌運大廈",
+    "value": "1343"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "昌榮閣",
+    "value": "1588"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "昌裕大廈",
+    "value": "1589"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "澤安閣",
+    "value": "2672"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "昌寶大樓",
+    "value": "1344"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "青蓮閣",
+    "value": "1305"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "創業中心",
+    "value": "434"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "俊景閣",
+    "value": "2537"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "龍暉花園",
+    "value": "660"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "Eight South Lane",
+    "value": "2842"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "尚嶺",
+    "value": "2841"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "怡景花園",
+    "value": "1341"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "雅賢軒",
+    "value": "2543"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "八達大廈",
+    "value": "1351"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "福滿大廈",
+    "value": "2546"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "富山苑",
+    "value": "1347"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "富基大廈",
+    "value": "1594"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "富滿大廈",
+    "value": "1348"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "富賢閣",
+    "value": "1349"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "豐景閣",
+    "value": "2402"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "豐盛大廈",
+    "value": "2556"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "豐逸大廈",
+    "value": "1593"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "豐裕大廈",
+    "value": "1350"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "高雅大廈",
+    "value": "2745"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "康和花園",
+    "value": "1260"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "兆禧閣",
+    "value": "1859"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "裕福大廈",
+    "value": "2563"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "怡景苑 - 堅尼地城/西營盤",
+    "value": "1382"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "維壹",
+    "value": "2839"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "海怡花園",
+    "value": "572"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "羲皇臺",
+    "value": "3138"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "曉譽",
+    "value": "2879"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "曉山閣",
+    "value": "1596"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "海昇大廈",
+    "value": "1346"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "曉順閣",
+    "value": "1178"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "Imperial Kennedy",
+    "value": "2837"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "俊庭居",
+    "value": "278"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "縉城峰",
+    "value": "2732"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "綠意居",
+    "value": "2509"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "翡翠閣 - 堅尼地城/西營盤",
+    "value": "1353"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "翠華閣 (高街)",
+    "value": "1355"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "翠荷苑",
+    "value": "1354"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "佳景閣",
+    "value": "1597"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "再輝大廈 - 堅尼地城/西營盤",
+    "value": "1352"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "嘉富大廈 - 堅尼地城/西營盤",
+    "value": "2098"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "嘉安大廈",
+    "value": "667"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "錦華大廈",
+    "value": "1361"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "祺安大廈",
+    "value": "2651"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "城暉大廈",
+    "value": "1357"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "堅城中心",
+    "value": "1358"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "Kensington Hill",
+    "value": "2876"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "啟成大廈",
+    "value": "1176"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "明德山",
+    "value": "2875"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "高雋閣",
+    "value": "260"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "高雅閣",
+    "value": "259"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "高宏閣",
+    "value": "1359"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "光前大廈",
+    "value": "724"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "均益大廈",
+    "value": "2606"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "國基大廈",
+    "value": "2645"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "廣豐台",
+    "value": "662"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "麗景閣",
+    "value": "1264"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "麗恩閣",
+    "value": "1360"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "Lexington Hill",
+    "value": "2836"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "良基大廈",
+    "value": "1600"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "聯發新樓",
+    "value": "3133"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "聯基新樓",
+    "value": "3134"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "聯興新樓",
+    "value": "3132"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "聯康新樓",
+    "value": "3131"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "聯安新樓",
+    "value": "3130"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "聯威新樓",
+    "value": "3129"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "聯友新樓",
+    "value": "3128"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "龍豐閣",
+    "value": "3142"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "龍翔花園",
+    "value": "1356"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "文光閣",
+    "value": "1602"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "高逸華軒",
+    "value": "1366"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "美新樓",
+    "value": "3090"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "寶立閣",
+    "value": "1312"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "怡(峰)",
+    "value": "3067"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "南雄大廈",
+    "value": "2631"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "五福大廈",
+    "value": "3089"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "新昇大廈",
+    "value": "1363"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "翰林峰",
+    "value": "3100"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "南里壹號",
+    "value": "2872"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "觀海閣",
+    "value": "1271"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "珍珠閣",
+    "value": "1149"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "寶豐大廈 - 堅尼地城/西營盤",
+    "value": "1615"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "麗景大廈",
+    "value": "3065"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "裕豐花園",
+    "value": "1364"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "樂信大廈 (皇后大道西)",
+    "value": "1365"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "樂新大廈 (水街)",
+    "value": "1362"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "海傍大廈",
+    "value": "1378"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "西寧閣 - 堅尼地城/西營盤",
+    "value": "1610"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "順昌大廈",
+    "value": "2479"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "順輝大廈 - 堅尼地城/西營盤",
+    "value": "1370"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "順泰大廈",
+    "value": "1277"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "瑞華閣",
+    "value": "1368"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "兆豐大廈 - 堅尼地城/西營盤",
+    "value": "1369"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "美菲閣",
+    "value": "630"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "嘉輝花園",
+    "value": "420"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "曉輝大廈",
+    "value": "1367"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "得利大廈 - 堅尼地城/西營盤",
+    "value": "1377"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "浚峰",
+    "value": "2860"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "泓都",
+    "value": "2601"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "薈臻",
+    "value": "2823"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "星鑽",
+    "value": "2910"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "傲翔灣畔",
+    "value": "2722"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "金寶閣",
+    "value": "1372"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "翠麗苑",
+    "value": "1383"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "翠景閣",
+    "value": "1373"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "東蔚苑",
+    "value": "1374"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "維港峰",
+    "value": "2901"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "華輝閣",
+    "value": "1619"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "華明中心",
+    "value": "639"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "慧華閣",
+    "value": "1620"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "聚賢逸居",
+    "value": "1186"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "榮昇閣",
+    "value": "1282"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "和益樓",
+    "value": "1375"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "怡豐閣",
+    "value": "1622"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "宜順大廈",
+    "value": "1623"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "仁愛苑",
+    "value": "1617"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "仁信大廈",
+    "value": "1563"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "益豐花園",
+    "value": "2181"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "盈基花園",
+    "value": "643"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "裕新大廈",
+    "value": "638"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "源輝閣",
+    "value": "1371"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "堅尼地城/西營盤",
+    "name": "毓明閣",
+    "value": "1162"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "麥當勞道11號",
+    "value": "2514"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "羅便臣道31號",
+    "value": "2786"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "璈珀",
+    "value": "2893"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "80 Robinson Road",
+    "value": "2041"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "豐樂閣",
+    "value": "2135"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "百合苑",
+    "value": "1630"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "尚璟",
+    "value": "2845"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "瀚然",
+    "value": "2844"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "雅緻大廈",
+    "value": "2622"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "蔚然",
+    "value": "2945"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "麗怡大廈",
+    "value": "889"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "雅苑 - 半山",
+    "value": "885"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "百麗花園",
+    "value": "2036"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "蔚晴軒",
+    "value": "264"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶樺臺",
+    "value": "1587"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "殷樺花園",
+    "value": "577"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶恒苑",
+    "value": "887"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "般景台",
+    "value": "2225"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "雍慧閣",
+    "value": "2526"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶林閣",
+    "value": "888"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶雲閣",
+    "value": "2199"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "廣堅大廈",
+    "value": "1010"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "堅都大廈",
+    "value": "2129"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "慧源閣",
+    "value": "895"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉樂園",
+    "value": "2675"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉威花園",
+    "value": "892"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶華軒",
+    "value": "2083"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "世紀大廈",
+    "value": "2396"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉岶薈",
+    "value": "2885"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "萬翠花園",
+    "value": "2130"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "時樂花園",
+    "value": "1590"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "芝古臺3號",
+    "value": "2275"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "重德大廈",
+    "value": "2670"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "金碧閣",
+    "value": "2131"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉富麗苑",
+    "value": "1173"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "Cluny Park",
+    "value": "2886"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "Conduit 18",
+    "value": "2843"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "君德閣",
+    "value": "1629"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉景臺",
+    "value": "1007"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "月陶居",
+    "value": "2198"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "恆龍閣 - 半山",
+    "value": "265"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "龍騰閣",
+    "value": "1586"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "帝景園",
+    "value": "571"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "慧明苑 - 半山",
+    "value": "483"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "愛都大廈",
+    "value": "713"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "豫苑",
+    "value": "484"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "輝鴻閣",
+    "value": "899"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶雲山莊",
+    "value": "2082"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "輝煌臺",
+    "value": "266"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "福熙苑",
+    "value": "2668"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "殷榮閣",
+    "value": "1011"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "福祺閣",
+    "value": "2133"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "福澤花園",
+    "value": "896"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "花園臺",
+    "value": "2458"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉和苑",
+    "value": "908"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "金帝軒",
+    "value": "2134"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "金庭居",
+    "value": "1015"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "金鳳閣",
+    "value": "2168"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "高雲臺",
+    "value": "903"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "瑧環",
+    "value": "2933"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "格蘭閣",
+    "value": "2223"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "雍翠臺 - 半山",
+    "value": "1580"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "慧景臺",
+    "value": "2932"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "碧翠園 - 半山",
+    "value": "2459"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "翠怡閣",
+    "value": "2404"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "海天閣",
+    "value": "2128"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "亨順閣",
+    "value": "2175"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "杏彤苑",
+    "value": "2295"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "學林雅軒",
+    "value": "2075"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "曉峰閣",
+    "value": "584"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "興業大廈",
+    "value": "2658"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "海明苑",
+    "value": "902"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "香港花園 - 半山",
+    "value": "479"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "峰景",
+    "value": "2406"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "翰庭軒",
+    "value": "276"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "怡康閣",
+    "value": "2146"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "帝豪閣",
+    "value": "1020"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶玉閣",
+    "value": "910"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉富大廈 - 半山",
+    "value": "1605"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉怡閣",
+    "value": "1309"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "金風大廈",
+    "value": "2137"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "金莉大廈",
+    "value": "2656"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "金寧大廈",
+    "value": "2172"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "堅麗閣",
+    "value": "2289"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "甘苑",
+    "value": "2235"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "錦翠園",
+    "value": "1599"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "景輝大廈",
+    "value": "2625"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "瓊峰臺",
+    "value": "909"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "莉景閣",
+    "value": "915"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "禮順苑",
+    "value": "1601"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "俊賢花園",
+    "value": "549"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "麥當奴大廈",
+    "value": "2243"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "澄碧閣",
+    "value": "2238"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "文華閣",
+    "value": "2426"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "美樂閣",
+    "value": "1603"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "梅苑",
+    "value": "2427"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "May Tower II",
+    "value": "2241"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "美蘭閣",
+    "value": "924"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "明苑",
+    "value": "2138"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "日景閣",
+    "value": "1598"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寧養臺",
+    "value": "922"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "柏道2號",
+    "value": "2921"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶珊道一號",
+    "value": "2689"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "輝煌豪園",
+    "value": "268"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "景雅花園",
+    "value": "2139"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "栢苑",
+    "value": "755"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "般柏苑",
+    "value": "754"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶威閣",
+    "value": "496"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶時大廈 - 半山",
+    "value": "2147"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "蔚巒閣",
+    "value": "547"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "明珠台",
+    "value": "2464"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶園",
+    "value": "1607"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "寶如玉大廈",
+    "value": "2140"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "蔚華閣",
+    "value": "926"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉富臺",
+    "value": "2136"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "莊士明德軒",
+    "value": "2497"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "聯邦花園",
+    "value": "2436"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "薈萃苑",
+    "value": "2438"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "御花園",
+    "value": "678"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "怡富閣 - 半山",
+    "value": "2176"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "德信花園",
+    "value": "2212"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "樂信臺",
+    "value": "518"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "雍景臺",
+    "value": "727"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "樂怡閣",
+    "value": "2586"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "樂賢閣",
+    "value": "760"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "皇朝閣 - 半山",
+    "value": "1925"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "帝景閣 - 半山堅尼地道",
+    "value": "2742"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "樂欣大廈",
+    "value": "1608"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "承德山莊",
+    "value": "952"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "福苑 - 半山",
+    "value": "1609"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "富景花園",
+    "value": "1716"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "御景臺",
+    "value": "1913"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "俊傑花園",
+    "value": "757"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "秀麗閣 - 半山",
+    "value": "758"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "懿峰",
+    "value": "2916"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "信怡閣",
+    "value": "759"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "些利閣",
+    "value": "2446"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "慧林閣 - 半山",
+    "value": "1611"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "兆景閣",
+    "value": "1035"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉麗苑",
+    "value": "756"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "華庭閣",
+    "value": "1612"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "天悅閣",
+    "value": "1613"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "SOHO 38",
+    "value": "2746"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "雨時大廈",
+    "value": "1614"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "海雅閣",
+    "value": "1606"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "Tavistock II",
+    "value": "2044"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "The Babington",
+    "value": "2743"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "采文軒",
+    "value": "2912"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉兆臺",
+    "value": "519"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "港景別墅",
+    "value": "2035"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "The Icon",
+    "value": "2998"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "The Mayfair",
+    "value": "2034"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "帝華臺",
+    "value": "2056"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "高士台",
+    "value": "2908"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "添寶閣",
+    "value": "934"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "添寶閣第2期",
+    "value": "933"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "地利根德閣",
+    "value": "570"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "麗豪閣",
+    "value": "1185"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "駿豪閣",
+    "value": "516"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "蔚皇居",
+    "value": "2046"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "慧豪閣",
+    "value": "588"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "威都閣",
+    "value": "1628"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "蔚山花園",
+    "value": "1618"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "威豪閣",
+    "value": "2145"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "豪輝閣",
+    "value": "2142"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "蔚庭軒",
+    "value": "768"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "衛城閣",
+    "value": "762"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "穎章大廈",
+    "value": "2143"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "永福閣",
+    "value": "1927"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "匯豪閣",
+    "value": "769"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "慧苑",
+    "value": "502"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "福臨閣",
+    "value": "1621"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "活倫閣",
+    "value": "2120"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "嘉倫軒",
+    "value": "2144"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "怡基閣",
+    "value": "2141"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "英輝閣",
+    "value": "2244"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "應彪大廈",
+    "value": "765"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "英華閣",
+    "value": "272"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "半山",
+    "name": "殷豪閣",
+    "value": "767"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "益新洋樓",
+    "value": "1393"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "百福花園",
+    "value": "515"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "富豪閣",
+    "value": "576"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "寶明閣",
+    "value": "2330"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "寶城閣",
+    "value": "1171"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "賽西湖大廈",
+    "value": "313"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "寶馬臺",
+    "value": "1726"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "雅景臺",
+    "value": "2944"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "建康花園",
+    "value": "801"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "嘉信大廈 - 北角",
+    "value": "578"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "天順樓",
+    "value": "1425"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "清暉臺",
+    "value": "2221"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "清華大廈",
+    "value": "2671"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "永光閣",
+    "value": "959"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "城市花園",
+    "value": "454"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "康福園",
+    "value": "2941"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "創福苑",
+    "value": "2197"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "康福台2號",
+    "value": "1254"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "珊瑚閣",
+    "value": "2387"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "康麗苑",
+    "value": "1227"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "康和苑",
+    "value": "1226"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "康明苑",
+    "value": "1225"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "怡昇洋樓",
+    "value": "1799"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "DIVA",
+    "value": "2940"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "金龍大廈 - 北角",
+    "value": "865"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "龍心閣",
+    "value": "864"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "龍峰閣",
+    "value": "901"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "傲龍軒",
+    "value": "1706"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "龍景花園",
+    "value": "1705"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "寶峰閣",
+    "value": "2381"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "怡家洋樓",
+    "value": "1796"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "合偉大廈",
+    "value": "964"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "雲景台",
+    "value": "579"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "康威大廈",
+    "value": "1428"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "柏蔚山",
+    "value": "3055"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "富麗園 - 北角",
+    "value": "714"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "胡日皆大廈",
+    "value": "2666"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "富澤花園",
+    "value": "340"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "富澤軒",
+    "value": "2045"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "康澤花園",
+    "value": "506"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "盈富閣 - 北角",
+    "value": "2401"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "富邦大廈",
+    "value": "2554"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "富景閣",
+    "value": "1230"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "富利來大廈",
+    "value": "580"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "富蘭苑 - 北角",
+    "value": "803"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "富雅花園",
+    "value": "436"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "富慧閣",
+    "value": "339"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "豐昌大廈",
+    "value": "1427"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "僑裕大廈",
+    "value": "808"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "嘉樂園",
+    "value": "1797"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "港逸軒",
+    "value": "2562"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "海景軒",
+    "value": "2564"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "維港頌",
+    "value": "3054"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "海峰園",
+    "value": "388"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "健威花園",
+    "value": "318"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "峰景大廈",
+    "value": "906"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "興漢大廈",
+    "value": "966"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "海興大廈",
+    "value": "1993"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "海新大廈",
+    "value": "811"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "海和苑",
+    "value": "2503"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "鴻日大廈",
+    "value": "809"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "港濤軒",
+    "value": "2701"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "港運城",
+    "value": "281"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "寶翠洋樓",
+    "value": "1795"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "渣華大樓",
+    "value": "2568"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "縉景臺",
+    "value": "2966"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "嘉寶大廈",
+    "value": "1438"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "嘉興大廈",
+    "value": "2224"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "嘉威大廈",
+    "value": "1238"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "啟禮閣",
+    "value": "1399"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "嘉富大廈",
+    "value": "971"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "嘉文樓",
+    "value": "968"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "嘉安苑",
+    "value": "1804"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "嘉運大廈",
+    "value": "2234"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "雅怡閣",
+    "value": "2049"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "啟協大廈",
+    "value": "1440"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "建邦大廈",
+    "value": "1421"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "建基大廈",
+    "value": "1403"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "建業大廈",
+    "value": "2208"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "景暉閣 - 北角",
+    "value": "1072"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "景興閣",
+    "value": "1051"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "英輝大廈",
+    "value": "1404"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "建華花園",
+    "value": "2173"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "僑輝大廈 - 北角",
+    "value": "1801"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "僑英大廈",
+    "value": "1446"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "鉅利大廈",
+    "value": "2220"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "金山閣",
+    "value": "967"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "光超台",
+    "value": "1234"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "慧雲(峰)",
+    "value": "2738"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "豪庭峰",
+    "value": "348"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "利景閣",
+    "value": "2174"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "形品",
+    "value": "2779"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "萬德閣",
+    "value": "1298"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "明威大廈",
+    "value": "980"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "楓林花園",
+    "value": "2252"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "馬寶閣",
+    "value": "2263"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "寶馬花園",
+    "value": "586"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "萬寶大廈",
+    "value": "976"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "美麗閣",
+    "value": "1410"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "愛琴軒",
+    "value": "1006"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "木蘭苑",
+    "value": "978"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "明園閣",
+    "value": "1452"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "明苑中心",
+    "value": "979"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "明園",
+    "value": "2974"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "曉峰",
+    "value": "2775"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "南珠大廈",
+    "value": "2383"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "新和富大廈",
+    "value": "1448"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "北角中心大廈",
+    "value": "1809"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "君譽峰",
+    "value": "3166"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "國賓大廈",
+    "value": "1449"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "尚譽",
+    "value": "3101"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "寶馬山花園",
+    "value": "507"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "百佳閣",
+    "value": "1450"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "寶豐大廈 - 北角",
+    "value": "981"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "寶榮大廈 - 北角",
+    "value": "1447"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "寶德樓",
+    "value": "2211"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "金豐大廈",
+    "value": "1228"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "和富中心",
+    "value": "380"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "俊文樓",
+    "value": "1458"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "港輝豪庭",
+    "value": "2073"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "樂嘉中心",
+    "value": "632"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "山河大廈",
+    "value": "2445"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "嘉洋大廈",
+    "value": "2230"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "新達大廈",
+    "value": "986"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "乘龍閣",
+    "value": "987"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "兆寶大廈",
+    "value": "1416"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "兆景大廈",
+    "value": "1233"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "兆文樓",
+    "value": "2348"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "兆年大廈",
+    "value": "1232"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "兆華大廈",
+    "value": "1456"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "摩天大廈",
+    "value": "928"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "雲峰大廈",
+    "value": "2980"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "新英大廈",
+    "value": "1414"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "康盛苑",
+    "value": "2293"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "怡新洋樓",
+    "value": "988"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "耀星華庭",
+    "value": "2482"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "宣協大廈",
+    "value": "985"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "得發大廈",
+    "value": "1453"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "丹拿花園",
+    "value": "347"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "添金閣",
+    "value": "2183"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "維峰",
+    "value": "2861"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "The Java",
+    "value": "2767"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "柏傲山",
+    "value": "3029"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "和富豪庭",
+    "value": "2906"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "聚龍閣",
+    "value": "935"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "東寶大廈",
+    "value": "1420"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "康平閣",
+    "value": "994"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "威德閣",
+    "value": "995"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "維多利中心",
+    "value": "589"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "維景臺",
+    "value": "1065"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "威景臺",
+    "value": "590"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "明軒",
+    "value": "941"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "華信大廈 - 北角",
+    "value": "2231"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "華凱大廈",
+    "value": "2485"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "華禮大廈 - 北角",
+    "value": "1573"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "華誠洋樓",
+    "value": "2354"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "宏華閣",
+    "value": "2385"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "富家閣 - 北角",
+    "value": "999"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "華福閣",
+    "value": "2227"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "慧雅閣",
+    "value": "2103"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "維順閣",
+    "value": "1570"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "永寶大廈",
+    "value": "998"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "永順大廈",
+    "value": "829"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "偉文大廈",
+    "value": "2228"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "友福園",
+    "value": "1459"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "怡寶洋樓",
+    "value": "828"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "仁寶閣",
+    "value": "1000"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "益漢洋樓",
+    "value": "1805"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "耀明大廈",
+    "value": "2352"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "旭威閣",
+    "value": "826"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "北角",
+    "name": "裕益大廈",
+    "value": "1567"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "學士臺",
+    "value": "297"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "愛琴苑",
+    "value": "2152"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "Albany Court",
+    "value": "2149"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "碧瑤灣",
+    "value": "457"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "碧荔臺",
+    "value": "2332"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "寶瑜閣",
+    "value": "2676"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "俊威閣",
+    "value": "1858"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "置富花園",
+    "value": "280"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "置富花園 - 雅緻洋房",
+    "value": "303"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "美琳苑",
+    "value": "2196"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "安景閣 - 薄扶林",
+    "value": "1595"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "福慧園",
+    "value": "2548"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "翠林苑",
+    "value": "2661"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "怡林閣",
+    "value": "1985"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "錦棠小築",
+    "value": "2505"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "錦明閣",
+    "value": "2648"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "寶林閣",
+    "value": "1273"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "薄扶林花園",
+    "value": "2490"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "碧林大廈",
+    "value": "2494"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "富臨軒",
+    "value": "2495"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "帝柏園",
+    "value": "1535"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "貝沙灣",
+    "value": "2639"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "豪峰",
+    "value": "1068"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "美景臺",
+    "value": "1579"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "寶翠園",
+    "value": "751"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "翠安閣",
+    "value": "1281"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "薄扶林",
+    "name": "翰林軒",
+    "value": "425"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "寶峰園",
+    "value": "1170"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "Casa 880",
+    "value": "2720"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "豐榮苑",
+    "value": "1395"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "富景閣",
+    "value": "1432"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "海光苑",
+    "value": "1329"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "漢威大廈",
+    "value": "1436"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "嘉榮大廈 - 鰂魚涌",
+    "value": "1397"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "英麗閣",
+    "value": "1145"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "康怡花園",
+    "value": "300"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "康山花園",
+    "value": "1631"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "康蕙花園",
+    "value": "217"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "康景花園",
+    "value": "470"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "Mount Parker Residences",
+    "value": "3181"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "南豐新邨",
+    "value": "285"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "君豪峰",
+    "value": "3088"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "海暉大廈",
+    "value": "1408"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "柏蕙苑",
+    "value": "203"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "濱海大廈",
+    "value": "1413"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "御皇臺",
+    "value": "2478"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "金舫大廈",
+    "value": "1455"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "新威園",
+    "value": "317"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "太古城",
+    "value": "210"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "逸意居",
+    "value": "282"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "The Holborn",
+    "value": "3177"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "逸樺園",
+    "value": "2600"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "華信花園",
+    "value": "1926"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "惠芳閣",
+    "value": "1460"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "華蘭花園",
+    "value": "592"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "鰂魚涌",
+    "name": "惠安苑",
+    "value": "734"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "港島東18",
+    "value": "2946"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "欣景花園",
+    "value": "356"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "百利居 - 西灣河",
+    "value": "2549"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "富欣閣",
+    "value": "1396"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "嘉亨灣",
+    "value": "2700"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "興民大廈",
+    "value": "1401"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "鴻恩大廈",
+    "value": "1398"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "利基大廈",
+    "value": "1405"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "鯉景灣",
+    "value": "391"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "逸濤灣",
+    "value": "2110"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "西灣河大廈",
+    "value": "1454"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "太安樓",
+    "value": "2982"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "星灣峰",
+    "value": "2484"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "華昇大廈",
+    "value": "1568"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "西灣河",
+    "name": "陽安大廈",
+    "value": "1572"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "愛蝶灣",
+    "value": "2752"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "碧麗閣",
+    "value": "1172"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "嘉兆大廈",
+    "value": "3183"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "莊士軒",
+    "value": "1422"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "大來大廈",
+    "value": "1463"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "東威大廈",
+    "value": "2961"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "福怡大廈",
+    "value": "1429"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "銀河廣場",
+    "value": "1394"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "金寶大廈 - 筲箕灣",
+    "value": "1431"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "君悅軒",
+    "value": "2749"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "恆昌閣",
+    "value": "1430"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "樂融軒",
+    "value": "2824"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "協和大廈",
+    "value": "1441"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "海峰中心",
+    "value": "1435"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "海利大廈 - 筲箕灣",
+    "value": "1235"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "海寧大廈",
+    "value": "1245"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "海順大廈",
+    "value": "1237"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "康華大廈",
+    "value": "1326"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "譽都",
+    "value": "2821"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "香島",
+    "value": "3052"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "N/A",
+    "value": "3051"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "譽‧東",
+    "value": "2935"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "嘉裕大廈",
+    "value": "1439"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "金海樓",
+    "value": "1437"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "金基大廈",
+    "value": "1400"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "金發大廈",
+    "value": "1434"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "景輝大廈",
+    "value": "1311"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "遠晴",
+    "value": "2926"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "鯉景大廈",
+    "value": "1443"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "形薈",
+    "value": "2925"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "海灣華庭",
+    "value": "1444"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "美東大廈",
+    "value": "1242"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "雁亭",
+    "value": "1442"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "麗東海景豪園",
+    "value": "277"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "安業大廈",
+    "value": "1243"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "柏匯",
+    "value": "2919"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "峻峰花園",
+    "value": "573"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "寶福大廈",
+    "value": "1451"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "寶華大廈 - 筲箕灣",
+    "value": "1407"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "西灣大廈",
+    "value": "1303"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "西灣閣",
+    "value": "1240"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "御景軒",
+    "value": "2917"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "筲箕灣廣場",
+    "value": "730"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "筲箕灣中心",
+    "value": "956"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "瑞興閣",
+    "value": "1411"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "新利大廈",
+    "value": "2981"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "新成中心",
+    "value": "622"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "泰安閣",
+    "value": "1457"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "德福樓",
+    "value": "1418"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "東灣閣",
+    "value": "1231"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "東駿苑",
+    "value": "2318"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "東熹苑",
+    "value": "2377"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "東興大廈 - 筲箕灣",
+    "value": "1423"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "東強大廈",
+    "value": "1317"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "東霖苑",
+    "value": "2273"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "東寶大廈",
+    "value": "1315"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "東濤苑",
+    "value": "2854"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "東欣苑",
+    "value": "2902"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "東旭苑",
+    "value": "2853"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "華寶大廈",
+    "value": "1462"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "永德大廈",
+    "value": "1461"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "筲箕灣",
+    "name": "永興閣",
+    "value": "940"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "雅景軒",
+    "value": "882"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "栢麗園",
+    "value": "884"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "康馨園",
+    "value": "891"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "嘉雲臺",
+    "value": "439"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "中華大廈",
+    "value": "1064"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "龍濤苑",
+    "value": "800"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "愉富大廈",
+    "value": "1301"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "慧景園 - 大坑/渣甸山",
+    "value": "715"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "福興閣",
+    "value": "900"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "嘉景臺",
+    "value": "806"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "帝后臺",
+    "value": "904"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "頌月花園",
+    "value": "2382"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "光明臺",
+    "value": "510"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "海麗軒",
+    "value": "914"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "竹麗苑",
+    "value": "911"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "蓮花園",
+    "value": "1402"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "昍逵閣",
+    "value": "921"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "愛群閣",
+    "value": "817"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "柏園",
+    "value": "2491"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "勵志大廈",
+    "value": "822"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "龍華花園",
+    "value": "499"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "玫瑰花園",
+    "value": "823"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "騰黃閣 - 大坑/渣甸山",
+    "value": "824"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "上林",
+    "value": "2782"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "瑞士花園",
+    "value": "799"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "大坑道1號",
+    "value": "1922"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "大坑台",
+    "value": "936"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "嘉崙臺",
+    "value": "2105"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "優雅閣",
+    "value": "931"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "金樂居",
+    "value": "1417"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "名門",
+    "value": "2691"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "春暉8號",
+    "value": "2796"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "大寶閣",
+    "value": "1419"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "雍藝軒",
+    "value": "937"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "華峯樓",
+    "value": "938"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "尚巒",
+    "value": "2828"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "永安閣",
+    "value": "1163"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "永威閣",
+    "value": "763"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "浣沙花園",
+    "value": "764"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "浣紗閣",
+    "value": "1571"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "大坑/渣甸山",
+    "name": "煜康臺",
+    "value": "761"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "柏苑",
+    "value": "775"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "雅閣苑",
+    "value": "1426"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "雅慧苑",
+    "value": "771"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "寶豐大廈 - 灣仔",
+    "value": "1558"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "慧賢軒",
+    "value": "2392"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "國泰新宇",
+    "value": "2097"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "灣景中心大廈",
+    "value": "776"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "會景閣",
+    "value": "2006"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "恒安大廈",
+    "value": "1549"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "怡明閣",
+    "value": "774"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "倚雲閣",
+    "value": "1062"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "快添大廈",
+    "value": "1513"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "福和大廈",
+    "value": "1146"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "祥友大廈 - 灣仔",
+    "value": "1306"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "富嘉大廈",
+    "value": "1562"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "富榮閣",
+    "value": "1512"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "富怡閣",
+    "value": "1511"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "富苑",
+    "value": "1483"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "富利大廈",
+    "value": "770"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "嘉威閣",
+    "value": "1488"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "建華閣",
+    "value": "1487"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "恒信大廈",
+    "value": "2660"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "恒達樓",
+    "value": "1524"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "熙華大廈",
+    "value": "1239"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "軒寧大廈",
+    "value": "2257"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "興邦大廈",
+    "value": "1142"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "康富大廈 - 灣仔",
+    "value": "1307"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "海華苑",
+    "value": "1143"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "百旺都中心",
+    "value": "1489"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "嘉薈軒",
+    "value": "2697"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "雙喜樓",
+    "value": "2112"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "金福大廈",
+    "value": "1495"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "金勝大廈",
+    "value": "778"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "基利大廈",
+    "value": "1310"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "堅尼閣",
+    "value": "1514"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "建利大廈",
+    "value": "2650"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "建安樓",
+    "value": "1560"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "京都大廈",
+    "value": "1494"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "景星樓",
+    "value": "2236"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "帝城大廈",
+    "value": "1492"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "廣生行大廈",
+    "value": "2386"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "李節花園",
+    "value": "781"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "年威閣",
+    "value": "1066"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "樂滿大廈 - 灣仔",
+    "value": "1499"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "聯發大廈",
+    "value": "1151"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "聯利大廈",
+    "value": "2232"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "文石大廈",
+    "value": "2239"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "萬豪閣",
+    "value": "782"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "美暉大廈",
+    "value": "1445"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "萬信臺",
+    "value": "783"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "滿峰台",
+    "value": "780"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "月豐閣",
+    "value": "1559"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "星月閣",
+    "value": "1497"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "廣泰樓",
+    "value": "1498"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "新春園大廈",
+    "value": "2242"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "利文樓",
+    "value": "1313"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "愛群閣 - 灣仔",
+    "value": "2253"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "壹環",
+    "value": "2806"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "鳳凰閣 - 灣仔",
+    "value": "1320"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "寶藝花園",
+    "value": "1147"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "永豪閣",
+    "value": "1519"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "麗都大廈",
+    "value": "1501"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "富寶閣",
+    "value": "1502"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "金櫻閣",
+    "value": "785"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "三元大廈",
+    "value": "1314"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "樹德大廈",
+    "value": "1152"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "兆威閣",
+    "value": "1518"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "兆豐大廈 - 灣仔",
+    "value": "1566"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "修頓花園",
+    "value": "1722"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "聖佛蘭士大廈",
+    "value": "1517"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "匯星壹號",
+    "value": "1717"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "星域軒",
+    "value": "349"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "桂濤苑",
+    "value": "787"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "泰和大廈",
+    "value": "793"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "太源閣",
+    "value": "790"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "囍匯",
+    "value": "2894"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "尚匯",
+    "value": "2816"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "駿逸峰",
+    "value": "2791"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "萃峰",
+    "value": "2798"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "尚翹峰",
+    "value": "2702"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "杜誌台",
+    "value": "2261"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "東曦大廈",
+    "value": "1523"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "慧蘭閣 - 灣仔",
+    "value": "1521"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "永星苑",
+    "value": "1507"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "華發大廈",
+    "value": "1304"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "華欣閣",
+    "value": "1522"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "維昌大樓",
+    "value": "2262"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "維新大廈",
+    "value": "2259"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "銳興樓",
+    "value": "1564"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "永豐大廈",
+    "value": "1509"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "永威閣",
+    "value": "795"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "欣景閣",
+    "value": "1520"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "忻怡閣",
+    "value": "796"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "海源中心",
+    "value": "1161"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "怡康大廈",
+    "value": "1565"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "仁文大廈",
+    "value": "794"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "仁英大廈",
+    "value": "2249"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "灣仔",
+    "name": "York Place",
+    "value": "2795"
+  },
+  {
+    "bank": "citi",
+    "region": "香港",
+    "district": "黃竹坑",
+    "name": "南濤閣",
+    "value": "2349"
+  },
+  {
+    "bank": "citi",
     "region": "九龍",
     "district": "長沙灣/荔枝角",
     "name": "碧海藍天",
