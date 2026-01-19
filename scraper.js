@@ -20,6 +20,7 @@ const loadJson = (relativePath) => {
 const CITI_DATA = loadJson('data/citi.json');
 const DBS_DATA = loadJson('data/dbs.json');
 const HASE_DATA = loadJson('data/hangseng.json');
+const HSBC_DATA = loadJson('data/hsbc.json'); // <--- 新增這一行 (請確保 data/hsbc.json 存在)
 let openccConverter = null;
 let openccWarned = false;
 try {
@@ -69,7 +70,7 @@ function toTraditional(text) {
     openccWarned = true;
   }
 
-  const map = { '蓝': '藍', '湾': '灣', '邨': '村', '号': '號', '楼': '樓', '层': '層', '座': '座' };
+  const map = { '蓝': '藍', '湾': '灣', '邨': '村', '号': '號', '楼': '樓', '层': '層', '座': '座','悦': '悅', '汇': '滙','峰': '峯','柏': '柏'};
   result = result.replace(/./g, char => map[char] || char);
 
   return result.replace(/東湧/g, '東涌');
@@ -160,17 +161,25 @@ function mapToBankData(propertyData) {
   const estate = toTraditional(propertyData.estate || '');
   const bankDistrict = mapDistrictToBankOption(district);
 
+  // 1. 篩選候選名單
   const citiCandidates = CITI_DATA.filter(item =>
     (!bankDistrict?.district || item.district === bankDistrict.district)
   );
   const dbsCandidates = DBS_DATA.filter(item =>
     (!bankDistrict?.district || item.district === bankDistrict.district)
   );
-  const haseCandidates = HASE_DATA;
+  const haseCandidates = HASE_DATA; 
+  
+  // ✨ HSBC 篩選: 簡單過濾分區 (如果 JSON 資料量大，這步很重要)
+  // 如果找不到對應分區，則回退到搜尋全部 (避免分區寫法不同導致漏找)
+  let hsbcCandidates = HSBC_DATA.filter(item => item.district === district);
+  if (hsbcCandidates.length === 0) hsbcCandidates = HSBC_DATA;
 
+  // 2. 挑選最佳屋苑 (Fuzzy Match)
   const citiEstate = pickBestEstate(citiCandidates, estate);
   const dbsEstate = pickBestEstate(dbsCandidates, estate);
   const haseEstate = pickBestEstate(haseCandidates, estate);
+  const hsbcEstate = pickBestEstate(hsbcCandidates, estate); // ✨ 匹配 HSBC
 
   return {
     citi: {
@@ -188,6 +197,13 @@ function mapToBankData(propertyData) {
     hase: {
       estate: haseEstate?.name || estate,
       estateValue: propertyData.estateId || haseEstate?.value || null
+    },
+    // ✨ 新增 HSBC 映射結果
+    hsbc: {
+      region: hsbcEstate?.region || null,
+      district: hsbcEstate?.district || null,
+      estate: hsbcEstate?.name || estate,
+      estateValue: hsbcEstate?.value || null // 這就是 JSON 裡的 "2680" 這類 ID
     }
   };
 }
@@ -696,261 +712,484 @@ async function scrapeDBSValuation(page, propertyData) {
 }
 
 // ==========================================
-// 4. Citibank 估價 (終極點擊重試版)
+// 4. Citibank 估價 (精確點擊修正版)
 // ==========================================
 
 async function scrapeCitibankValuation(propertyData) {
   let browser = null;
   try {
-    console.log('🚀 [Citi] 啟動瀏覽器...');
-    browser = await chromium.launch({ headless: isCIEnv ? true : false, slowMo: 100 });
-    const context = await browser.newContext({
-      viewport: { width: 1280, height: 900 },
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    console.log('🚀 [Citi] 啟動瀏覽器 (精確點擊模式)...');
+
+    browser = await chromium.launch({
+      headless: false, // 必須顯示視窗
+      slowMo: 50,
+      args: [
+        '--start-maximized',
+        '--disable-blink-features=AutomationControlled'
+      ]
     });
+
+    const context = await browser.newContext({
+      viewport: null,
+      locale: 'zh-HK',
+      timezoneId: 'Asia/Hong_Kong',
+    });
+
     const page = await context.newPage();
 
-    // 攔截資源加快速度
-    await page.route('**/*.{png,jpg,jpeg,gif,webp,svg,woff,woff2}', route => route.abort());
+    // --- 🏆 API 劫持 ---
+    let capturedPrice = null;
+    page.on('response', async response => {
+      // 監聽所有可能的估價 API
+      if (response.url().includes('propValuation') && response.status() === 200) {
+        try {
+          const json = await response.json();
+          // Citi API 回傳格式可能變動，這裡做多重檢查
+          if (json.propertyValuationPrice) {
+            capturedPrice = Number(json.propertyValuationPrice);
+            console.log(`   💰 [API] 攔截成功: ${capturedPrice}`);
+          }
+        } catch (e) {}
+      }
+    });
 
     const targetUrl = 'https://www.citibank.com.hk/acquisition/mortgage/index.html?locale=zh_HK';
-    console.log(`📄 [Citi] 前往估價頁: ${targetUrl}`);
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
 
-    // --- Helper: 觸發事件 ---
-    const triggerAngularEvents = async (selector) => {
-      await page.evaluate((sel) => {
-        const el = document.querySelector(sel);
-        if (el) {
-          el.dispatchEvent(new Event('input', { bubbles: true }));
-          el.dispatchEvent(new Event('change', { bubbles: true }));
-          el.dispatchEvent(new Event('blur', { bubbles: true }));
-        }
-      }, selector);
-    };
+    // --- 🛠️ 穩健選擇函數 ---
+    const safeSelect = async (selector, label, text) => {
+      if (!text) return;
+      console.log(`👇 正在選擇 ${label}: "${text}"...`);
 
-    // --- Helper: 等待下拉選單 ---
-    const waitSelectReady = async (selector, label) => {
       try {
-        await page.waitForSelector(`${selector}:not([disabled])`, { timeout: 15000 });
-        await page.waitForFunction((sel) => {
-          const el = document.querySelector(sel);
-          return el && el.options && el.options.length > 1;
-        }, selector, { timeout: 15000 });
+        await page.waitForSelector(`${selector}:not([disabled])`, { timeout: 10000 });
+        await page.waitForFunction((s) => {
+            const el = document.querySelector(s);
+            return el && el.options && el.options.length > 1;
+        }, selector, { timeout: 10000 });
       } catch (e) {
-        console.warn(`⚠️ [Citi] 等待 ${label} 選項載入超時`);
-      }
-    };
-
-    const normalizeCitiRegion = (value) => {
-      if (!value) return '新界/離島';
-      if (value === '新界') return '新界/離島';
-      if (value === '香港') return '香港島';
-      return value;
-    };
-
-    const district = toTraditional(propertyData.bankMap?.citi?.district || propertyData.district || '');
-    const region = normalizeCitiRegion(propertyData.bankMap?.citi?.region || getRegionByDistrict(district || '')) || '新界/離島';
-    const estateKeyword = toTraditional(propertyData.bankMap?.citi?.estate || propertyData.estate || '');
-
-    const selectCiti = async (selector, text, value = null) => {
-      if (!text) return false;
-      let selected = false;
-
-      if (value) {
-        const res = await page.selectOption(selector, { value }).catch(() => null);
-        if (res && res.length > 0) selected = true;
+        console.error(`   ❌ 失敗: ${label} 選單未載入或無選項`);
+        return;
       }
 
-      if (!selected) {
-        const options = await page.$$eval(`${selector} option`, opts =>
-          opts.map(o => ({ val: o.value, txt: (o.textContent || '').trim() }))
-        );
-        let match = options.find(o => o.txt === text);
-        if (!match) match = options.find(o => o.txt.startsWith(text));
-        if (!match) match = options.find(o => o.txt.includes(text) || text.includes(o.txt));
+      const options = await page.$$eval(`${selector} option`, opts => 
+        opts.map(o => ({ val: o.value, txt: (o.textContent || '').trim() }))
+      );
+      
+      let match = options.find(o => o.txt === text);
+      if (!match) match = options.find(o => o.txt.startsWith(text));
+      if (!match) match = options.find(o => o.txt.includes(text) || text.includes(o.txt));
 
-        if (match) {
-          console.log(`   ✅ [Citi] 選取: "${match.txt}"`);
-          await page.selectOption(selector, match.val);
-          selected = true;
-        }
-      }
-
-      if (selected) {
-        await triggerAngularEvents(selector);
+      if (match) {
+        await page.selectOption(selector, match.val);
+        await page.evaluate((s) => {
+            const el = document.querySelector(s);
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+            el.dispatchEvent(new Event('blur', { bubbles: true }));
+        }, selector);
+        
+        console.log(`   ✅ 已選: "${match.txt}"`);
         await page.waitForTimeout(1000); 
-        return true;
+      } else {
+        console.warn(`   ⚠️ 找不到選項: "${text}"`);
       }
-      return false;
     };
 
-    // === 開始填寫 ===
+    // --- 填寫流程 ---
+    const d = propertyData.bankMap?.citi;
+    const region = (d?.region === '新界' ? '新界/離島' : d?.region) || '新界/離島';
     
-    console.log(`👇 [Citi] 區域: ${region}`);
-    await waitSelectReady('#zone', '區域');
-    await selectCiti('#zone', region);
-
-    if (district) {
-      console.log(`👇 [Citi] 地區: ${district}`);
-      await waitSelectReady('#district', '地區');
-      await selectCiti('#district', district);
-    }
-
-    console.log(`👇 [Citi] 屋苑: ${estateKeyword}`);
-    await waitSelectReady('#estName', '屋苑');
-    await selectCiti('#estName', estateKeyword, propertyData.bankMap?.citi?.estateValue || null);
-
+    await safeSelect('#zone', '區域', region);
+    await safeSelect('#district', '地區', toTraditional(d?.district || propertyData.district));
+    await safeSelect('#estName', '屋苑', toTraditional(d?.estate || propertyData.estate));
+    
     if (await page.isVisible('#phase')) {
-       await page.waitForTimeout(500);
-       const opts = await page.$$eval('#phase option', o => o.length);
-       if (opts > 1) {
-           await page.selectOption('#phase', { index: 1 });
-           await triggerAngularEvents('#phase');
-           await page.waitForTimeout(1000);
-       }
+        await page.waitForTimeout(500);
+        const opts = await page.$$eval('#phase option', o => o.length);
+        if (opts > 1) {
+            await page.selectOption('#phase', { index: 1 });
+            await page.waitForTimeout(500);
+        }
     }
-
-    if (propertyData.block) {
-      console.log(`👇 [Citi] 座數: ${propertyData.block}`);
-      await waitSelectReady('#bckBuilding', '座數');
-      await selectCiti('#bckBuilding', propertyData.block);
-    }
-
-    if (propertyData.floor) {
-      console.log(`👇 [Citi] 樓層: ${propertyData.floor}`);
-      await waitSelectReady('#floor', '樓層');
-      await selectCiti('#floor', propertyData.floor);
-    }
+    
+    await safeSelect('#bckBuilding', '座數', propertyData.block);
+    await safeSelect('#floor', '樓層', propertyData.floor);
 
     if (propertyData.unit) {
-      console.log(`👇 [Citi] 單位: ${propertyData.unit}`);
-      await waitSelectReady('#flatUnit', '單位');
-      await selectCiti('#flatUnit', String(propertyData.unit).toUpperCase());
+      const unitVal = String(propertyData.unit).toUpperCase();
+      console.log(`👇 正在選擇 單位: "${unitVal}"...`);
+      await page.waitForSelector('#flatUnit:not([disabled])');
+      
+      try {
+        await page.selectOption('#flatUnit', { index: 1 }); 
+        await page.evaluate(() => document.querySelector('#flatUnit').dispatchEvent(new Event('change', {bubbles:true})));
+        await page.waitForTimeout(800);
+      } catch(e) {}
+      
+      await safeSelect('#flatUnit', '單位', unitVal);
     }
 
-    // === 提交與重試機制 ===
-    console.log('🔘 [Citi] 準備點擊估價按鈕...');
+    // --- 準備點擊 (核心修正部分) ---
+    console.log('🔘 [Citi] 準備點擊 (Human Click)...');
     
-    // 移除干擾元素
+    // 1. 強力移除遮擋 (Header, Footer, Chat, Cookie Banner)
     await page.evaluate(() => {
-        document.querySelectorAll('#onetrust-banner-sdk, footer, .navbar, .cmp-container').forEach(el => el.remove());
+        const selectors = [
+            '#onetrust-banner-sdk', 'footer', 'header', '.navbar', '.cmp-container', 
+            '.chat-widget', '#LP_DIV_1686906236357', '[id^="lp-chat"]'
+        ];
+        selectors.forEach(sel => {
+            document.querySelectorAll(sel).forEach(el => el.remove());
+        });
     });
-
-    // 檢查是否有結果的函數
-    const hasResult = async () => {
-        const text = await page.evaluate(() => document.body.innerText);
-        return text.includes('估價') && /[\d,]{5,}/.test(text); // 必須包含估價文字與數字
-    };
-
-    // 嘗試點擊的 Loop
-    let success = false;
-    const btnSelector = 'a.btn.btn-primary';
     
-    // 策略 1: Playwright Force Click (最標準)
-    if (!success) {
-        console.log('   👉 嘗試 1: Playwright Force Click');
-        try {
-            await page.click(btnSelector, { force: true, timeout: 2000 });
-            await page.waitForTimeout(3000); // 等待反應
-            if (await hasResult()) success = true;
-        } catch (e) { console.log('      -> 失敗或無反應'); }
-    }
+    // 2. 重新定位按鈕
+    const btnSelector = 'a.btn.btn-primary'; // 這是 Citi 常用的按鈕 class
+    // 有時候按鈕上面會有文字 "立即估價" 或 "Get Valuation"
+    const btn = page.locator(btnSelector).filter({ hasText: /估價|Valuation/ }).first();
 
-    // 策略 2: JS Click (繞過事件遮擋)
-    if (!success) {
-        console.log('   👉 嘗試 2: JS Native Click');
-        await page.evaluate((sel) => {
-            const btn = document.querySelector(sel);
-            if (btn) btn.click();
-        }, btnSelector);
-        await page.waitForTimeout(3000);
-        if (await hasResult()) success = true;
-    }
+    if (await btn.count() > 0) {
+        // 確保按鈕在視窗中間，避免被上下邊緣遮擋
+        await btn.scrollIntoViewIfNeeded();
+        await page.evaluate(() => window.scrollBy(0, -100)); // 往上捲一點點，避開可能的底欄
 
-    // 策略 3: Dispatch Event Click (模擬更深層的事件)
-    if (!success) {
-        console.log('   👉 嘗試 3: Dispatch Event Click');
-        await page.evaluate((sel) => {
-            const btn = document.querySelector(sel);
-            if (btn) {
-                const event = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true
-                });
-                btn.dispatchEvent(event);
-            }
-        }, btnSelector);
-        await page.waitForTimeout(3000);
-        if (await hasResult()) success = true;
-    }
-
-    // 策略 4: Enter Key (最後手段)
-    if (!success) {
-        console.log('   👉 嘗試 4: Press Enter');
-        await page.keyboard.press('Enter');
-        await page.waitForTimeout(3000);
-        if (await hasResult()) success = true;
-    }
-
-    console.log('⏳ [Citi] 檢查最終結果...');
-    
-    // 最終檢查
-    const bodyText = await page.evaluate(() => document.body.innerText);
-    
-    // 檢查是否系統繁忙
-    if (bodyText.includes('未能提供') || bodyText.includes('System busy') || bodyText.includes('未能完成')) {
-        console.warn('⚠️ [Citi] 網站回傳：系統繁忙或未能提供估價');
-        await browser.close();
-        return null;
-    }
-
-    // 檢查是否還在表單錯誤狀態
-    if (bodyText.includes('請選擇')) {
-        console.warn('⚠️ [Citi] 表單驗證未通過 (請檢查欄位是否正確)');
-        await page.screenshot({ path: 'citi-validation-fail.png', fullPage: true });
-        await browser.close();
-        return null;
-    }
-
-    // 提取價格
-    const price = await page.evaluate(() => {
-        const text = document.body.innerText;
-        const match = text.match(/估價\s*\(?港幣\)?\s*[:：]?\s*(\$?\s?[\d,]+)/i);
-        if (match) return match[1].replace(/[^\d]/g, '');
-        
-        // 寬鬆匹配: 找 "估價" 附近的數字
-        if (text.includes('估價')) {
-             const allNums = text.match(/[\d,]{6,}/g); // 找百萬級以上的數字
-             if (allNums && allNums.length > 0) return allNums[0].replace(/,/g, '');
+        const box = await btn.boundingBox();
+        if (box) {
+             // 隨機化座標，但在按鈕範圍內
+             const targetX = box.x + box.width / 2;
+             const targetY = box.y + box.height / 2;
+             
+             console.log(`   🐭 滑鼠移動到 (${Math.round(targetX)}, ${Math.round(targetY)})`);
+             
+             await page.mouse.move(targetX, targetY, { steps: 10 });
+             await page.waitForTimeout(200);
+             await page.mouse.down();
+             await page.waitForTimeout(150); // 真實的按壓時間
+             await page.mouse.up();
+        } else {
+             // Fallback
+             await btn.click({ force: true });
         }
-        return null;
-    });
-
-    if (price) {
-        console.log(`💰 [Citi] 估價成功: ${price}`);
-        await browser.close();
-        return Number(price);
     } else {
-        console.log('⚠️ [Citi] 嘗試多次仍找不到估價結果');
-        console.log('   Debug Info:', bodyText.substring(bodyText.indexOf('物業價值'), bodyText.indexOf('物業價值') + 200));
-        await page.screenshot({ path: 'citi-final-fail.png', fullPage: true });
+        console.error('❌ 找不到按鈕！嘗試備用 Selector...');
+        // 備用方案：直接找 form 裡的 submit 按鈕
+        const altBtn = page.locator('button[type="submit"], input[type="submit"]').first();
+        if (await altBtn.isVisible()) await altBtn.click();
+    }
+
+    console.log('⏳ [Citi] 等待 API 回傳...');
+
+    const startTime = Date.now();
+    // 延長等待時間到 20 秒，因為有時候 API 真的很慢
+    while (!capturedPrice && Date.now() - startTime < 20000) {
+        await page.waitForTimeout(200);
+        // 補按邏輯：如果 5 秒沒反應，再按一次
+        if (Date.now() - startTime > 5000 && Date.now() - startTime < 5200) {
+            console.log('   🔄 無反應，補按一次...');
+            if (await btn.isVisible()) {
+                await btn.click({ force: true });
+            }
+        }
+    }
+
+    if (capturedPrice) {
+        console.log(`✅ [Citi] 最終估價: ${capturedPrice}`);
+        await browser.close();
+        return capturedPrice;
+    } else {
+        console.log('⚠️ [Citi] 失敗：API 未回傳數據');
+        await page.screenshot({ path: 'citi-form-debug.png', fullPage: true });
     }
 
     await browser.close();
     return null;
 
   } catch (error) {
-    console.error('❌ [Citi] 發生錯誤:', error.message);
+    console.error('❌ [Citi] 錯誤:', error.message);
     if (browser) await browser.close();
     return null;
   }
 }
 
-async function scrapeHSBCValuation() {
-  console.warn('⚠️ [HSBC] 尚未實作，暫時略過。');
-  return null;
+
+// ==========================================
+// 5. HSBC 估價 (ID 精確驅動 + 類型修正版)
+// ==========================================
+
+async function scrapeHSBCValuation(propertyData) {
+  let browser = null;
+  try {
+    console.log('🚀 [HSBC] 啟動瀏覽器 (JSON ID 驅動模式)...');
+
+    browser = await chromium.launch({
+      headless: false,
+      slowMo: 50,
+      args: [
+        '--start-maximized',
+        '--disable-blink-features=AutomationControlled'
+      ]
+    });
+
+    const context = await browser.newContext({
+      viewport: null,
+      locale: 'zh-HK',
+      timezoneId: 'Asia/Hong_Kong',
+    });
+
+    const page = await context.newPage();
+
+    // --- 🏆 API 劫持 ---
+    let capturedPrice = null;
+    page.on('response', async response => {
+      const type = response.request().resourceType();
+      if (type === 'xhr' || type === 'fetch') {
+        try {
+          const json = await response.json();
+          const str = JSON.stringify(json);
+          if (str.includes('propertyValuation') || str.includes('valuationAmount') || str.includes('netPrice')) {
+             const match = str.match(/("valuationAmount"|"netPrice"|"propertyValuation"|"price")\s*[:=]\s*"?([\d,]+(\.\d+)?)"?/i);
+             if (match) {
+                 const val = Number(match[2].replace(/,/g, ''));
+                 if (val > 100000) {
+                     console.log(`   💰 [API] 鎖定價格: ${val}`);
+                     capturedPrice = val;
+                 }
+             }
+          }
+        } catch (e) {}
+      }
+    });
+
+    const targetUrl = 'https://www.hsbc.com.hk/zh-hk/mortgages/tools/property-valuation/';
+    console.log(`📄 [HSBC] 前往: ${targetUrl}`);
+    
+    await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+    try {
+        const closeBanner = page.locator('.notification-close, [aria-label="Close"], .icon-close').first();
+        if (await closeBanner.isVisible({ timeout: 5000 })) {
+            await closeBanner.click();
+            await page.waitForTimeout(500);
+        }
+    } catch (e) {}
+
+    console.log('⏳ 等待表單載入...');
+    try {
+        await page.waitForSelector('.selectize-input', { state: 'visible', timeout: 30000 });
+    } catch(e) {
+        console.error('❌ 表單載入超時');
+        await browser.close();
+        return null;
+    }
+
+    // --- 🛠️ 智能選擇函數 ---
+    const selectizePick = async (index, label, rawText, valueId = null) => {
+        // ✨ 修正點 1: 強制將 rawText 轉為字串，避免數字導致 crash
+        const text = rawText !== null && rawText !== undefined ? String(rawText) : '';
+
+        if (!text && !valueId) return false;
+        
+        console.log(`👇 正在選擇 [${label}]: ${text} ${valueId ? `(ID: ${valueId})` : ''}`);
+        
+        const control = page.locator('.selectize-control').nth(index);
+        const inputDiv = control.locator('.selectize-input');
+
+        await control.scrollIntoViewIfNeeded();
+        await page.evaluate(() => window.scrollBy(0, -150)); 
+
+        try {
+            await page.waitForFunction(
+                (el) => !el.querySelector('.selectize-input').classList.contains('loading'),
+                await control.elementHandle(),
+                { timeout: 10000 }
+            );
+        } catch(e) {}
+
+        await inputDiv.click();
+        await page.waitForTimeout(800);
+
+        let success = false;
+
+        // 策略 A: ID 點擊
+        if (valueId) {
+            success = await page.evaluate((val) => {
+                const visibleDropdowns = Array.from(document.querySelectorAll('.selectize-dropdown-content'))
+                    .filter(el => el.offsetParent !== null);
+                
+                for (const dd of visibleDropdowns) {
+                    const option = dd.querySelector(`.option[data-value="${val}"]`);
+                    if (option) {
+                        option.click();
+                        return true;
+                    }
+                }
+                return false;
+            }, valueId);
+
+            if (success) console.log(`   ✅ [精確命中] ID: ${valueId}`);
+        }
+
+        // 策略 B: 文字輸入
+        if (!success) {
+            if (!valueId && text) {
+                console.log(`   ⌨️ 輸入文字篩選: "${text}"`);
+                // ✨ 修正點 2: 這裡的 text 已經確保是 String 了
+                await page.keyboard.type(text, { delay: 100 });
+                await page.waitForTimeout(1000);
+            }
+            
+            success = await page.evaluate((txt) => {
+                const visibleDropdowns = Array.from(document.querySelectorAll('.selectize-dropdown-content'))
+                    .filter(el => el.offsetParent !== null);
+
+                for (const dd of visibleDropdowns) {
+                    const options = Array.from(dd.querySelectorAll('.option'));
+                    const match = options.find(opt => opt.innerText.includes(txt));
+                    if (match) {
+                        match.click();
+                        return true;
+                    }
+                }
+                return false;
+            }, text);
+
+            if (success) {
+                console.log(`   ✅ [文字命中] "${text}"`);
+            } else {
+                console.log(`   ⚠️ 無法匹配，嘗試按 Enter...`);
+                await page.keyboard.press('Enter');
+            }
+        }
+
+        await page.waitForTimeout(1000);
+    };
+
+    // --- 填寫流程 ---
+    
+    const d = propertyData.bankMap?.hsbc || {};
+    
+    // 1. 區域
+    const regionText = d.region || (getRegionByDistrict(propertyData.district) || '新界').replace('/離島', '');
+    await selectizePick(0, '區域', regionText);
+    
+    // 2. 分區
+    const districtText = d.district || propertyData.district;
+    await selectizePick(1, '分區', districtText);
+    
+    // 3. 屋苑
+    await selectizePick(2, '屋苑', d.estate || propertyData.estate, d.estateValue);
+
+    // 4. 座數 (✨ 修正點: 強制轉 String)
+    if (propertyData.block) {
+        await selectizePick(3, '座數', String(propertyData.block));
+    }
+
+    // 5. 樓層 (✨ 修正點: 強制轉 String)
+    if (propertyData.floor) {
+        await selectizePick(4, '樓層', String(propertyData.floor));
+    }
+
+    // 6. 單位
+    if (propertyData.unit) {
+        await selectizePick(5, '單位', String(propertyData.unit).toUpperCase());
+    }
+
+    // --- 提交 ---
+    console.log('🔘 [HSBC] 點擊估價...');
+    const btn = page.locator('a.search-button').first();
+    
+    if (await btn.isVisible()) {
+         const box = await btn.boundingBox();
+         if (box) {
+             await page.mouse.move(box.x + box.width/2, box.y + box.height/2, { steps: 10 });
+             await page.waitForTimeout(200);
+             await page.mouse.down();
+             await page.waitForTimeout(100);
+             await page.mouse.up();
+         } else {
+             await btn.click();
+         }
+    } else {
+        console.error('❌ 找不到估價按鈕');
+    }
+
+    console.log('⏳ [HSBC] 等待結果顯示...');
+
+    // 1. 優先檢查 API 是否已攔截到
+    const startTime = Date.now();
+    while (!capturedPrice && Date.now() - startTime < 10000) {
+        await page.waitForTimeout(500);
+    }
+
+    if (capturedPrice) {
+        console.log(`✅ [HSBC] API 攔截成功: ${capturedPrice}`);
+        await browser.close();
+        return capturedPrice;
+    }
+
+    // 2. 嘗試讀取頁面數值 (DOM Parsing)
+    console.log('🔍 [HSBC] 嘗試讀取頁面數值...');
+    try {
+        await page.waitForFunction(() => {
+            return /[\d,]{7,}/.test(document.body.innerText);
+        }, { timeout: 5000 });
+    } catch (e) {}
+
+    const bodyText = await page.innerText('body');
+    let foundPrice = null;
+
+    // 策略 A: Regex 匹配常見格式
+    const patterns = [
+        /(?:港幣估價|物業價值|Valuation)\s*[:：]?\s*(?:HKD|\$)?\s*([0-9,]{6,})/i,
+        /港幣\s*([0-9,]{6,})/i,
+        /([0-9,]{6,})\s*\(港元\)/
+    ];
+
+    for (const pattern of patterns) {
+        const match = bodyText.match(pattern);
+        if (match && match[1]) {
+            const num = Number(match[1].replace(/,/g, ''));
+            if (num > 800000) {
+                foundPrice = num;
+                console.log(`✅ [HSBC] 文字匹配成功: ${num}`);
+                break;
+            }
+        }
+    }
+
+    // 策略 B: 尋找頁面上最大的純數字 (通常是房價)
+    if (!foundPrice) {
+        try {
+            const potentialPrices = await page.$$eval('*', (els) => {
+                return els.map(el => el.innerText)
+                          .filter(t => /^[0-9,]{6,}$/.test(t.trim()))
+                          .map(t => Number(t.replace(/,/g, '')));
+            });
+            const maxVal = Math.max(...potentialPrices);
+            if (maxVal > 800000 && isFinite(maxVal)) {
+                 foundPrice = maxVal;
+                 console.log(`✅ [HSBC] 最大數值匹配成功: ${foundPrice}`);
+            }
+        } catch (e) {}
+    }
+
+    if (foundPrice) {
+        await browser.close();
+        return foundPrice;
+    } else {
+        console.log('⚠️ [HSBC] 頁面已顯示但無法提取數值');
+        await page.screenshot({ path: 'hsbc-read-fail.png', fullPage: true });
+        console.log('📄 Body Snapshot:', bodyText.substring(0, 200).replace(/\n/g, ' '));
+    }
+
+    await browser.close();
+    return null;
+
+  } catch (error) {
+    console.error('❌ [HSBC] 錯誤:', error.message);
+    if (browser) await browser.close();
+    return null;
+  }
 }
 
 // ==========================================
@@ -970,20 +1209,21 @@ async function getPendingLeads() {
   }
 }
 
-async function updateValuation(row, { citiPrice = null, hangSengPrice = null, dbsPrice = null, status = 'completed' } = {}) {
+async function updateValuation(row, { citiPrice = null, hangSengPrice = null, dbsPrice = null, hsbcPrice = null, status = 'completed' } = {}) {
   // Helper to ensure data is numeric or null
   const formatPrice = (p) => p ? Number(String(p).replace(/[^0-9.]/g, '')) : null;
 
   try {
     console.log(`📡 [Google Sheet] 上傳數據 Row ${row}...`);
-    console.log(`   👉 HASE: ${hangSengPrice}, Citi: ${citiPrice}, DBS: ${dbsPrice}`);
+    console.log(`   👉 HASE: ${hangSengPrice}, Citi: ${citiPrice}, DBS: ${dbsPrice}, HSBC: ${hsbcPrice}`);
 
     await axios.post(process.env.GOOGLE_SCRIPT_URL, {
       action: 'updateValuation',
       row: row,
-      hasePrice: formatPrice(hangSengPrice), // Correct Key for Col G
-      citiPrice: formatPrice(citiPrice),     // Correct Key for Col J
-      dbsPrice: formatPrice(dbsPrice),       // Correct Key for Col K
+      hasePrice: formatPrice(hangSengPrice), // Correct Key for Col L
+      citiPrice: formatPrice(citiPrice),     // Correct Key for Col O
+      dbsPrice: formatPrice(dbsPrice),       // Correct Key for Col P
+      hsbcPrice: formatPrice(hsbcPrice),     // Correct Key for Col K
       status: status,
       token: process.env.GS_SECRET_TOKEN
     }, { timeout: 30000 });
@@ -994,7 +1234,7 @@ async function updateValuation(row, { citiPrice = null, hangSengPrice = null, db
 }
 
 async function startWorker() {
-  console.log('🔄 啟動背景工作器 (Citi → DBS → Hang Seng → HSBC)...');
+  console.log('🔄 啟動背景工作器 (HSBC → Citi → DBS → Hang Seng)...');
   if (!process.env.GOOGLE_SCRIPT_URL) {
     console.error('❌ 缺少 GOOGLE_SCRIPT_URL');
     process.exit(1);
@@ -1049,6 +1289,9 @@ async function startWorker() {
       let hangSengValuation = null;
       let hsbcValuation = null;
       try {
+        console.log('🔍 [Worker] 開始爬取 HSBC 估價...');
+        hsbcValuation = await scrapeHSBCValuation(propertyData);
+
         console.log('🔍 [Worker] 開始爬取 Citibank 估價...');
         citiValuation = await scrapeCitibankValuation(propertyData);
 
@@ -1068,9 +1311,6 @@ async function startWorker() {
 
         console.log('🔍 [Worker] 開始爬取 Hang Seng 估價...');
         hangSengValuation = await scrapeHangSengValuation(propertyData);
-
-        console.log('🔍 [Worker] 開始爬取 HSBC 估價...');
-        hsbcValuation = await scrapeHSBCValuation(propertyData);
       } catch (e) {
         console.log(`⚠️ 爬取過程中發生錯誤: ${e.message}`);
       }
@@ -1080,6 +1320,7 @@ async function startWorker() {
           citiPrice: citiValuation,
           hangSengPrice: hangSengValuation,
           dbsPrice: dbsValuation, // Add this
+          hsbcPrice: hsbcValuation,
           status: 'completed'
         });
       } else {

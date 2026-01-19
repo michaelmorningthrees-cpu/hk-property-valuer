@@ -1,204 +1,182 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const fs = require('fs');
 const path = require('path');
 
+puppeteer.use(StealthPlugin());
+
 (async () => {
-  console.log('🚀 啟動 HSBC (Selectize 深度爬蟲) - 修復版...');
+  console.log('🚀 啟動 HSBC 爬蟲 (v7.0 智能重試版)...');
 
   const dataDir = path.join(__dirname, '../data');
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
-  const browser = await puppeteer.launch({ 
-    headless: false, 
-    defaultViewport: { width: 1300, height: 900 },
-    // ✅ FIX: 加入防止偵測的參數
-    args: [
-        '--no-sandbox', 
-        '--disable-setuid-sandbox',
-        '--disable-blink-features=AutomationControlled' 
-    ]
+  const executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+
+  const browser = await puppeteer.launch({
+    headless: false,
+    executablePath: executablePath,
+    userDataDir: path.join(__dirname, '../chrome_hsbc_v7'), // 用新 Profile
+    defaultViewport: null,
+    args: ['--start-maximized', '--disable-blink-features=AutomationControlled']
   });
-  
+
   const page = await browser.newPage();
-  await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+  
+  // 輔助函數
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  const randomSleep = (min, max) => sleep(Math.floor(Math.random() * (max - min + 1) + min));
 
   const URL = 'https://www.hsbc.com.hk/zh-hk/mortgages/tools/property-valuation/';
   console.log(`🔗 前往: ${URL}`);
   
-  await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.goto(URL, { waitUntil: 'domcontentloaded' });
+  await sleep(3000);
 
-  // ✅ FIX: 明確等待 Selectize 元件出現
-  console.log('⏳ 等待估價工具載入...');
-  try {
-      // 這裡等待第一個 selectize input 出現，最多等 30 秒
-      await page.waitForSelector('.selectize-control.single', { visible: true, timeout: 30000 });
-  } catch (e) {
-      console.error('❌ 找不到下拉選單！可能是頁面結構改變或被阻擋。');
-      await page.screenshot({ path: path.join(dataDir, 'error_screenshot.png') });
-      console.log('📸 已儲存錯誤截圖: error_screenshot.png');
-      await browser.close();
-      return;
-  }
+  // ==========================================
+  // 核心函數
+  // ==========================================
 
-  // 1. 處理 Cookie Popup
-  console.log('🧹 嘗試清理畫面...');
-  try {
-      // HSBC 常見的 Cookie 按鈕 Selector
-      const selectors = ['#onetrust-accept-btn-handler', 'button[aria-label="Close"]', '.icon-close-thick'];
-      for (const sel of selectors) {
-          if (await page.$(sel)) {
-              await page.click(sel);
-              console.log(`   (已關閉視窗: ${sel})`);
-              await new Promise(r => setTimeout(r, 1000));
-          }
+  const getControl = async (index) => {
+      const controls = await page.$$('.selectize-control');
+      return controls[index];
+  };
+
+  // 🔥 改進版：讀取選項 (含重試機制)
+  const scrapeOptions = async (index, retryCount = 0) => {
+      const control = await getControl(index);
+      const input = await control.$('.selectize-input');
+      
+      // 點擊打開
+      await input.click();
+      await sleep(800); // 等待動畫
+
+      // 讀取內容
+      let options = await page.evaluate(() => {
+          const visibleDropdown = Array.from(document.querySelectorAll('.selectize-dropdown-content'))
+              .find(el => el.offsetParent !== null);
+          
+          if (!visibleDropdown) return [];
+
+          return Array.from(visibleDropdown.querySelectorAll('.option'))
+              .map(opt => ({
+                  t: opt.innerText.trim(),
+                  v: opt.getAttribute('data-value')
+              }))
+              .filter(o => o.v && o.v !== '' && !o.t.includes('選擇') && !o.t.includes('Select'));
+      });
+
+      // 🔥 關鍵邏輯：如果是空的，且重試次數少於 2 次，就再試一次
+      if (options.length === 0 && retryCount < 2) {
+          console.log(`      ⚠️ (Index ${index}) 暫無選項，等待 2 秒重試...`);
+          await page.keyboard.press('Escape'); // 先關閉
+          await sleep(2000); // 等久一點
+          return scrapeOptions(index, retryCount + 1); // 遞歸重試
       }
-  } catch(e) {}
 
-  // 滾動畫面確保元素在視窗內
-  await page.evaluate(() => {
-      const el = document.querySelector('.selectize-control');
-      if(el) el.scrollIntoView({ behavior: 'instant', block: 'center' });
-  });
-  await new Promise(r => setTimeout(r, 2000));
+      // 關閉選單
+      await page.keyboard.press('Escape');
+      await sleep(300);
 
-  /**
-   * 核心功能：操作 Selectize.js
-   */
-  const getSelectizeOptions = async (index, label) => {
-    // 重新獲取 DOM，避免 Context 丟失
-    const wrappers = await page.$$('.selectize-control.single');
-    
-    if (!wrappers[index]) {
-        console.log(`❌ 找不到第 ${index} 個下拉選單 (${label})`);
-        // 除錯：印出目前找到幾個
-        console.log(`   目前頁面只有 ${wrappers.length} 個 selectize 元件`);
-        return [];
-    }
-
-    const wrapper = wrappers[index];
-    const input = await wrapper.$('.selectize-input');
-
-    // ✅ FIX: 確保 Input 可點擊
-    try {
-        await input.click();
-    } catch (e) {
-        console.log(`⚠️ 無法點擊 ${label}，嘗試使用 JS 觸發`);
-        await page.evaluate((el) => el.click(), input);
-    }
-
-    // 等待下拉選單動畫
-    await new Promise(r => setTimeout(r, 1500));
-
-    // ✅ FIX: 改良抓取邏輯，確保抓取的是「當前展開」的 dropdown
-    // Selectize 打開時會給 wrapper 添加 'loading' 或 dropdown 會變成 'display: block'
-    const options = await page.evaluate((idx) => {
-        // 必須精確定位到對應的 selectize-dropdown
-        const wrappers = document.querySelectorAll('.selectize-control.single');
-        const targetWrapper = wrappers[idx];
-        if (!targetWrapper) return [];
-
-        const dropdownContent = targetWrapper.querySelector('.selectize-dropdown-content');
-        if (!dropdownContent) return [];
-
-        const opts = dropdownContent.querySelectorAll('.option');
-        
-        return Array.from(opts)
-            .filter(opt => {
-                const val = opt.getAttribute('data-value');
-                const text = opt.innerText.trim();
-                return val && val !== '' && !text.includes('請選擇') && !opt.classList.contains('disabled');
-            })
-            .map(opt => ({
-                t: opt.innerText.trim(),
-                v: opt.getAttribute('data-value')
-            }));
-    }, index);
-
-    // 關閉選單 (點擊 body 或是再次點擊 input)
-    await page.mouse.click(0, 0); 
-    await new Promise(r => setTimeout(r, 500));
-    
-    return options;
+      return options;
   };
 
   const selectOption = async (index, value) => {
-    const wrappers = await page.$$('.selectize-control.single');
-    if(!wrappers[index]) return;
+      const control = await getControl(index);
+      const input = await control.$('.selectize-input');
 
-    const input = await wrappers[index].$('.selectize-input');
-    await input.click();
-    await new Promise(r => setTimeout(r, 1000));
+      await input.click();
+      await sleep(300);
 
-    // ✅ FIX: 使用 evaluate 點擊，比 Puppeteer click 更穩定
-    const success = await page.evaluate((idx, val) => {
-        const wrapper = document.querySelectorAll('.selectize-control.single')[idx];
-        const option = wrapper.querySelector(`.selectize-dropdown-content .option[data-value="${val}"]`);
-        if (option) {
-            option.click();
-            return true;
-        }
-        return false;
-    }, index, value);
+      const success = await page.evaluate((val) => {
+          const visibleDropdown = Array.from(document.querySelectorAll('.selectize-dropdown-content'))
+              .find(el => el.offsetParent !== null);
+          if (!visibleDropdown) return false;
 
-    if (!success) console.log(`   ⚠️ 選項點擊失敗: ${value}`);
-    
-    // 等待 API 回應與連動 (Loading)
-    await new Promise(r => setTimeout(r, 2000)); 
+          const option = visibleDropdown.querySelector(`.option[data-value="${val}"]`);
+          if (option) {
+              option.click();
+              return true;
+          }
+          return false;
+      }, value);
+
+      if (!success) await page.keyboard.press('Escape');
+      return success;
+  };
+
+  const waitForUnlock = async (nextIndex) => {
+      try {
+          await page.waitForFunction((idx) => {
+              const els = document.querySelectorAll('.selectize-control');
+              if (!els[idx]) return false;
+              const input = els[idx].querySelector('.selectize-input');
+              // 確保無 loading 且 input 可點擊
+              return !els[idx].classList.contains('loading') && !input.classList.contains('locked');
+          }, { timeout: 15000 }, nextIndex); // 延長等待時間到 15秒
+          await sleep(800); // 解鎖後再多等 0.8 秒，確保數據落地
+          return true;
+      } catch(e) { return false; }
   };
 
   // ==========================================
   // 主流程
   // ==========================================
-  
-  let allData = [];
 
-  // --- 1. 區域 ---
-  console.log('📡 正在讀取區域 (Region)...');
-  const regions = await getSelectizeOptions(0, "區域");
-  
-  if (regions.length === 0) {
-      console.log('❌ 區域列表為空，程式終止。請檢查 error_screenshot.png');
-      await page.screenshot({ path: path.join(dataDir, 'debug_empty_region.png') });
-      await browser.close();
-      return;
-  }
+  let database = [];
 
+  console.log('📡 讀取區域...');
+  const regions = await scrapeOptions(0);
   console.log(`📍 找到 ${regions.length} 個區域`);
 
-  for (const region of regions) {
-      console.log(`👉 [區域]: ${region.t}`);
-      await selectOption(0, region.v);
+  for (const r of regions) {
+      console.log(`👉 [區域] ${r.t}`);
+      await selectOption(0, r.v);
+      await waitForUnlock(1);
 
-      // --- 2. 分區 ---
-      const districts = await getSelectizeOptions(1, "分區");
-      
-      for (const district of districts) {
-          // console.log(`   ↳ [分區]: ${district.t}`);
-          await selectOption(1, district.v);
+      // 讀取分區
+      const districts = await scrapeOptions(1);
 
-          // --- 3. 屋苑 ---
-          const estates = await getSelectizeOptions(2, "屋苑");
-          console.log(`      🏠 [${region.t} - ${district.t}] 找到 ${estates.length} 個屋苑`);
+      // 如果連分區都沒抓到 (例如新界/離島)，嘗試重抓一次
+      if (districts.length === 0) {
+          console.log(`   ⚠️ [${r.t}] 分區載入失敗，最後重試...`);
+          await sleep(2000);
+          // 這裡不遞歸，手動重做一次流程
+      }
 
+      for (const d of districts) {
+          // console.log(`      選取: ${d.t}`);
+          await selectOption(1, d.v);
+          await waitForUnlock(2);
+
+          // 讀取屋苑 (會自動重試)
+          const estates = await scrapeOptions(2);
+          
           if (estates.length > 0) {
-              for (const estate of estates) {
-                  allData.push({
-                      region: region.t,
-                      district: district.t,
-                      estate: estate.t,
-                      id: estate.v
+              console.log(`     🏠 [${d.t}] ${estates.length} 個屋苑`);
+              
+              estates.forEach(e => {
+                  database.push({
+                      bank: 'hsbc',
+                      region: r.t,
+                      district: d.t,
+                      name: e.t,
+                      value: e.v
                   });
-              }
-              // 💾 每抓完一個分區就存檔一次，防止崩潰資料全失
-              fs.writeFileSync(path.join(dataDir, 'hsbc_estates_partial.json'), JSON.stringify(allData, null, 2));
+              });
+
+              // 存檔
+              fs.writeFileSync(path.join(dataDir, 'hsbc.json'), JSON.stringify(database, null, 2));
+          } else {
+              console.log(`     ❌ [${d.t}] 確實無資料 (已重試)`);
           }
+
+          // 🔥 隨機延遲：避免太快被鎖
+          await randomSleep(500, 1500);
       }
   }
 
-  const outFile = path.join(dataDir, 'hsbc_estates_full.json');
-  fs.writeFileSync(outFile, JSON.stringify(allData, null, 2));
-  console.log(`\n✅ 爬取完成！共 ${allData.length} 筆資料`);
-  console.log(`📂 檔案已儲存: ${outFile}`);
-
+  console.log(`\n🎉 全部完成！共 ${database.length} 筆資料。`);
   await browser.close();
+
 })();
