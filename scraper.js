@@ -696,7 +696,7 @@ async function scrapeDBSValuation(page, propertyData) {
 }
 
 // ==========================================
-// 4. Citibank 估價
+// 4. Citibank 估價 (Angular 事件修復版)
 // ==========================================
 
 async function scrapeCitibankValuation(propertyData) {
@@ -705,14 +705,42 @@ async function scrapeCitibankValuation(propertyData) {
     console.log('🚀 [Citi] 啟動瀏覽器...');
     browser = await chromium.launch({ headless: isCIEnv ? true : false, slowMo: 100 });
     const context = await browser.newContext({
-      viewport: { width: 1280, height: 800 },
+      viewport: { width: 1280, height: 900 },
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     });
     const page = await context.newPage();
 
+    // 攔截不必要的圖片與字體，加快載入速度
+    await page.route('**/*.{png,jpg,jpeg,gif,webp,svg,woff,woff2}', route => route.abort());
+
     const targetUrl = 'https://www.citibank.com.hk/acquisition/mortgage/index.html?locale=zh_HK';
     console.log(`📄 [Citi] 前往估價頁: ${targetUrl}`);
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
+
+    // --- 關鍵修復 1: 強制觸發 Angular 事件 (Input, Change, Blur) ---
+    const triggerAngularEvents = async (selector) => {
+      await page.evaluate((sel) => {
+        const el = document.querySelector(sel);
+        if (el) {
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+          el.dispatchEvent(new Event('blur', { bubbles: true })); // 觸發驗證
+        }
+      }, selector);
+    };
+
+    // --- 關鍵修復 2: 等待選單資料真正載入 (避免選到空選項) ---
+    const waitSelectReady = async (selector, label) => {
+      try {
+        await page.waitForSelector(`${selector}:not([disabled])`, { timeout: 15000 });
+        await page.waitForFunction((sel) => {
+          const el = document.querySelector(sel);
+          return el && el.options && el.options.length > 1; // 確保有選項
+        }, selector, { timeout: 15000 });
+      } catch (e) {
+        console.warn(`⚠️ [Citi] 等待 ${label} 選項載入超時，嘗試繼續...`);
+      }
+    };
 
     const normalizeCitiRegion = (value) => {
       if (!value) return '新界/離島';
@@ -725,309 +753,161 @@ async function scrapeCitibankValuation(propertyData) {
     const region = normalizeCitiRegion(propertyData.bankMap?.citi?.region || getRegionByDistrict(district || '')) || '新界/離島';
     const estateKeyword = toTraditional(propertyData.bankMap?.citi?.estate || propertyData.estate || '');
 
-    const waitReady = async (selector) => {
-      await page.waitForSelector(`${selector}:not([disabled])`, { timeout: 20000 });
-      await page.waitForFunction((sel) => {
-        const select = document.querySelector(sel);
-        return select && select.options && select.options.length > 1;
-      }, selector, { timeout: 20000 });
-    };
-
-    const getOptions = async (selector) => {
-      return page.$$eval(`${selector} option`, options =>
-        options.map(o => ({
-          value: o.value,
-          label: o.label || o.textContent || '',
-        })).filter(o => o.label && o.label.trim().length > 0)
-      );
-    };
-
-    const normalizeNumeric = (value) => String(value || '').replace(/[^\d]/g, '');
-
-    const isPlaceholderOption = (label) => {
-      const text = (label || '').replace(/\s+/g, '');
-      return text === '' || text === '請選擇' || text === '屋苑名稱';
-    };
-
-    const scoreText = (target, candidate) => {
-      const normalize = (s) => String(s || '')
-        .replace(/\s+/g, '')
-        .replace(/[座期苑樓室層棟]/g, '')
-        .toUpperCase();
-      const t = normalize(target);
-      const c = normalize(candidate);
-      if (!t || !c) return 0;
-      if (t === c) return 100;
-      if (t.includes(c)) return 80 + c.length;
-      if (c.includes(t)) return 80 + t.length;
-      const tSet = new Set(t.split(''));
-      let matchCount = 0;
-      for (const char of c) {
-        if (tSet.has(char)) matchCount += 1;
-      }
-      return (matchCount / Math.max(t.length, c.length)) * 100;
-    };
-
-    const selectByScore = async (selector, targetValue) => {
-      if (!targetValue) return false;
-      const options = await getOptions(selector);
-      const filtered = options.filter(o => !isPlaceholderOption(o.label));
-      if (filtered.length === 0) return false;
-
-      const targetText = String(targetValue).trim();
-      const targetNumeric = normalizeNumeric(targetValue);
-
-      let best = null;
-      let bestScore = 0;
-      const normalizeLabel = (s) => String(s || '')
-        .replace(/\s+/g, '')
-        .replace(/[座期苑樓室層棟]/g, '')
-        .toUpperCase();
-      const targetNorm = normalizeLabel(targetText);
-
-      for (const opt of filtered) {
-        if (normalizeLabel(opt.label) === targetNorm) {
-          best = opt;
-          bestScore = 999;
-          break;
-        }
-        let score = scoreText(targetText, opt.label);
-        if (targetNumeric) {
-          const optNumeric = normalizeNumeric(opt.label);
-          if (optNumeric === targetNumeric) score = Math.max(score, 100);
-          if (optNumeric.endsWith(targetNumeric)) score = Math.max(score, 85);
-        }
-        if (score > bestScore) {
-          bestScore = score;
-          best = opt;
-        }
-      }
-
-      if (best && bestScore >= 20) {
-        await page.selectOption(selector, { value: best.value });
-        return true;
-      }
-
-      return false;
-    };
-
     const selectCiti = async (selector, text, value = null) => {
       if (!text) return false;
+      let selected = false;
+
+      // 嘗試 Value 匹配
       if (value) {
-        const selected = await page.selectOption(selector, { value }).catch(() => null);
-        if (selected && selected.length > 0) {
-          console.log(`   ✅ [Citi] 直接選取 value: "${value}"`);
-          await page.waitForTimeout(1000);
-          return true;
+        const res = await page.selectOption(selector, { value }).catch(() => null);
+        if (res && res.length > 0) selected = true;
+      }
+
+      // 嘗試文字 Fuzzy 匹配
+      if (!selected) {
+        const options = await page.$$eval(`${selector} option`, opts =>
+          opts.map(o => ({ val: o.value, txt: (o.textContent || '').trim() }))
+        );
+        let match = options.find(o => o.txt === text);
+        if (!match) match = options.find(o => o.txt.startsWith(text));
+        if (!match) match = options.find(o => o.txt.includes(text) || text.includes(o.txt));
+
+        if (match) {
+          console.log(`   ✅ [Citi] 選取: "${match.txt}"`);
+          await page.selectOption(selector, match.val);
+          selected = true;
         }
       }
-      const options = await page.$$eval(`${selector} option`, opts =>
-        opts.map(o => ({ val: o.value, txt: (o.textContent || '').trim() }))
-      );
-      let match = options.find(o => o.txt === text);
-      if (!match) {
-        match = options.find(o => o.txt.startsWith(text));
-      }
-      if (!match) {
-        match = options.find(o => o.txt.includes(text) || text.includes(o.txt));
-      }
-      if (match) {
-        console.log(`   ✅ [Citi] 精確選取: "${match.txt}" (目標: "${text}")`);
-        await page.selectOption(selector, match.val);
-        await page.waitForTimeout(1000);
+
+      if (selected) {
+        // 選取後立即觸發事件，並等待 Loading (通常是轉圈圈)
+        await triggerAngularEvents(selector);
+        await page.waitForTimeout(1000); 
         return true;
       }
-      console.warn(`   ⚠️ [Citi] 找不到選項: "${text}"`);
       return false;
     };
 
-    const logSelected = async (selector, label) => {
-      const selectedText = await page.$eval(selector, (sel) => {
-        const opt = sel.selectedOptions && sel.selectedOptions[0];
-        return opt ? opt.textContent : '';
-      }).catch(() => '');
-      console.log(`✅ [Citi] 已選 ${label}: ${selectedText || '(無法讀取)'}`);
-    };
-
-    const selectPhaseIfAny = async () => {
-      const phaseSelector = '#phase';
-      const exists = await page.$(phaseSelector);
-      if (!exists) return;
-      const options = await getOptions(phaseSelector);
-      if (options.length > 1) {
-        await page.selectOption(phaseSelector, { index: 1 });
-      } else if (options.length === 1) {
-        await page.selectOption(phaseSelector, { index: 0 });
-      }
-      await page.waitForTimeout(2000);
-    };
-
+    // === 開始填寫 ===
+    
+    // 1. 區域
     console.log(`👇 [Citi] 區域: ${region}`);
-    await waitReady('#zone');
+    await waitSelectReady('#zone', '區域');
     await selectCiti('#zone', region);
-    await logSelected('#zone', '區域');
-    await page.waitForTimeout(2000);
 
+    // 2. 地區
     if (district) {
       console.log(`👇 [Citi] 地區: ${district}`);
-      await waitReady('#district');
+      await waitSelectReady('#district', '地區');
       await selectCiti('#district', district);
-      await logSelected('#district', '地區');
-      await page.waitForTimeout(2000);
     }
 
+    // 3. 屋苑
     console.log(`👇 [Citi] 屋苑: ${estateKeyword}`);
-    await waitReady('#estName');
-    await page.waitForFunction((sel) => {
-      const select = document.querySelector(sel);
-      if (!select) return false;
-      const opts = Array.from(select.options || []);
-      const nonPlaceholders = opts.filter(o => {
-        const text = (o.textContent || '').replace(/\s+/g, '');
-        return text && text !== '請選擇' && text !== '屋苑名稱';
-      });
-      return nonPlaceholders.length > 0;
-    }, '#estName', { timeout: 20000 });
+    await waitSelectReady('#estName', '屋苑');
+    await selectCiti('#estName', estateKeyword, propertyData.bankMap?.citi?.estateValue || null);
 
-    const estateSelected = await selectCiti('#estName', estateKeyword, propertyData.bankMap?.citi?.estateValue || null);
-    await logSelected('#estName', '屋苑');
-    await page.waitForTimeout(2000);
+    // 處理期數 (Phase) - 若出現則選第一個
+    if (await page.isVisible('#phase')) {
+       await page.waitForTimeout(500);
+       const opts = await page.$$eval('#phase option', o => o.length);
+       if (opts > 1) {
+           await page.selectOption('#phase', { index: 1 });
+           await triggerAngularEvents('#phase');
+           await page.waitForTimeout(1000);
+       }
+    }
 
-    await selectPhaseIfAny();
-
+    // 4. 座數
     if (propertyData.block) {
       console.log(`👇 [Citi] 座數: ${propertyData.block}`);
-      await waitReady('#bckBuilding');
+      await waitSelectReady('#bckBuilding', '座數');
       await selectCiti('#bckBuilding', propertyData.block);
-      await logSelected('#bckBuilding', '座數');
-      await page.waitForTimeout(2000);
     }
 
+    // 5. 樓層
     if (propertyData.floor) {
       console.log(`👇 [Citi] 樓層: ${propertyData.floor}`);
-      await waitReady('#floor');
+      await waitSelectReady('#floor', '樓層');
       await selectCiti('#floor', propertyData.floor);
-      await logSelected('#floor', '樓層');
-      await page.waitForTimeout(2000);
     }
 
+    // 6. 單位
     if (propertyData.unit) {
       console.log(`👇 [Citi] 單位: ${propertyData.unit}`);
-      await waitReady('#flatUnit');
+      await waitSelectReady('#flatUnit', '單位');
       await selectCiti('#flatUnit', String(propertyData.unit).toUpperCase());
-      await logSelected('#flatUnit', '單位');
-      await page.waitForTimeout(2000);
     }
 
+    // 7. 提交
     console.log('🔘 [Citi] 準備點擊估價按鈕...');
+    
+    // 清除遮擋元素 (Banner, Navbar, Footer)
     await page.evaluate(() => {
-      const banner = document.querySelector('#onetrust-banner-sdk');
-      if (banner) banner.remove();
-      document.querySelectorAll('footer, .cmp-container, .navbar').forEach(el => el.remove());
+        document.querySelectorAll('#onetrust-banner-sdk, footer, .navbar, .cmp-container').forEach(el => el.remove());
     });
-
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForTimeout(1000);
-
-    const possibleSelectors = [
-      'text=進行物業估價',
-      'text=估價',
-      'text=Get Valuation',
-      'text=Submit',
-      'a:has-text("進行物業估價")',
-      'button:has-text("進行物業估價")',
-      'div[role="button"]:has-text("估價")',
-      '.citi-btn',
-      'button.primary',
-      'input[type="submit"]'
-    ];
-
-    let clicked = false;
-    for (const selector of possibleSelectors) {
-      try {
-        const btn = page.locator(selector).first();
-        const count = await btn.count();
-        if (!count) continue;
-        if (await btn.isVisible()) {
-          console.log(`   👉 [Citi] 嘗試點擊: ${selector}`);
-          await btn.scrollIntoViewIfNeeded().catch(() => {});
-          await btn.hover().catch(() => {});
-          await page.waitForTimeout(200);
-          await btn.click({ force: true, timeout: 3000 });
-          clicked = true;
-          break;
+    
+    // --- 關鍵修復 3: 使用 JS 直接觸發 Click (繞過遮擋與 Playwright 限制) ---
+    const btnSelector = 'a.btn.btn-primary'; // 根據你的 DOM 截圖
+    const clicked = await page.evaluate((sel) => {
+        const btn = document.querySelector(sel);
+        if (btn) {
+            btn.click(); // 原生 JS 點擊
+            return true;
         }
-      } catch (e) {
-        // ignore and try next selector
-      }
-    }
+        return false;
+    }, btnSelector);
 
-    if (!clicked) {
-      console.warn('⚠️ [Citi] 找不到明確按鈕，改用 Enter 嘗試提交...');
-      await page.keyboard.press('Enter');
+    if (clicked) {
+        console.log('   👉 已觸發 JS Click (a.btn.btn-primary)');
+    } else {
+        console.warn('   ⚠️ 找不到按鈕，嘗試備用選擇器...');
+        await page.click('text=進行物業估價', { force: true });
     }
-
-    await page.waitForTimeout(3000);
 
     console.log('⏳ [Citi] 等待結果...');
+    
+    // 8. 獲取結果
     try {
-      await page.waitForFunction(() => {
-        const nodes = Array.from(document.querySelectorAll('td, th, div, span'));
-        const labelEl = nodes.find(el => {
-          const text = (el.textContent || '').replace(/\s+/g, '');
-          return text.includes('估價') && text.includes('港幣');
-        });
-        if (!labelEl) return false;
-        const row = labelEl.closest('tr');
-        if (row) {
-          const cells = Array.from(row.querySelectorAll('td'));
-          if (cells.length >= 2) {
-            const valueText = (cells[cells.length - 1].textContent || '').trim();
-            return /[\d,]+/.test(valueText);
-          }
-        }
-        const next = labelEl.nextElementSibling;
-        if (next) return /[\d,]+/.test(next.textContent || '');
-        return false;
-      }, { timeout: 30000 });
+        // 等待價格數字出現 (regex: 數字,數字)
+        await page.waitForFunction(() => {
+            return /[\d,]{5,}/.test(document.body.innerText) && document.body.innerText.includes('估價');
+        }, { timeout: 20000 });
     } catch (e) {
-      const bodyText = await page.innerText('body');
-      if (/未能提供|System busy/i.test(bodyText)) {
-        console.warn('⚠️ [Citi] 系統繁忙或未能提供估價，略過。');
-        await browser.close();
-        return null;
-      }
-      throw e;
+        // 錯誤處理：檢查是否還停留在表單頁 (有紅色錯誤字)
+        const hasError = await page.evaluate(() => document.body.innerText.includes('請選擇'));
+        if (hasError) {
+             console.error('❌ [Citi] 表單提交失敗 (Angular 驗證未通過)');
+             // 這裡可以做 retry 邏輯，或者直接回傳 null
+             await browser.close();
+             return null;
+        }
     }
 
     const price = await page.evaluate(() => {
-      const nodes = Array.from(document.querySelectorAll('td, th, div, span'));
-      const labelEl = nodes.find(el => {
-        const text = (el.textContent || '').replace(/\s+/g, '');
-        return text.includes('估價') && text.includes('港幣');
-      });
-      if (!labelEl) return null;
-      const row = labelEl.closest('tr');
-      let valueText = '';
-      if (row) {
-        const cells = Array.from(row.querySelectorAll('td'));
-        if (cells.length >= 2) valueText = (cells[cells.length - 1].textContent || '').trim();
-      } else if (labelEl.nextElementSibling) {
-        valueText = (labelEl.nextElementSibling.textContent || '').trim();
-      }
-      const match = valueText.match(/[\d,]+/);
-      return match ? Number(match[0].replace(/,/g, '')) : null;
+        const text = document.body.innerText;
+        // 搜尋 "估價 (港幣)" 後面的數字
+        const match = text.match(/估價\s*\(?港幣\)?\s*[:：]?\s*(\$?\s?[\d,]+)/i);
+        if (match) {
+            return match[1].replace(/[^\d]/g, ''); // 只留數字
+        }
+        // 備用：直接找任何類似價格的大數字
+        const allCurrency = text.match(/[\d]{1,3}(,[\d]{3})+/g);
+        return allCurrency ? allCurrency[0].replace(/,/g, '') : null;
     });
 
     if (price) {
-      console.log(`💰 [Citi] 估價成功: ${price}`);
+        console.log(`💰 [Citi] 估價成功: ${price}`);
+        await browser.close();
+        return Number(price);
     } else {
-      console.log('⚠️ [Citi] 找不到估價結果，保存截圖: citi-result-error.png');
-      await page.screenshot({ path: 'citi-result-error.png', fullPage: true });
+        console.log('⚠️ [Citi] 找不到估價結果');
+        await page.screenshot({ path: 'citi-result-missing.png', fullPage: true });
     }
 
     await browser.close();
-    return price;
+    return null;
+
   } catch (error) {
     console.error('❌ [Citi] 發生錯誤:', error.message);
     if (browser) await browser.close();
