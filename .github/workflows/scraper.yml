@@ -2,9 +2,9 @@ name: Valuation Scraper Worker
 
 on:
   schedule:
-    # 修改這裡：設定每 30 分鐘運行一次
+    # 設定每 30 分鐘運行一次
     - cron: '*/30 * * * *'
-  workflow_dispatch: # 允許你在 GitHub Actions 頁面手動按按鈕測試
+  workflow_dispatch: # 允許手動按按鈕測試
 
 jobs:
   run-scraper:
@@ -22,17 +22,22 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        # 安裝 package.json 裡面所有嘢 (包括 Next.js 同 Scraper 依賴)
+        # 安裝 package.json 裡面所有嘢
         run: npm ci
 
       - name: Install Playwright Browsers
         # 只安裝 Chromium 以節省時間
         run: npx playwright install chromium --with-deps
 
+      # 👇 1. 新增這一步：安裝虛擬螢幕 XVFB (解決 Missing X server 問題)
+      - name: Install XVFB
+        run: sudo apt-get install -y xvfb
+
       - name: Run Scraper Script
         env:
           # 讀取 GitHub Secrets
           GOOGLE_SCRIPT_URL: ${{ secrets.GOOGLE_SCRIPT_URL }}
           GS_SECRET_TOKEN: ${{ secrets.GS_SECRET_TOKEN }}
-          CI: true # 讓 scraper.js 知道要用 Headless mode
-        run: node scraper.js
+          CI: true 
+        # 👇 2. 修改這一步：使用 xvfb-run 來執行 node，模擬有一個 1280x960 的螢幕
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" node scraper.js
