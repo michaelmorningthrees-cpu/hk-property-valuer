@@ -6,177 +6,235 @@ const path = require('path');
 puppeteer.use(StealthPlugin());
 
 (async () => {
-  console.log('🚀 啟動 HSBC 爬蟲 (v7.0 智能重試版)...');
+  console.log('🚀 啟動 HSBC 補漏爬蟲 (保留原名斜線版)...');
+
+  // 🎯 設定目標地區關鍵字
+  // 邏輯說明：
+  // 只要選單名稱含有 '黃大仙'，程式就會把整個 "黃大仙/橫頭磡" 存入 JSON
+  // 只要選單名稱含有 '深井'，程式就會把整個 "深井/青龍頭" 存入 JSON
+  const targetKeywords = [
+      '山頂',       
+      '土瓜灣',     
+      '黃大仙',     // 對應 [九龍] 黃大仙/橫頭磡
+      '葵涌',       
+      '荔景',       
+      '深井',       // 對應 [新界/離島] 深井/青龍頭
+      '沙田',       
+      '上水',       
+      '大埔',       
+      '將軍澳'      
+  ];
 
   const dataDir = path.join(__dirname, '../data');
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
-  const executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-
   const browser = await puppeteer.launch({
-    headless: false,
-    executablePath: executablePath,
-    userDataDir: path.join(__dirname, '../chrome_hsbc_v7'), // 用新 Profile
+    headless: false, // 開啟瀏覽器以便監控
     defaultViewport: null,
-    args: ['--start-maximized', '--disable-blink-features=AutomationControlled']
+    protocolTimeout: 0, 
+    slowMo: 50,      
+    args: [
+        '--start-maximized', 
+        '--disable-blink-features=AutomationControlled',
+        '--no-sandbox', 
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu'
+    ]
   });
 
   const page = await browser.newPage();
   
-  // 輔助函數
-  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-  const randomSleep = (min, max) => sleep(Math.floor(Math.random() * (max - min + 1) + min));
+  // 資源攔截 (加速載入，不載圖片字體)
+  await page.setRequestInterception(true);
+  page.on('request', (req) => {
+    if (['image', 'font', 'media', 'stylesheet'].includes(req.resourceType())) req.abort();
+    else req.continue();
+  });
 
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   const URL = 'https://www.hsbc.com.hk/zh-hk/mortgages/tools/property-valuation/';
-  console.log(`🔗 前往: ${URL}`);
   
-  await page.goto(URL, { waitUntil: 'domcontentloaded' });
+  await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await sleep(3000);
 
   // ==========================================
   // 核心函數
   // ==========================================
 
-  const getControl = async (index) => {
-      const controls = await page.$$('.selectize-control');
-      return controls[index];
+  const getSelectizeControls = async () => {
+      return await page.$$('.selectize-control');
   };
 
-  // 🔥 改進版：讀取選項 (含重試機制)
-  const scrapeOptions = async (index, retryCount = 0) => {
-      const control = await getControl(index);
-      const input = await control.$('.selectize-input');
-      
-      // 點擊打開
-      await input.click();
-      await sleep(800); // 等待動畫
+  const waitForUnlock = async (index) => {
+      try {
+          await page.waitForFunction((idx) => {
+              const controls = document.querySelectorAll('.selectize-control');
+              const target = controls[idx];
+              if (!target) return false;
+              const isLoading = target.classList.contains('loading');
+              const input = target.querySelector('.selectize-input');
+              const isLocked = input && input.classList.contains('locked');
+              // 確保不是 disabled
+              const isDisabled = input && input.classList.contains('disabled');
+              return !isLoading && !isLocked && !isDisabled;
+          }, { timeout: 15000 }, index); 
+          await sleep(200);
+          return true;
+      } catch (e) { return false; }
+  };
 
-      // 讀取內容
-      let options = await page.evaluate(() => {
-          const visibleDropdown = Array.from(document.querySelectorAll('.selectize-dropdown-content'))
-              .find(el => el.offsetParent !== null);
-          
+  const scrapeOptions = async (index) => {
+      const controls = await getSelectizeControls();
+      const target = controls[index];
+      if (!target) return [];
+
+      const input = await target.$('.selectize-input');
+      try { await input.click(); } catch(e) {}
+      await sleep(500); 
+
+      const options = await page.evaluate(() => {
+          const dropdowns = Array.from(document.querySelectorAll('.selectize-dropdown-content'));
+          const visibleDropdown = dropdowns.find(el => el.offsetParent !== null);
           if (!visibleDropdown) return [];
-
+          
           return Array.from(visibleDropdown.querySelectorAll('.option'))
               .map(opt => ({
-                  t: opt.innerText.trim(),
+                  t: opt.innerText.trim(), // 👈 這裡直接取 innerText，保留 "黃大仙/橫頭磡" 原樣
                   v: opt.getAttribute('data-value')
               }))
               .filter(o => o.v && o.v !== '' && !o.t.includes('選擇') && !o.t.includes('Select'));
       });
 
-      // 🔥 關鍵邏輯：如果是空的，且重試次數少於 2 次，就再試一次
-      if (options.length === 0 && retryCount < 2) {
-          console.log(`      ⚠️ (Index ${index}) 暫無選項，等待 2 秒重試...`);
-          await page.keyboard.press('Escape'); // 先關閉
-          await sleep(2000); // 等久一點
-          return scrapeOptions(index, retryCount + 1); // 遞歸重試
-      }
-
-      // 關閉選單
       await page.keyboard.press('Escape');
       await sleep(300);
-
       return options;
   };
 
   const selectOption = async (index, value) => {
-      const control = await getControl(index);
-      const input = await control.$('.selectize-input');
-
+      const controls = await getSelectizeControls();
+      if (!controls[index]) return false;
+      
+      const input = await controls[index].$('.selectize-input');
       await input.click();
       await sleep(300);
 
       const success = await page.evaluate((val) => {
-          const visibleDropdown = Array.from(document.querySelectorAll('.selectize-dropdown-content'))
-              .find(el => el.offsetParent !== null);
+          const dropdowns = Array.from(document.querySelectorAll('.selectize-dropdown-content'));
+          const visibleDropdown = dropdowns.find(el => el.offsetParent !== null);
           if (!visibleDropdown) return false;
-
           const option = visibleDropdown.querySelector(`.option[data-value="${val}"]`);
-          if (option) {
-              option.click();
-              return true;
-          }
+          if (option) { option.click(); return true; }
           return false;
       }, value);
 
       if (!success) await page.keyboard.press('Escape');
+      await sleep(500); 
       return success;
-  };
-
-  const waitForUnlock = async (nextIndex) => {
-      try {
-          await page.waitForFunction((idx) => {
-              const els = document.querySelectorAll('.selectize-control');
-              if (!els[idx]) return false;
-              const input = els[idx].querySelector('.selectize-input');
-              // 確保無 loading 且 input 可點擊
-              return !els[idx].classList.contains('loading') && !input.classList.contains('locked');
-          }, { timeout: 15000 }, nextIndex); // 延長等待時間到 15秒
-          await sleep(800); // 解鎖後再多等 0.8 秒，確保數據落地
-          return true;
-      } catch(e) { return false; }
   };
 
   // ==========================================
   // 主流程
   // ==========================================
 
-  let database = [];
+  let results = [];
 
   console.log('📡 讀取區域...');
+  await waitForUnlock(0);
   const regions = await scrapeOptions(0);
-  console.log(`📍 找到 ${regions.length} 個區域`);
 
   for (const r of regions) {
-      console.log(`👉 [區域] ${r.t}`);
+      // 這裡不需過濾大區域，因為目標分佈在港九新界
       await selectOption(0, r.v);
       await waitForUnlock(1);
 
-      // 讀取分區
       const districts = await scrapeOptions(1);
 
-      // 如果連分區都沒抓到 (例如新界/離島)，嘗試重抓一次
-      if (districts.length === 0) {
-          console.log(`   ⚠️ [${r.t}] 分區載入失敗，最後重試...`);
-          await sleep(2000);
-          // 這裡不遞歸，手動重做一次流程
-      }
-
       for (const d of districts) {
-          // console.log(`      選取: ${d.t}`);
+          if (d.v === 'ALL') continue;
+
+          // 🛑 核心過濾器：檢查 d.t (顯示名稱) 是否包含我們的關鍵字
+          const isTarget = targetKeywords.some(keyword => d.t.includes(keyword));
+
+          if (!isTarget) {
+             continue;
+          }
+          
+          console.log(`🎯 [命中目標] 抓取: ${d.t} (保留原名)`);
+
+          // 刷新頁面保平安 (針對沙田等大區)
+          await page.reload({ waitUntil: 'domcontentloaded' });
+          await sleep(2000);
+          
+          // 重新導航
+          await waitForUnlock(0);
+          await selectOption(0, r.v);
+          await waitForUnlock(1);
+
+          console.log(`   👉 進入分區: ${d.t}`);
           await selectOption(1, d.v);
           await waitForUnlock(2);
 
-          // 讀取屋苑 (會自動重試)
           const estates = await scrapeOptions(2);
-          
-          if (estates.length > 0) {
-              console.log(`     🏠 [${d.t}] ${estates.length} 個屋苑`);
-              
-              estates.forEach(e => {
-                  database.push({
-                      bank: 'hsbc',
-                      region: r.t,
-                      district: d.t,
-                      name: e.t,
-                      value: e.v
-                  });
-              });
+          console.log(`      🏠 發現 ${estates.length} 個屋苑`);
 
-              // 存檔
-              fs.writeFileSync(path.join(dataDir, 'hsbc.json'), JSON.stringify(database, null, 2));
-          } else {
-              console.log(`     ❌ [${d.t}] 確實無資料 (已重試)`);
+          for (let i = 0; i < estates.length; i++) {
+              const e = estates[i];
+              try {
+                  const selected = await selectOption(2, e.v);
+                  if (!selected) {
+                      console.log(`      ⚠️ 無法選取: ${e.t}`);
+                      continue;
+                  }
+                  
+                  // 等待座數
+                  const hasBlocks = await waitForUnlock(3);
+                  let blocks = [];
+                  if (hasBlocks) {
+                      blocks = await scrapeOptions(3);
+                  }
+
+                  if (blocks.length > 0) {
+                      for (const b of blocks) {
+                          results.push({
+                              bank: 'hsbc',
+                              region: r.t,
+                              district: d.t, // 👈 這裡存入的就是 "黃大仙/橫頭磡"，原汁原味
+                              name: e.t,
+                              value: e.v,
+                              block: b.t,
+                              block_value: b.v
+                          });
+                      }
+                  } else {
+                      results.push({
+                          bank: 'hsbc',
+                          region: r.t,
+                          district: d.t, // 👈 同上
+                          name: e.t,
+                          value: e.v,
+                          block: null,
+                          block_value: null
+                      });
+                  }
+                  
+                  if (i % 50 === 0 && i > 0) process.stdout.write(` [${i}/${estates.length}] `);
+                  else process.stdout.write(`.`); 
+
+              } catch (err) {
+                  console.log(`\n      ❌ 錯誤: ${e.t}`);
+                  await page.keyboard.press('Escape');
+              }
           }
-
-          // 🔥 隨機延遲：避免太快被鎖
-          await randomSleep(500, 1500);
+          console.log(`\n      ✅ ${d.t} 完成！`);
       }
   }
 
-  console.log(`\n🎉 全部完成！共 ${database.length} 筆資料。`);
+  // 最終儲存
+  const outFile = path.join(dataDir, 'hsbc_missing_districts.json');
+  fs.writeFileSync(outFile, JSON.stringify(results, null, 2));
+  console.log(`\n🎉 補漏完成！數據已儲存至 ${outFile}`);
+  
   await browser.close();
 
 })();

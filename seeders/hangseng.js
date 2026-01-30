@@ -1,85 +1,67 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const fs = require('fs');
 const path = require('path');
 
-(async () => {
-  console.log('🚀 啟動 Hang Seng (中文版) 爬蟲...');
+puppeteer.use(StealthPlugin());
 
-  // 確保 data 資料夾存在
+(async () => {
+  console.log('🚀 啟動 Hang Seng 爬蟲 (v2.0 座數完整版)...');
+
   const dataDir = path.join(__dirname, '../data');
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
   const browser = await puppeteer.launch({ 
-    headless: false, // 設為 false 可以看到爬取過程，Debug 方便
-    defaultViewport: { width: 1280, height: 800 },
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    headless: false, 
+    defaultViewport: null,
+    // slowMo: 20, // 稍微慢一點點有助於 Select2 反應
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--window-size=1280,800']
   });
+  
   const page = await browser.newPage();
   
-  await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+  // 資源攔截：加速爬蟲，不載入圖片
+  await page.setRequestInterception(true);
+  page.on('request', (req) => {
+    if (['image', 'font', 'media', 'stylesheet'].includes(req.resourceType())) req.abort();
+    else req.continue();
+  });
 
-  // 1. 前往網址 (中文版 zh-hk)
   const URL = 'https://www.hangseng.com/zh-hk/e-valuation/address-search/';
   console.log(`🔗 前往: ${URL}`);
-  await page.goto(URL, { waitUntil: 'domcontentloaded' });
+  
+  await page.goto(URL, { waitUntil: 'networkidle2', timeout: 60000 });
 
-  // 2. 處理免責聲明 (如果有的話)
+  // 處理免責聲明 (如果有)
   try {
-      const btnSelector = 'a.btn-accept, input[name="btnAccept"], button.accept-btn, a[id*="btnAccept"]';
+      const btnSelector = 'a.btn-accept, input[name="btnAccept"], button.accept-btn';
       const btn = await page.waitForSelector(btnSelector, { timeout: 5000 }).catch(() => null);
       if (btn) {
-          console.log('✅ 點擊免責聲明同意按鈕...');
+          console.log('✅ 點擊免責聲明...');
           await btn.click();
           await new Promise(r => setTimeout(r, 2000));
       }
   } catch(e) {}
 
-  // ID 定義
+  // --- Selectors ---
+  // Hang Seng 的 ID 命名規則通常是 area -> district -> estate -> block
   const SEL_REGION   = '#areaValue';
   const SEL_DISTRICT = '#districtValue';
   const SEL_ESTATE   = '#estateValue';
-  // Select2 的顯示容器 (用來點擊激活)
-  const UI_REGION    = '#select2-areaValue-container';
+  const SEL_BLOCK    = '#blockValue'; // 座數 ID
 
-  console.log('⏳ 等待頁面初始化...');
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-  // Helper: 智能等待數據
-  const waitForDataLoad = async (hiddenSelectId, uiContainerId) => {
-    try {
-        // 嘗試等待 hidden select 內有 options
-        await page.waitForFunction((sel) => {
-            const el = document.querySelector(sel);
-            return el && el.options && el.options.length > 1; 
-        }, { timeout: 5000 }, hiddenSelectId);
-    } catch(e) {
-        // 如果超時，嘗試點擊 UI 觸發載入
-        if (uiContainerId) {
-            try {
-                // console.log(`      ⚠️ 嘗試點擊激活 ${uiContainerId}...`);
-                await page.click(uiContainerId);
-                await new Promise(r => setTimeout(r, 500));
-                // 再次等待
-                await page.waitForFunction((sel) => {
-                    const el = document.querySelector(sel);
-                    return el && el.options.length > 1;
-                }, { timeout: 5000 }, hiddenSelectId);
-            } catch(err) {
-                // 忽略錯誤，有些區域可能真的沒有資料
-            }
-        }
-    }
-  };
-
-  // Helper: 獲取選項 (過濾掉 "請選擇", "Select" 等字眼)
+  // Helper: 獲取 Hidden Select 的選項
   const getOptions = async (selector) => {
     return page.evaluate((s) => {
       const el = document.querySelector(s);
       if (!el) return [];
+      // 即使是 display:none，options 屬性依然存在
       return Array.from(el.options)
         .filter(o => {
             const text = o.innerText.trim();
             const val = o.value;
-            // 過濾無效選項
             return val && val !== "" && 
                    !text.includes("Select") && 
                    !text.includes("選擇") &&
@@ -89,68 +71,117 @@ const path = require('path');
     }, selector);
   };
 
-  // Helper: Select2 觸發改變
-  const triggerSelect2Change = async (selector, value) => {
+  // Helper: 強制觸發 Select2 變更
+  // 這是最關鍵的部分，模擬 jQuery 的 .val().trigger('change')
+  const selectSelect2 = async (selector, value) => {
       await page.evaluate((sel, val) => {
           const el = document.querySelector(sel);
           if(el) {
-            el.value = val;
-            el.dispatchEvent(new Event('change', { bubbles: true }));
-            // 嘗試兼容 jQuery
-            if (typeof $ !== 'undefined') $(sel).val(val).trigger('change');
+              el.value = val;
+              // 觸發原生事件
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+              
+              // 嘗試觸發 jQuery 事件 (Hang Seng 依賴這個)
+              if (typeof $ !== 'undefined') {
+                  $(sel).val(val).trigger('change');
+              }
           }
       }, selector, value);
+      
+      await sleep(500); // 等待 AJAX
   };
+
+  // Helper: 等待下一個選單載入數據
+  const waitForNextDropdown = async (nextSelector) => {
+      try {
+          await page.waitForFunction((sel) => {
+              const el = document.querySelector(sel);
+              // 等待選項數量 > 1 (因為通常有一個 "Please Select" 預設值)
+              return el && el.options && el.options.length > 1;
+          }, { timeout: 8000 }, nextSelector);
+          return true;
+      } catch(e) {
+          return false; // 超時代表可能無資料
+      }
+  };
+
+  // ==========================================
+  // 主流程
+  // ==========================================
 
   let results = [];
 
-  // --- 1. Regions (區域) ---
   console.log('⏳ 等待區域數據...');
-  await waitForDataLoad(SEL_REGION, UI_REGION);
-
+  await waitForNextDropdown(SEL_REGION);
   const regions = await getOptions(SEL_REGION);
   console.log(`📍 找到 ${regions.length} 個區域`);
 
   for (const r of regions) {
     console.log(`👉 [區域] ${r.t}`);
+    await selectSelect2(SEL_REGION, r.v);
+    await waitForNextDropdown(SEL_DISTRICT);
 
-    await triggerSelect2Change(SEL_REGION, r.v);
-    
-    // District 的 UI Container ID
-    await waitForDataLoad(SEL_DISTRICT, '#select2-districtValue-container');
-
-    // --- 2. Districts (分區) ---
     const districts = await getOptions(SEL_DISTRICT);
     
     for (const d of districts) {
-      // 進度條顯示
-      process.stdout.write(`   ↳ [分區] ${d.t} `);
-      
-      await triggerSelect2Change(SEL_DISTRICT, d.v);
-      
-      // Estate 的 UI Container ID
-      await waitForDataLoad(SEL_ESTATE, '#select2-estateValue-container');
+    //   console.log(`   ↳ [分區] ${d.t}`);
+      await selectSelect2(SEL_DISTRICT, d.v);
+      await waitForNextDropdown(SEL_ESTATE);
 
-      // --- 3. Estates (屋苑) ---
       const estates = await getOptions(SEL_ESTATE);
-      console.log(`- 找到 ${estates.length} 個屋苑`);
+      console.log(`   🏠 [${d.t}] 正在處理 ${estates.length} 個屋苑...`);
 
       for (const e of estates) {
-        results.push({
-          bank: 'hangseng',
-          region: r.t,
-          district: d.t,
-          name: e.t,   // 這裡是中文名
-          value: e.v   // 這是 ID
-        });
+        // 1. 選取屋苑
+        await selectSelect2(SEL_ESTATE, e.v);
+        
+        // 2. 等待座數 (SEL_BLOCK) 載入
+        // 注意：如果是獨立屋，這裡可能會超時回傳 false，這是正常的
+        const hasBlocks = await waitForNextDropdown(SEL_BLOCK);
+        
+        let blocks = [];
+        if (hasBlocks) {
+            blocks = await getOptions(SEL_BLOCK);
+        }
+
+        if (blocks.length > 0) {
+            // A: 有座數
+            for (const b of blocks) {
+                results.push({
+                  bank: 'hangseng',
+                  region: r.t,
+                  district: d.t,
+                  name: e.t,
+                  value: e.v,
+                  block: b.t,
+                  block_value: b.v
+                });
+            }
+        } else {
+            // B: 無座數 (獨立屋)
+            results.push({
+              bank: 'hangseng',
+              region: r.t,
+              district: d.t,
+              name: e.t,
+              value: e.v,
+              block: null,
+              block_value: null
+            });
+        }
       }
+
+      // 🔥 增量存檔 (每做完一個 District 存一次)
+      const tempFile = path.join(dataDir, 'hangseng_temp.json');
+      fs.writeFileSync(tempFile, JSON.stringify(results, null, 2));
     }
   }
 
-  // 儲存結果
+  // 最終存檔
   const outFile = path.join(dataDir, 'hangseng.json');
   fs.writeFileSync(outFile, JSON.stringify(results, null, 2));
-  console.log(`\n✅ Hang Seng 中文爬取完成！`);
+  console.log(`\n✅ Hang Seng 爬取完成！`);
   console.log(`📦 共 ${results.length} 筆資料已儲存至: ${outFile}`);
 
   await browser.close();

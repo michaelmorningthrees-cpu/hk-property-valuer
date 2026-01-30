@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import EstateAutocomplete from '../components/EstateAutocomplete'
+// import EstateAutocomplete from '../components/EstateAutocomplete' // 移除舊組件引用
 
 const MAX_QUOTA = 10
 
@@ -16,22 +16,27 @@ export default function Home() {
     email: '',
     purpose: ''
   })
+
+  // 🔥 新增：屋苑列表數據 & 載入狀態
+  const [estateList, setEstateList] = useState([])
+  const [isLoadingEstates, setIsLoadingEstates] = useState(false)
+  const [blockOptions, setBlockOptions] = useState([])
+  const [isLoadingBlocks, setIsLoadingBlocks] = useState(false)
+
   const [isServiceActive, setIsServiceActive] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [purposeError, setPurposeError] = useState('')
   const [remainingQuota, setRemainingQuota] = useState(MAX_QUOTA)
 
-  // Initialize daily quota from localStorage
+  // Initialize daily quota
   useEffect(() => {
     const initializeQuota = () => {
       if (typeof window === 'undefined') return
-
       const today = new Date().toDateString()
       const storedDate = localStorage.getItem('quotaDate')
       const storedQuota = localStorage.getItem('remainingQuota')
 
-      // If it's a new day or no stored data, reset quota
       if (storedDate !== today || !storedQuota) {
         localStorage.setItem('quotaDate', today)
         localStorage.setItem('remainingQuota', MAX_QUOTA.toString())
@@ -40,70 +45,115 @@ export default function Home() {
         setRemainingQuota(parseInt(storedQuota, 10))
       }
     }
-
     initializeQuota()
   }, [])
 
-  // Check Hong Kong time to determine service status
+  // Check Service Status
   useEffect(() => {
     const checkServiceStatus = () => {
       const now = new Date()
-      // Convert to Hong Kong time (UTC+8)
       const hkTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' }))
       const hours = hkTime.getHours()
-      // Service is active between 09:00 and 22:00
       setIsServiceActive(hours >= 9 && hours < 22)
     }
-
-    // Check immediately
     checkServiceStatus()
-
-    // Check every minute to update status
     const interval = setInterval(checkServiceStatus, 60000)
-
     return () => clearInterval(interval)
   }, [])
 
+  // 🔥 新增：監聽地區變更，從 API 獲取屋苑列表
+  useEffect(() => {
+    const fetchEstates = async () => {
+      // 當地區改變時，重置已選屋苑
+      setFormData(prev => ({ ...prev, estate: '', estateId: '' }))
+      setEstateList([])
+
+      if (!formData.district) return
+
+      setIsLoadingEstates(true)
+      try {
+        const res = await fetch(`/api/estates?district=${encodeURIComponent(formData.district)}`)
+        if (res.ok) {
+          const data = await res.json()
+          setEstateList(data.estates || [])
+        }
+      } catch (error) {
+        console.error('Failed to fetch estates:', error)
+      } finally {
+        setIsLoadingEstates(false)
+      }
+    }
+
+    fetchEstates()
+  }, [formData.district])
+
+  // ... (原本 fetchEstates 的 useEffect) ...
+  // }, [formData.district])  <-- 搵到呢度，在下面加入：
+
+  // 🔥 [新增] 獲取座數邏輯
+  useEffect(() => {
+    // 重置已選座數
+    setFormData(prev => ({ ...prev, block: '' }))
+    setBlockOptions([])
+
+    if (!formData.district || !formData.estate) return
+
+    const fetchBlocks = async () => {
+      setIsLoadingBlocks(true)
+      try {
+        const res = await fetch(`/api/blocks?district=${encodeURIComponent(formData.district)}&estate=${encodeURIComponent(formData.estate)}`)
+        if (res.ok) {
+          const data = await res.json()
+          if (data.blocks && data.blocks.length > 0) {
+            setBlockOptions(data.blocks)
+          } else {
+            // 💡 如果 API 無回傳座數 (單幢樓)，手動加一個選項，確保一定是 Dropdown
+            setBlockOptions(['單幢 / 無座數']) 
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch blocks:', error)
+        setBlockOptions(['單幢 / 無座數']) // 錯誤時的 Fallback
+      } finally {
+        setIsLoadingBlocks(false)
+      }
+    }
+
+    fetchBlocks()
+  }, [formData.district, formData.estate])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
-    // Reset error
     setPurposeError('')
 
-    // Validate purpose field
-    if (!formData.purpose || formData.purpose === '') {
+    if (!formData.purpose) {
       setPurposeError('請選擇查詢目的')
       return
     }
 
-    // Only proceed if all fields are valid
-    if (!formData.district || !formData.estate || !formData.block || !formData.floor || !formData.flat || !formData.email || !formData.purpose) {
+    if (!formData.district || !formData.estate || !formData.block || !formData.floor || !formData.flat || !formData.email) {
+      alert('請填寫所有必填欄位')
       return
     }
 
     setIsSubmitting(true)
 
     try {
-      // Submit to Google Sheets via API route
       const response = await fetch('/api/valuation', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
 
       const data = await response.json()
 
       if (response.ok && data.success) {
-        // Track Google Ads conversion event - HK_Valuation_Submit
         if (typeof window !== 'undefined' && window.gtag) {
           window.gtag('event', 'conversion', {
             'send_to': 'AW-17861479339/BI_iCLfbm-IbEKuXgsVC'
           })
         }
         
-        // Decrease remaining quota
         const newQuota = Math.max(0, remainingQuota - 1)
         setRemainingQuota(newQuota)
         if (typeof window !== 'undefined') {
@@ -116,9 +166,7 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error submitting form:', error)
-      // Show more detailed error message
-      const errorMessage = error.message || '提交失敗，請稍後再試。'
-      alert(`提交失敗：${errorMessage}\n\n請檢查終端機的錯誤訊息以獲取更多詳情。`)
+      alert(`提交失敗：${error.message || '請稍後再試。'}`)
     } finally {
       setIsSubmitting(false)
     }
@@ -127,12 +175,21 @@ export default function Home() {
   const handleChange = (e) => {
     const { name, value } = e.target
     
-    setFormData({
-      ...formData,
-      [name]: value
-    })
+    // 🔥 修改：如果選的是屋苑，自動查找並設定 estateId
+    if (name === 'estate') {
+      const selectedEstate = estateList.find(item => item.name === value)
+      setFormData({
+        ...formData,
+        estate: value,
+        estateId: selectedEstate ? selectedEstate.id : '' // 確保 ID 被記錄
+      })
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      })
+    }
 
-    // Clear error when user selects a purpose
     if (name === 'purpose' && value !== '') {
       setPurposeError('')
     }
@@ -148,7 +205,6 @@ export default function Home() {
       </Head>
 
       <div className="min-h-screen bg-light-gray flex flex-col">
-        {/* Header */}
         <header className="w-full py-4 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-100">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
@@ -160,10 +216,8 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Main Content */}
         <main className="flex-grow flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
           <div className="w-full max-w-2xl">
-            {/* Hero Section */}
             <div className="text-center mb-10 sm:mb-12">
               <h2 className="text-deep-navy text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
                 一鍵對比四大銀行估價
@@ -173,11 +227,9 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Form Card */}
             <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 lg:p-10 relative">
               {!isSuccess ? (
                 <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
-                  {/* Service Status Indicator - Above Quota Card */}
                   <div className="flex items-center justify-end space-x-2 text-xs text-gray-600 mb-2">
                     <div className={`flex-shrink-0 w-1.5 h-1.5 rounded-full ${isServiceActive ? 'bg-emerald-green animate-pulse' : 'bg-gray-400'}`}></div>
                     <span className="leading-tight">
@@ -188,7 +240,6 @@ export default function Home() {
                     </span>
                   </div>
 
-                  {/* Daily Quota Banner */}
                   <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-4 mb-4">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="text-deep-navy text-sm font-semibold">
@@ -201,7 +252,6 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                    {/* Progress Bar */}
                     <div className="w-full bg-emerald-200 rounded-full h-2.5 overflow-hidden shadow-inner">
                       <div 
                         className="bg-emerald-green h-2.5 rounded-full transition-all duration-500 ease-out shadow-sm"
@@ -225,7 +275,7 @@ export default function Home() {
                       disabled={isSubmitting}
                     >
                       <option value="">請選擇區域</option>
-                      <optgroup label="香港島">
+                      <optgroup label="香港">
                         <option value="堅尼地城/西營盤">堅尼地城 / 西營盤</option>
                         <option value="中環/上環">中環 / 上環</option>
                         <option value="半山">半山</option>
@@ -270,7 +320,7 @@ export default function Home() {
                         <option value="藍田">藍田</option>
                         <option value="油塘/茶果嶺">油塘 / 茶果嶺</option>
                       </optgroup>
-                      <optgroup label="新界及離島">
+                      <optgroup label="新界/離島">
                         <option value="將軍澳">將軍澳</option>
                         <option value="西貢/清水灣">西貢 / 清水灣</option>
                         <option value="沙田">沙田</option>
@@ -292,45 +342,77 @@ export default function Home() {
                     </select>
                   </div>
 
-                  {/* Estate Name */}
+                  {/* 🔥 Estate Name (已改為下拉選單) */}
                   <div>
                     <label htmlFor="estate" className="block text-deep-navy text-sm font-medium mb-2">
                       屋苑名稱
                     </label>
-                    <EstateAutocomplete
-                      district={formData.district}
+                    <select
+                      id="estate"
+                      name="estate"
                       value={formData.estate}
-                      estateId={formData.estateId}
-                      onChange={({ name, id }) => setFormData({ ...formData, estate: name, estateId: id })}
-                      disabled={isSubmitting}
-                    />
-                    <p className="mt-2 text-xs text-gray-500">
-                      如找不到屋苑，可直接輸入自訂名稱
-                    </p>
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-green focus:border-emerald-green transition-colors text-gray-900 bg-white disabled:bg-gray-100 disabled:text-gray-500"
+                      required
+                      disabled={!formData.district || isLoadingEstates || isSubmitting}
+                    >
+                      <option value="">
+                        {!formData.district 
+                          ? '請先選擇地區' 
+                          : isLoadingEstates 
+                            ? '載入中...' 
+                            : '請選擇屋苑'
+                        }
+                      </option>
+                      {estateList.map((estate, index) => (
+                        <option key={`${estate.id}-${index}`} value={estate.name}>
+                          {estate.name}
+                        </option>
+                      ))}
+                    </select>
+                    {!isLoadingEstates && formData.district && estateList.length === 0 && (
+                       <p className="mt-2 text-xs text-red-500">該地區暫無屋苑資料，請聯絡管理員。</p>
+                    )}
                   </div>
-
-                  {/* Block / Floor / Flat */}
-                  <div>
+{/* Block / Floor / Flat */}
+<div>
                     <label className="block text-deep-navy text-sm font-medium mb-2">
                       座數 / 樓層 / 單位
                     </label>
                     <div className="grid grid-cols-3 gap-3">
+                      
+                      {/* 🔥 [修改] 座數變成強制下拉選單 */}
                       <div>
                         <label htmlFor="block" className="block text-xs text-gray-500 mb-1">
                           座
                         </label>
-                        <input
-                          type="text"
+                        <select
                           id="block"
                           name="block"
                           value={formData.block}
                           onChange={handleChange}
-                          placeholder="座"
-                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-green focus:border-emerald-green transition-colors text-gray-900 placeholder-gray-400"
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-green focus:border-emerald-green transition-colors text-gray-900 bg-white disabled:bg-gray-100"
                           required
-                          disabled={isSubmitting}
-                        />
+                          disabled={isSubmitting || isLoadingBlocks || !formData.estate}
+                        >
+                          <option value="">
+                            {isLoadingBlocks 
+                              ? '載入中...' 
+                              : !formData.estate 
+                                ? '請先選屋苑' 
+                                : '請選擇'
+                            }
+                          </option>
+                          
+                          {blockOptions.map((opt, idx) => (
+                            <option key={idx} value={opt}>
+                              {opt}
+                            </option>
+                          ))}
+                        </select>
                       </div>
+
+                      {/* 樓層 (Floor) */}
                       <div>
                         <label htmlFor="floor" className="block text-xs text-gray-500 mb-1">
                           樓
@@ -341,12 +423,14 @@ export default function Home() {
                           name="floor"
                           value={formData.floor}
                           onChange={handleChange}
-                          placeholder="樓"
+                          placeholder="如2樓，請輸入阿拉伯數字"
                           className="w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-green focus:border-emerald-green transition-colors text-gray-900 placeholder-gray-400"
                           required
                           disabled={isSubmitting}
                         />
                       </div>
+
+                      {/* 單位 (Flat) */}
                       <div>
                         <label htmlFor="flat" className="block text-xs text-gray-500 mb-1">
                           室

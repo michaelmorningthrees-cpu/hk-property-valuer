@@ -3,42 +3,38 @@ const fs = require('fs');
 const path = require('path');
 
 (async () => {
-  console.log('🚀 啟動 Citibank 爬蟲 (屋苑 + 座數版)...');
+  console.log('🚀 啟動 Citibank 爬蟲 (智能等待版)...');
   
-  // 1. 建立 data 資料夾
   const dataDir = path.join(__dirname, '../data');
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
 
   const browser = await puppeteer.launch({ 
-    headless: false, 
+    headless: false, // 建議保持 false 以便除錯，穩定後可改 true
     defaultViewport: null,
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
   
   const page = await browser.newPage();
-  
-  // 偽裝成普通瀏覽器
   await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
-  // 2. 前往網址
   const URL = 'https://www.citibank.com.hk/acquisition/mortgage/index.html?locale=zh_HK';
   console.log(`🔗 前往網站...`);
   
   try {
-    await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.goto(URL, { waitUntil: 'networkidle2', timeout: 60000 });
   } catch (e) {
-    console.log('⚠️ 導航超時，但嘗試繼續執行...');
+    console.log('⚠️ 導航超時，嘗試繼續...');
   }
 
-  // 3. 手動等待頁面初始化
-  console.log('⏳ 等待 5 秒讓頁面初始化...');
-  await new Promise(r => setTimeout(r, 5000));
+  // Helper: 隨機延遲 (模擬人類操作，避免被封)
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  const randomSleep = (min, max) => sleep(Math.floor(Math.random() * (max - min + 1) + min));
 
   // 定義 Selectors
   const SEL_REGION   = '#zone';
   const SEL_DISTRICT = '#district';
   const SEL_ESTATE   = '#estName';
-  const SEL_BLOCK    = '#bckBuilding'; // Citi 常用的座數 ID
+  const SEL_BLOCK    = '#bckBuilding';
 
   // Helper: 獲取 Dropdown 選項
   const getOptions = async (selector) => {
@@ -46,18 +42,18 @@ const path = require('path');
       const el = document.querySelector(s);
       if (!el || el.disabled) return [];
       return Array.from(el.options)
-        .filter(o => o.value && o.value.trim() !== "" && !o.disabled && !o.innerText.includes('請選擇') && !o.innerText.includes('Select'))
+        .filter(o => o.value && o.value.trim() !== "" && !o.disabled && !o.innerText.includes('Select') && !o.innerText.includes('請選擇'))
         .map(o => ({t: o.innerText.trim(), v: o.value}));
     }, selector);
   };
 
   let results = [];
 
-  // 1. 等待 #zone 出現
+  // 等待區域選單出現
   try {
-    await page.waitForSelector(SEL_REGION, { visible: true, timeout: 15000 });
+    await page.waitForSelector(SEL_REGION, { visible: true, timeout: 20000 });
   } catch (e) {
-    console.error('❌ 找不到 #zone。');
+    console.error('❌ 頁面加載失敗，找不到區域選單');
     await browser.close();
     return;
   }
@@ -67,18 +63,31 @@ const path = require('path');
   console.log(`📍 找到 ${regions.length} 個區域`);
 
   for (const r of regions) {
-    // 1. 選區域
+    console.log(`🔻 進入區域: ${r.t}`);
     await page.select(SEL_REGION, r.v);
-    await new Promise(res => setTimeout(res, 1000)); 
+    await randomSleep(500, 1000); // 稍微等待 API 觸發
+
+    // 等待 District 載入完成 (直到有選項)
+    await page.waitForFunction((sel) => {
+        const el = document.querySelector(sel);
+        return el && !el.disabled && el.options.length > 1;
+    }, { timeout: 5000 }, SEL_DISTRICT).catch(() => {});
 
     const districts = await getOptions(SEL_DISTRICT);
     
     for (const d of districts) {
+      // 排除預設選項
       if (d.t.includes('請選擇') || d.t.includes('Select')) continue;
 
       // 2. 選地區
       await page.select(SEL_DISTRICT, d.v);
-      await new Promise(res => setTimeout(res, 1500)); 
+      await randomSleep(300, 600);
+
+      // 等待 Estate 載入完成
+      await page.waitForFunction((sel) => {
+          const el = document.querySelector(sel);
+          return el && !el.disabled && el.options.length > 1;
+      }, { timeout: 5000 }, SEL_ESTATE).catch(() => {});
 
       const estates = await getOptions(SEL_ESTATE);
       console.log(`   🏠 [${d.t}] 正在處理 ${estates.length} 個屋苑...`);
@@ -86,30 +95,48 @@ const path = require('path');
       for (const e of estates) {
          if (e.t.includes('請選擇') || e.t.includes('Select')) continue;
          
-         // 3. 選屋苑 (重要：選了才會加載座數)
+         // 3. 選屋苑
          await page.select(SEL_ESTATE, e.v);
          
-         // ⏳ 等待座數 API 回傳 (稍為加長等待時間以保險)
-         await new Promise(res => setTimeout(res, 2000)); 
+         // 🔥【關鍵優化】不再死等 2 秒，而是監聽座數選單的變化
+         // 邏輯：等待座數選單 (SEL_BLOCK) 變為 Enabled 且選項數量 > 1
+         // 如果 4 秒內沒反應，我們才假設它是獨立屋 (無座數)
+         let hasBlocks = false;
+         try {
+             await page.waitForFunction((sel) => {
+                 const el = document.querySelector(sel);
+                 // 條件：元素存在 + 未禁用 + 選項大於1 (因為通常有一個 "Select Block" 預設值)
+                 return el && !el.disabled && el.options.length > 1;
+             }, { timeout: 4000 }, SEL_BLOCK); // 設定 4 秒超時，API 慢的時候這很有用
+             hasBlocks = true;
+         } catch (err) {
+             // 超時代表可能真的沒有座數，或者該屋苑只有一期/一座
+             hasBlocks = false;
+         }
+
+         // 給一點緩衝讓 DOM 渲染完畢
+         if(hasBlocks) await randomSleep(100, 300);
 
          // 4. 獲取座數
          const blocks = await getOptions(SEL_BLOCK);
 
          if (blocks.length > 0) {
-             // 情況 A: 有座數 (存入座數名及 ID)
+             // 情況 A: 有座數
+             // console.log(`      ✅ 抓到 ${blocks.length} 座`);
              for (const b of blocks) {
                  results.push({
                     bank: 'citi',
                     region: r.t,
                     district: d.t,
-                    name: e.t,       // 屋苑名
-                    value: e.v,      // 屋苑 ID
-                    block: b.t,      // 座數名
-                    block_value: b.v // 座數 ID (供 scraper.js 直接使用)
+                    name: e.t,
+                    value: e.v,
+                    block: b.t,
+                    block_value: b.v
                  });
              }
          } else {
-             // 情況 B: 無座數 (獨立屋/單幢)，Block 欄位留空
+             // 情況 B: 無座數 (獨立屋/單幢)
+            //  console.log(`      ⚠️ 無座數 (可能是單幢/洋房)`);
              results.push({
                 bank: 'citi',
                 region: r.t,
@@ -121,10 +148,14 @@ const path = require('path');
              });
          }
       }
+      
+      // 每處理完一個地區，存一次檔 (避免崩潰全白費)
+      const tempFile = path.join(dataDir, 'citi_temp.json');
+      fs.writeFileSync(tempFile, JSON.stringify(results, null, 2));
     }
   }
 
-  // 存檔 (這裡改回 citi.json)
+  // 最終存檔
   const outFile = path.join(dataDir, 'citi.json');
   fs.writeFileSync(outFile, JSON.stringify(results, null, 2));
   console.log(`\n✅ 成功！共 ${results.length} 筆資料已儲存至 ${outFile}`);
