@@ -24,48 +24,27 @@ export default async function handler(req, res) {
   const { history, message } = req.body;
 
   try {
-    // 使用 gemini-pro (穩定版)
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-    // 處理歷史訊息：
-    // 1. 過濾掉任何沒有內容的訊息
-    // 2. 確保我們正確讀取前端傳來的結構 (parts)
-    // 3. 過濾掉第一條如果是 'model' 的歡迎語 (Gemini 規定對話必須由 User 開始)
-    const cleanHistory = history
-      .filter((msg, index) => {
-        // 如果第一條係 model (即係 UI 嗰句 "你好..."), 就唔好 send 俾 Google
-        if (index === 0 && msg.role === 'model') return false;
-        return true;
-      })
-      .map(msg => {
-        // 修正：前端傳來的 msg 已經係 { role, parts: [...] } 格式
-        // 所以我哋直接用就得，唔好再 msg.text 這樣讀 (因為會 undefined)
-        if (msg.parts) {
-            return {
-                role: msg.role === 'user' ? 'user' : 'model',
-                parts: msg.parts
-            };
-        }
-        return null;
-      })
-      .filter(item => item !== null); // 移除任何轉換失敗的項目
-
-    // 啟動對話，並將 System Prompt 塞入去開頭
-    const chat = model.startChat({
-      history: [
-        {
-          role: "user",
-          parts: [{ text: SYSTEM_PROMPT }],
-        },
-        {
-          role: "model",
-          parts: [{ text: "明白，我是 hk-valuation 小助手，請隨時吩咐。" }],
-        },
-        ...cleanHistory // 放入過濾後的用戶歷史
-      ],
+    // 🔥 1. 使用最新的 gemini-1.5-flash (速度快，支援 systemInstruction)
+    const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        systemInstruction: SYSTEM_PROMPT // 直接注入人設，不用搞 Fake History
     });
 
-    // 發送用戶最新問題
+    // 🔥 2. 處理歷史訊息 (關鍵修正)
+    // 你的前端已經把格式轉成了 { role, parts: [...] }
+    // 我們只需要過濾掉第一條 (如果是 Model 歡迎語)，因為 Google 不容許 Model 開頭
+    const cleanHistory = history.filter((msg, index) => {
+        // 如果是第一條訊息，且角色是 model，過濾掉 (移除歡迎語)
+        if (index === 0 && msg.role === 'model') return false;
+        return true;
+    });
+
+    // 啟動對話
+    const chat = model.startChat({
+      history: cleanHistory, // 直接傳入乾淨的歷史
+    });
+
+    // 發送用戶訊息
     const result = await chat.sendMessage(message);
     const response = await result.response;
     const text = response.text();
