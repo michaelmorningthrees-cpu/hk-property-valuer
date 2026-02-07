@@ -24,34 +24,48 @@ export default async function handler(req, res) {
   const { history, message } = req.body;
 
   try {
-    // 🔥 修改點 1：改用最穩定的 'gemini-pro'
+    // 使用 gemini-pro (穩定版)
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-    // 🔥 修改點 2：手動將 System Prompt 放入對話歷史的第一條
-    // (這比 systemInstruction 兼容性更高)
-    const chatHistory = [
-      {
-        role: "user",
-        parts: [{ text: SYSTEM_PROMPT }],
-      },
-      {
-        role: "model",
-        parts: [{ text: "收到，我是 hk-valuation 小助手，請隨時吩咐。" }],
-      },
-      // 過濾掉前端傳來的舊 System Message (如果有)，避免重複
-      ...history.filter((msg, index) => {
-         // 簡單過濾：確保不會連續傳入奇怪的格式
-         return true; 
-      }).map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'model',
-        parts: [{ text: msg.text }]
-      }))
-    ];
+    // 處理歷史訊息：
+    // 1. 過濾掉任何沒有內容的訊息
+    // 2. 確保我們正確讀取前端傳來的結構 (parts)
+    // 3. 過濾掉第一條如果是 'model' 的歡迎語 (Gemini 規定對話必須由 User 開始)
+    const cleanHistory = history
+      .filter((msg, index) => {
+        // 如果第一條係 model (即係 UI 嗰句 "你好..."), 就唔好 send 俾 Google
+        if (index === 0 && msg.role === 'model') return false;
+        return true;
+      })
+      .map(msg => {
+        // 修正：前端傳來的 msg 已經係 { role, parts: [...] } 格式
+        // 所以我哋直接用就得，唔好再 msg.text 這樣讀 (因為會 undefined)
+        if (msg.parts) {
+            return {
+                role: msg.role === 'user' ? 'user' : 'model',
+                parts: msg.parts
+            };
+        }
+        return null;
+      })
+      .filter(item => item !== null); // 移除任何轉換失敗的項目
 
+    // 啟動對話，並將 System Prompt 塞入去開頭
     const chat = model.startChat({
-      history: chatHistory,
+      history: [
+        {
+          role: "user",
+          parts: [{ text: SYSTEM_PROMPT }],
+        },
+        {
+          role: "model",
+          parts: [{ text: "明白，我是 hk-valuation 小助手，請隨時吩咐。" }],
+        },
+        ...cleanHistory // 放入過濾後的用戶歷史
+      ],
     });
 
+    // 發送用戶最新問題
     const result = await chat.sendMessage(message);
     const response = await result.response;
     const text = response.text();
