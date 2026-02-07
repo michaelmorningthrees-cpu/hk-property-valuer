@@ -68,3 +68,7 @@ export default async function handler(req, res) {
     res.status(200).json({ reply: text });
 
   } catch (error) {
+    console.error("Gemini API Error details:", error);
+    res.status(500).json({ error: error.message || "系統繁忙" });
+  }
+}
