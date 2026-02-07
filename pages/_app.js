@@ -1,6 +1,7 @@
 import '../styles/globals.css'
 import Script from 'next/script'
 import { Analytics } from '@vercel/analytics/react'
+import ChatWidget from '../components/ChatWidget'
 
 export default function App({ Component, pageProps }) {
   return (
@@ -38,6 +39,8 @@ export default function App({ Component, pageProps }) {
       />
       <Component {...pageProps} />
       <Analytics />
+      {/* 👈 動作 2：加呢行，這就是你的聊天機械人！ */}
+      <ChatWidget /> 
     </>
   )
 }
