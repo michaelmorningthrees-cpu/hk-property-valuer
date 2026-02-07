@@ -24,27 +24,42 @@ export default async function handler(req, res) {
   const { history, message } = req.body;
 
   try {
-    // 🔥 1. 使用最新的 gemini-1.5-flash (速度快，支援 systemInstruction)
-    const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
-        systemInstruction: SYSTEM_PROMPT // 直接注入人設，不用搞 Fake History
-    });
+    // ⭐️ 使用 gemini-pro (1.0) - 最穩定，美國 Server 一定通
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-    // 🔥 2. 處理歷史訊息 (關鍵修正)
-    // 你的前端已經把格式轉成了 { role, parts: [...] }
-    // 我們只需要過濾掉第一條 (如果是 Model 歡迎語)，因為 Google 不容許 Model 開頭
-    const cleanHistory = history.filter((msg, index) => {
-        // 如果是第一條訊息，且角色是 model，過濾掉 (移除歡迎語)
+    // 處理歷史訊息 (確保沒有 undefined)
+    const cleanHistory = (history || [])
+      .filter((msg, index) => {
+        // 過濾第一條如果是 model 的歡迎語
         if (index === 0 && msg.role === 'model') return false;
         return true;
-    });
+      })
+      .map(msg => {
+        if (msg.parts) {
+            return {
+                role: msg.role === 'user' ? 'user' : 'model',
+                parts: msg.parts
+            };
+        }
+        return null;
+      })
+      .filter(item => item !== null);
 
     // 啟動對話
     const chat = model.startChat({
-      history: cleanHistory, // 直接傳入乾淨的歷史
+      history: [
+        {
+          role: "user",
+          parts: [{ text: SYSTEM_PROMPT }],
+        },
+        {
+          role: "model",
+          parts: [{ text: "明白，我是 hk-valuation 小助手。" }],
+        },
+        ...cleanHistory
+      ],
     });
 
-    // 發送用戶訊息
     const result = await chat.sendMessage(message);
     const response = await result.response;
     const text = response.text();
