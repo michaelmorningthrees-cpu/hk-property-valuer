@@ -1,7 +1,7 @@
 import '../styles/globals.css'
 import Script from 'next/script'
 import { Analytics } from '@vercel/analytics/react'
-import ChatWidget from '../components/ChatWidget'
+import ChatWidget from '../components/ChatWidget' 
 
 export default function App({ Component, pageProps }) {
   // 檢查環境變數，如果係 'true' 先顯示chat
