@@ -37,7 +37,7 @@ export default async function handler(req, res) {
   try {
     // 使用 gemini-flash-latest (最穩定)
     const model = genAI.getGenerativeModel({ 
-        model: "models/gemini-flash-latest", 
+        model: "models/gemini-2.0-flash-lite-001", 
         systemInstruction: SYSTEM_PROMPT 
     });
 
