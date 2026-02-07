@@ -24,10 +24,11 @@ export default async function handler(req, res) {
   const { history, message } = req.body;
 
   try {
-    // ⭐️ 使用 gemini-pro (1.0) - 最穩定，美國 Server 一定通
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // ⭐️ 關鍵修改：現在 SDK 更新了，我們轉回使用最新的 1.5 Flash
+    // 這是目前 Google 最穩定、支援度最好的模型
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // 處理歷史訊息 (確保沒有 undefined)
+    // 處理歷史訊息 (保留這個穩定的過濾邏輯)
     const cleanHistory = (history || [])
       .filter((msg, index) => {
         // 過濾第一條如果是 model 的歡迎語
@@ -45,7 +46,7 @@ export default async function handler(req, res) {
       })
       .filter(item => item !== null);
 
-    // 啟動對話
+    // 手動注入 System Prompt (這在所有版本都通用，最安全)
     const chat = model.startChat({
       history: [
         {
@@ -67,7 +68,3 @@ export default async function handler(req, res) {
     res.status(200).json({ reply: text });
 
   } catch (error) {
-    console.error("Gemini API Error details:", error);
-    res.status(500).json({ error: error.message || "系統繁忙" });
-  }
-}
