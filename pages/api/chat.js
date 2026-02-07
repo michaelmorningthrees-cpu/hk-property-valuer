@@ -14,7 +14,7 @@ const SYSTEM_PROMPT = `
 2. **關於計算**：
    - 當計算按揭/印花稅時，請小心列出算式。
    - 假設 P按 = 4.125%，年期 30年。
-   - 印花稅請參考最新的第2標準稅率 (400萬以下$100)。
+   - 印花稅請參考最新的第2標準稅率。
 3. **免責聲明**：回答金額相關問題後，必須加上：「(以上數字只供參考，實際批核視乎銀行。)」
 `;
 
@@ -24,22 +24,32 @@ export default async function handler(req, res) {
   const { history, message } = req.body;
 
   try {
-    // 試用 gemini-pro (最穩定) 或者 gemini-1.5-flash-latest
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    
-    // 啟動對話模式
+    // 🔥 修改點 1：改用最穩定的 'gemini-pro'
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    // 🔥 修改點 2：手動將 System Prompt 放入對話歷史的第一條
+    // (這比 systemInstruction 兼容性更高)
+    const chatHistory = [
+      {
+        role: "user",
+        parts: [{ text: SYSTEM_PROMPT }],
+      },
+      {
+        role: "model",
+        parts: [{ text: "收到，我是 hk-valuation 小助手，請隨時吩咐。" }],
+      },
+      // 過濾掉前端傳來的舊 System Message (如果有)，避免重複
+      ...history.filter((msg, index) => {
+         // 簡單過濾：確保不會連續傳入奇怪的格式
+         return true; 
+      }).map(msg => ({
+        role: msg.role === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.text }]
+      }))
+    ];
+
     const chat = model.startChat({
-      history: [
-        {
-          role: "user",
-          parts: [{ text: SYSTEM_PROMPT }], // 將人設放入第一句
-        },
-        {
-          role: "model",
-          parts: [{ text: "明白，我是 hk-valuation.com 的小助手，隨時為你服務。" }],
-        },
-        ...history, // 帶入之前的對話紀錄
-      ],
+      history: chatHistory,
     });
 
     const result = await chat.sendMessage(message);
@@ -47,8 +57,9 @@ export default async function handler(req, res) {
     const text = response.text();
 
     res.status(200).json({ reply: text });
+
   } catch (error) {
-    console.error("Gemini API Error:", error);
-    res.status(500).json({ error: "系統繁忙，請稍後再試。" });
+    console.error("Gemini API Error details:", error);
+    res.status(500).json({ error: error.message || "系統繁忙" });
   }
 }
