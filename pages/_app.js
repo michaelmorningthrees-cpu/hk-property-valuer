@@ -4,6 +4,9 @@ import { Analytics } from '@vercel/analytics/react'
 import ChatWidget from '../components/ChatWidget'
 
 export default function App({ Component, pageProps }) {
+  // 檢查環境變數，如果係 'true' 先顯示chat
+  const showChat = process.env.NEXT_PUBLIC_ENABLE_CHAT === 'true';
+
   return (
     <>
       {/* Google tag (gtag.js) - Using Next.js Script for better performance */}
@@ -39,8 +42,8 @@ export default function App({ Component, pageProps }) {
       />
       <Component {...pageProps} />
       <Analytics />
-      {/* 👈 動作 2：加呢行，這就是你的聊天機械人！ */}
-      <ChatWidget /> 
+      {/* 👇 只有當變數係 true 時先顯示 */}
+      {showChat && <ChatWidget />}
     </>
   )
 }
