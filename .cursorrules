@@ -1,0 +1,202 @@
+# HK Valuation 專案規則
+
+## 專案概述
+HK Property Valuer 是一個香港房地產估價比較平台，提供四大銀行（HSBC、恒生、花旗、DBS）的物業估值對比服務，並配備 AI 智能助理協助用戶了解按揭流程。
+
+## 技術棧
+- **框架**: Next.js 14.0.4 (React 18.2.0)
+- **樣式**: Tailwind CSS 3.4.0 + Custom Design System
+- **AI**: Google Gemini 2.5 Flash API (@google/generative-ai ^0.24.1)
+- **數據抓取**: Playwright + Stealth Plugin (puppeteer-extra)
+- **分析**: Vercel Analytics, Google Analytics (AW-17861479339), Microsoft Clarity (v0unm481lh)
+- **語言處理**: opencc-js (繁簡轉換)
+
+## 架構設計
+
+### 核心功能模塊
+1. **估價系統** (`pages/index.js`, `pages/api/valuation.js`)
+   - 智能表單（地區 → 屋苑 → 座數動態加載）
+   - 每日限額控制（localStorage + 每日重置）
+   - Google Sheets 後端整合
+   - 服務時間檢測（HKT 09:00-22:00）
+
+2. **AI 聊天助理** (`components/ChatWidget.js`, `pages/api/chat.js`)
+   - **當前狀態**: 預設停用（`NEXT_PUBLIC_ENABLE_CHAT='false'`）
+   - 使用 Gemini 2.5 Flash 模型（免費層：~1,500次/日）
+   - 嚴格限制：僅回答香港房地產/按揭相關問題
+   - 防濫用設計：20秒超時、免責聲明同意頁面
+   - 移動端優化：全屏模式 + 鍵盤適配
+
+3. **數據 API**
+   - `/api/estates` - 屋苑列表（動態去重 + 異體字處理）
+   - `/api/blocks` - 座數列表（智能提取 + 單幢檢測）
+   - 數據來源：`data/{hsbc,hangseng,citi,dbs}.json`（共 ~5.8MB）
+
+4. **數據抓取器** (`scraper.js`)
+   - 自動化爬取四大銀行估價數據
+   - 地址標準化（繁簡轉換 + 異體字統一）
+   - Stealth 模式繞過反爬蟲機制
+
+### 數據處理策略
+- **異體字統一表** (`HK_VARIANTS_MAP`)：峯→峰、滙→匯、台→臺 等
+- **地區映射**：英文區名 → 繁體中文（如 "Cheung Sha Wan" → "長沙灣"）
+- **去重邏輯**：
+  1. Unicode NFKC 標準化
+  2. 指紋比對（移除空格/標點）
+  3. 變種過濾（如 "樂信大廈" vs "樂信大廈 (水街)"）
+
+## 編碼規範
+
+### 1. 語言與註釋
+- **代碼**: 英文變數名、函數名
+- **註釋**: 繁體中文（廣東話書面語）
+- **用戶介面**: 100% 繁體中文
+- **規則**: 使用繁體中文（traditional Chinese）
+
+### 2. React 最佳實踐
+```javascript
+// ✅ 正確：使用 useEffect 防止 SSR 錯誤
+useEffect(() => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('key', value);
+  }
+}, []);
+
+// ❌ 錯誤：直接訪問 localStorage
+const value = localStorage.getItem('key'); // SSR will fail
+```
+
+### 3. API 路由規範
+- 必須驗證所有輸入參數
+- 使用結構化錯誤響應：`{ error: string, message?: string }`
+- 記錄關鍵操作到 console（方便 Vercel Logs 追蹤）
+- 環境變數檢查：
+  ```javascript
+  if (!process.env.GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === 'YOUR_DEPLOYED_WEB_APP_URL') {
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+  ```
+
+### 4. Tailwind CSS 設計系統
+**自定義顏色**（`tailwind.config.js`）:
+- `deep-navy`: #1A2332（主色）
+- `emerald-green`: #10B981（CTA 按鈕）
+- `light-gray`: #F9FAFB（背景）
+
+**響應式斷點優先**:
+```jsx
+<div className="w-full sm:w-[380px] h-[100dvh] sm:h-[600px]">
+  {/* 手機：全屏，桌面：固定尺寸 */}
+</div>
+```
+
+### 5. 表單處理
+- 必須實作 loading 狀態（防止重複提交）
+- 錯誤提示必須清晰（如 `purposeError` state）
+- 禁用狀態需明確視覺反饋：`disabled:opacity-50 disabled:cursor-not-allowed`
+
+### 6. AI 聊天守護規則
+**System Prompt 核心要求** (`pages/api/chat.js`):
+1. 僅回答香港房地產/按揭相關問題
+2. 拒絕提供具體估價數字（引導用戶使用網站系統）
+3. 涉及金額必須加免責聲明：「(數字只供參考，以銀行為準)」
+4. 拒絕閒聊（食譜、編程、政治等）
+
+**配額管理**:
+- 使用 Gemini Free Tier（限制：~1,500次/日）
+- 429 錯誤時友善提示：「⚠️ 今日查詢人數過多，請聽日再試」
+
+## 環境變數配置
+
+### 必需變數（`.env.local`）
+```bash
+# Google Sheets 整合
+GOOGLE_SCRIPT_URL=https://script.google.com/macros/s/.../exec
+GS_SECRET_TOKEN=valuation_secure_2024_test
+
+# Gemini AI（目前停用）
+GEMINI_API_KEY=AIza...
+
+# 功能開關
+NEXT_PUBLIC_ENABLE_CHAT=false  # 聊天功能預設關閉
+```
+
+### Vercel 部署檢查清單
+- [ ] 所有環境變數已在 Vercel Dashboard 設定
+- [ ] `NEXT_PUBLIC_*` 變數會暴露給客戶端
+- [ ] API keys 絕不使用 `NEXT_PUBLIC_` 前綴
+
+## Git 提交規範
+- 使用小寫簡短描述：`update`, `fix`, `disable chat`, `add disclaimer`
+- 重大功能使用完整描述：`add chatbox with germini api`
+
+## 已知問題與維護注意事項
+
+### 1. 數據完整性
+- **HSBC 數據**: 最後更新 2024-01-28（需定期執行 `scraper.js` 更新）
+- **缺失區域**: 部分偏遠地區屋苑可能未收錄
+- **異體字問題**: 必須使用 `unifyCharacters()` 函數處理用戶輸入
+
+### 2. 聊天功能維護
+- **當前狀態**: 停用（`_app.js` 中 `showChat` 檢查環境變數）
+- **重啟步驟**:
+  1. 設定 `.env.local`: `NEXT_PUBLIC_ENABLE_CHAT=true`
+  2. 確認 Gemini API Key 有效
+  3. 監控配額使用（Vercel Logs）
+
+### 3. 移動端測試要點
+- 測試全屏聊天視窗（`h-[100dvh]` 適配 iOS Safari）
+- 驗證鍵盤彈出不會破壞佈局
+- 檢查觸控操作響應（按鈕 `active:scale-95`）
+
+## 開發流程
+
+### 本地開發
+```bash
+npm run dev        # 啟動開發服務器（http://localhost:3000）
+npm run build      # 生產環境構建
+npm run start      # 運行生產版本
+```
+
+### 數據更新
+```bash
+node scraper.js    # 執行爬蟲（需時 ~30 分鐘）
+# 輸出：data/{hsbc,hangseng,citi,dbs}.json
+```
+
+### 調試工具
+- `/api/debug` - 後端調試端點
+- `DEBUG_GUIDE.md` - 調試指南文檔
+- Vercel Logs - 生產環境日誌
+
+## 性能優化
+
+### 已實施
+- Next.js Script 組件延遲加載分析腳本（`strategy="afterInteractive"`）
+- 表單防抖（禁用按鈕 + loading 狀態）
+- 聊天超時控制（20 秒 AbortController）
+
+### 待優化
+- [ ] 數據 API 添加緩存（目前每次請求都讀取 5.8MB JSON）
+- [ ] 圖片優化（使用 Next.js Image 組件）
+- [ ] Code splitting（按需加載 ChatWidget）
+
+## 安全性
+
+### 實施措施
+- Google Sheets 請求需 token 驗證（`GS_SECRET_TOKEN`）
+- AI 聊天輸入提醒：「請勿輸入個人私隱資料」
+- Rate limiting：每日限額 10 份報告/IP
+
+### 待加強
+- [ ] API 路由添加 rate limiting middleware
+- [ ] CAPTCHA 防機器人濫用
+- [ ] CSP (Content Security Policy) 配置
+
+## 聯絡資訊
+- 官方郵箱: michaelmorningthrees@gmail.com
+- 網站: https://www.hk-valuation.com
+
+## 文檔更新日誌
+- 2026-03-26: 初始版本（基於最近20次提交分析）
+- 最後更新 Git commit: `897672b update`

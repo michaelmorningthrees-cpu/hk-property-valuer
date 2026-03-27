@@ -1,0 +1,454 @@
+# HK Valuation 系統上下文文檔
+**文檔版本**: v1.0 (2026-03-26)  
+**最後 Git Commit**: 897672b update  
+**系統狀態**: Production Ready (Chat 功能停用中)
+
+---
+
+## 🎯 專案定位
+HK Property Valuer 是香港首個一站式房地產估價比較平台，整合 HSBC、恒生銀行、花旗銀行、DBS 四大銀行的物業估值數據，為用戶提供免費的估價報告對比服務。
+
+**目標用戶**: 準買家、業主、地產從業員  
+**核心價值**: 30 分鐘內獲取四大銀行估價對比報告
+
+---
+
+## 📊 當前系統狀態（2026-03-26）
+
+### 生產環境配置
+| 功能模塊 | 狀態 | 說明 |
+|---------|------|------|
+| 估價表單系統 | ✅ 運行中 | 完整功能，每日限額 10 份 |
+| AI 聊天助理 | ⏸️ 停用 | 環境變數 `NEXT_PUBLIC_ENABLE_CHAT=false` |
+| Google Sheets 整合 | ✅ 運行中 | 自動記錄用戶提交 |
+| 數據 API (屋苑/座數) | ✅ 運行中 | 智能去重 + 異體字處理 |
+| 分析追蹤 | ✅ 運行中 | GA + Clarity + Vercel Analytics |
+
+### 數據覆蓋範圍
+- **銀行數據**: HSBC, Hang Seng, Citibank, DBS
+- **數據量**: 約 5.8MB JSON (合計 ~15,000+ 屋苑/區域組合)
+- **最後更新**: 
+  - HSBC: 2024-01-28
+  - Hang Seng: 2024-01-24
+  - DBS: 2024-01-24
+  - Citibank: 2024-01-23
+
+---
+
+## 🏗️ 系統架構詳解
+
+### 前端架構 (Next.js 14 + React 18)
+```
+pages/
+├── index.js              # 主估價表單（574 行）
+├── _app.js               # 全局配置 + 分析腳本 + ChatWidget 條件加載
+├── _document.js          # HTML 文檔結構
+├── about.js              # 關於我們
+├── contact.js            # 聯絡頁面
+├── disclaimer.js         # 免責聲明（重要法律文檔）
+├── privacy.js            # 私隱政策
+└── api/
+    ├── valuation.js      # 估價提交處理（115 行）
+    ├── estates.js        # 屋苑列表 API（133 行）
+    ├── blocks.js         # 座數列表 API（163 行）
+    ├── chat.js           # Gemini AI 聊天（71 行）
+    ├── submit.js         # (待確認用途)
+    └── debug.js          # 調試工具
+
+components/
+├── ChatWidget.js         # AI 聊天組件（228 行，移動端全屏優化）
+└── (已移除) EstateAutocomplete.js
+```
+
+### 數據層
+```
+data/
+├── hsbc.json            # 1.6MB (HSBC 估價數據)
+├── hangseng.json        # 1.5MB (恒生估價數據)
+├── dbs.json             # 1.5MB (DBS 估價數據)
+└── citi.json            # 1.1MB (花旗估價數據)
+
+格式範例：
+{
+  "district": "長沙灣 / 荔枝角",
+  "name": "碧海藍天",
+  "value": "cheung-sha-wan_bik-hoi-lam-tin",
+  "block": "第1座",
+  "block_name": "Tower 1"
+}
+```
+
+### 爬蟲系統 (`scraper.js` - 1,690 行)
+**技術棧**: Playwright + puppeteer-extra-plugin-stealth  
+**功能**:
+1. 自動化登入銀行估價系統（模擬真實用戶行為）
+2. 提取地區、屋苑、座數結構化數據
+3. 地址標準化處理（繁簡轉換 + 異體字統一）
+4. 反爬蟲對策（Stealth 模式 + 隨機延遲）
+
+**執行週期**: 建議每月更新一次數據
+
+---
+
+## 🧩 核心功能深度解析
+
+### 1. 智能表單系統 (`pages/index.js`)
+
+#### 流程圖
+```
+用戶選擇地區
+    ↓
+API: /api/estates?district=長沙灣
+    ↓ (返回該區所有屋苑，去重後)
+用戶選擇屋苑
+    ↓
+API: /api/blocks?district=長沙灣&estate=碧海藍天
+    ↓ (返回該屋苑所有座數，或「單幢/無座數」)
+用戶填寫樓層/單位
+    ↓
+提交 → /api/valuation
+    ↓
+寫入 Google Sheets → 後台處理 → 發送郵件報告
+```
+
+#### 關鍵技術細節
+
+**A. 每日限額機制**
+```javascript
+// localStorage 存儲：
+// - quotaDate: "Thu Mar 26 2026"
+// - remainingQuota: "8" (當日剩餘次數)
+
+// 每日 00:00 自動重置邏輯
+useEffect(() => {
+  const today = new Date().toDateString();
+  const storedDate = localStorage.getItem('quotaDate');
+  if (storedDate !== today) {
+    localStorage.setItem('quotaDate', today);
+    localStorage.setItem('remainingQuota', '10');
+    setRemainingQuota(10);
+  }
+}, []);
+```
+
+**B. 服務時間檢測**
+- HKT 09:00-22:00: 承諾 30 分鐘內發送
+- 其他時間: 報告將於翌日 10:30 前發送
+- 實時檢測（每分鐘更新）
+
+**C. 屋苑去重算法** (`/api/estates`)
+```
+階段一：Unicode 標準化 (NFKC)
+    ↓
+階段二：異體字統一 ("峯"→"峰", "滙"→"匯")
+    ↓
+階段三：指紋比對（移除空格/標點，轉大寫）
+    ↓
+階段四：變種過濾（"樂信大廈" vs "樂信大廈(水街)"）
+    ↓
+最終結果：按筆劃排序
+```
+
+### 2. AI 聊天助理系統
+
+#### 當前狀態：⏸️ 已停用
+**停用原因**（推測）:
+- 配額控制考量（Gemini Free Tier: ~1,500 次/日）
+- 用戶濫用風險（無 CAPTCHA 保護）
+- 產品定位調整（專注核心估價功能）
+
+#### 技術架構
+```
+components/ChatWidget.js (前端)
+    ↓ POST /api/chat
+pages/api/chat.js (後端)
+    ↓ Google Gemini 2.5 Flash API
+    ↓ (System Prompt 限制：僅房地產話題)
+返回 AI 回應
+```
+
+#### 守護規則 (Guardrails)
+1. **話題限制**: 拒絕非房地產問題（食譜、編程、政治等）
+2. **估價保護**: 不直接給出數字，引導用戶使用網站系統
+3. **免責聲明**: 所有金額加註「(僅供參考，以銀行為準)」
+4. **隱私保護**: 免責頁面明確警告「勿輸入個人資料」
+
+#### 重啟步驟（如需要）
+```bash
+# 1. 設定環境變數
+echo "NEXT_PUBLIC_ENABLE_CHAT=true" >> .env.local
+echo "GEMINI_API_KEY=AIza..." >> .env.local
+
+# 2. 重新部署（Vercel 自動）
+git add .env.local  # (本地測試用，勿提交到 Git)
+npm run dev
+
+# 3. 驗證功能
+# - 檢查聊天泡泡是否出現
+# - 測試免責聲明同意流程
+# - 監控 API 配額使用
+```
+
+### 3. Google Sheets 整合 (`pages/api/valuation.js`)
+
+#### 資料流
+```javascript
+// 用戶提交 → Next.js API
+const payload = {
+  action: 'submit_valuation',
+  district, estate, estateId, block, floor, flat, email, purpose,
+  timestamp: new Date().toISOString(),
+  token: process.env.GS_SECRET_TOKEN  // 安全驗證
+};
+
+// → Google Apps Script Web App
+fetch(process.env.GOOGLE_SCRIPT_URL, {
+  method: 'POST',
+  body: JSON.stringify(payload)
+});
+
+// → 寫入 Google Sheets
+// → 觸發後台處理（自動化工具獲取估價）
+// → 發送郵件給用戶
+```
+
+#### 安全機制
+- **Token 驗證**: `GS_SECRET_TOKEN` 防止未授權訪問
+- **環境變數檢查**: 啟動時驗證配置完整性
+- **詳細日誌**: 所有請求記錄到 Vercel Logs
+
+---
+
+## 🎨 設計系統
+
+### 顏色規範 (Tailwind)
+```javascript
+// tailwind.config.js
+colors: {
+  'deep-navy': '#1A2332',      // 主標題、導航欄
+  'emerald-green': '#10B981',  // CTA 按鈕、進度條
+  'light-gray': '#F9FAFB',     // 頁面背景
+}
+```
+
+### UI 組件規範
+- **按鈕**:
+  - 主按鈕: `bg-emerald-green hover:bg-emerald-700 active:scale-95`
+  - 禁用狀態: `disabled:opacity-50 disabled:cursor-not-allowed`
+  
+- **表單輸入**:
+  - Focus 狀態: `focus:ring-2 focus:ring-emerald-green`
+  - 錯誤狀態: `border-red-500 focus:ring-red-500`
+
+- **響應式設計**:
+  ```jsx
+  // 手機優先，桌面優化
+  <div className="text-lg sm:text-xl lg:text-2xl">
+  <div className="w-full sm:w-[380px]">
+  ```
+
+### 移動端優化
+- 使用 `h-[100dvh]` 適配 iOS Safari 動態視窗高度
+- 輸入框字體固定 16px（防止 iOS 自動縮放）
+- 全屏聊天模式（`fixed inset-0`）
+- Safe area 適配（`pt-safe-top`, `pb-safe-bottom`）
+
+---
+
+## 🔐 安全性與隱私
+
+### 已實施措施
+✅ **數據保護**:
+- 表單數據僅傳送至 Google Sheets（不存儲在 Next.js 服務器）
+- 環境變數隔離（`.env.local` 不納入版本控制）
+- Token 驗證所有 API 請求
+
+✅ **用戶隱私**:
+- 明確的免責聲明和私隱政策
+- AI 聊天提示「勿輸入個人資料」
+- 承諾「僅發送一次性報告，不打擾」
+
+### 待加強項
+⚠️ **Rate Limiting**: 目前僅依賴前端 localStorage（可繞過）  
+⚠️ **CAPTCHA**: 無機器人防護（易被濫用）  
+⚠️ **API Keys 保護**: Gemini API Key 無 IP 白名單限制  
+
+---
+
+## 📈 分析與追蹤
+
+### 已整合工具
+1. **Google Analytics** (GA4)
+   - 追蹤 ID: `AW-17861479339`
+   - 轉換事件: 表單提交成功 (`'BI_iCLfbm-IbEKuXgsVC'`)
+
+2. **Microsoft Clarity**
+   - Project ID: `v0unm481lh`
+   - 功能: 熱圖、會話錄製
+
+3. **Vercel Analytics**
+   - 自動收集 Web Vitals (CLS, FID, LCP)
+
+### 關鍵指標
+- **轉換率**: 訪客 → 提交表單
+- **每日配額使用率**: `remainingQuota` 變化趨勢
+- **API 錯誤率**: `/api/valuation` 失敗次數
+- **聊天使用率**: (停用期間為 0)
+
+---
+
+## 🚀 部署與維護
+
+### Vercel 生產環境
+- **自動部署**: Git push 到 `main` 分支
+- **域名**: www.hk-valuation.com
+- **環境變數** (Vercel Dashboard 設定):
+  ```
+  GOOGLE_SCRIPT_URL=https://script.google.com/macros/s/.../exec
+  GS_SECRET_TOKEN=valuation_secure_2024_test
+  GEMINI_API_KEY=AIza... (備用)
+  NEXT_PUBLIC_ENABLE_CHAT=false
+  ```
+
+### 日常維護檢查清單
+- [ ] 每月執行 `node scraper.js` 更新銀行數據
+- [ ] 監控 Vercel Logs 錯誤日誌
+- [ ] 檢查 Google Sheets 是否正常寫入
+- [ ] 追蹤 GA 轉換率趨勢
+- [ ] 驗證郵件發送成功率（後台系統）
+
+### 故障排查
+**問題 1**: 表單提交失敗
+```bash
+# 檢查步驟：
+1. Vercel Logs → 查找 "❌" 標記的錯誤
+2. 驗證 GOOGLE_SCRIPT_URL 是否正確
+3. 測試 Google Apps Script 是否運行正常
+4. 檢查 GS_SECRET_TOKEN 是否過期
+```
+
+**問題 2**: 屋苑列表空白
+```bash
+# 檢查步驟：
+1. 驗證 data/*.json 檔案存在且大小正常
+2. 測試 API: curl https://www.hk-valuation.com/api/estates?district=長沙灣
+3. 檢查前端 console.error 錯誤訊息
+```
+
+**問題 3**: AI 聊天不回應（如重啟後）
+```bash
+# 檢查步驟：
+1. 確認 NEXT_PUBLIC_ENABLE_CHAT=true
+2. 測試 Gemini API Key: curl with API key
+3. 檢查配額限制（429 錯誤）
+4. 查看 Network Tab → /api/chat 請求詳情
+```
+
+---
+
+## 🛠️ 開發指引
+
+### 本地環境設置
+```bash
+# 1. 克隆專案
+git clone <repository-url>
+cd hk-valuation
+
+# 2. 安裝依賴
+npm install
+
+# 3. 配置環境變數
+cp .env.example .env.local  # 手動創建
+# 填入：GOOGLE_SCRIPT_URL, GS_SECRET_TOKEN, GEMINI_API_KEY
+
+# 4. 啟動開發服務器
+npm run dev  # http://localhost:3000
+
+# 5. 構建生產版本（測試）
+npm run build
+npm run start
+```
+
+### 常用開發命令
+```bash
+# 數據更新
+node scraper.js  # 需時 ~30 分鐘，更新 data/*.json
+
+# 數據驗證
+node check_hsbc_coverage.js  # 檢查 HSBC 數據覆蓋率
+
+# 調試工具
+curl http://localhost:3000/api/debug  # 後端調試端點
+```
+
+### 新增屋苑數據流程
+1. 執行 `scraper.js` 獲取最新數據
+2. 驗證 `data/*.json` 更新成功
+3. 測試 `/api/estates` 和 `/api/blocks` API
+4. 手動測試表單提交流程
+5. 提交更新到 Git（包含新數據文件）
+
+---
+
+## 📚 關鍵文檔索引
+
+### 設置指南
+- `ENV_SETUP.md` - 環境變數詳細配置說明
+- `GOOGLE_SHEETS_SETUP.md` - Google Sheets 整合教學
+- `UPDATE_ENV.md` - 環境變數更新指引
+
+### 開發參考
+- `DEBUG_GUIDE.md` - 調試技巧和常見問題
+- `package.json` - 依賴版本和腳本命令
+- `next.config.js` - Next.js 配置
+- `tailwind.config.js` - Tailwind 自定義設置
+
+### 內容文件
+- `posts/how-to-check-valuation.md` - Blog 文章範例
+
+---
+
+## 🔮 未來規劃建議
+
+### Phase 1: 穩定性強化
+- [ ] 實作 Server-side Rate Limiting（Redis 或 Vercel KV）
+- [ ] 添加 reCAPTCHA v3（防機器人）
+- [ ] 數據 API 緩存優化（減少 5.8MB 重複讀取）
+
+### Phase 2: 功能擴展
+- [ ] 支援更多銀行（Standard Chartered, Bank of China）
+- [ ] 歷史估價趨勢圖表
+- [ ] 用戶帳號系統（追蹤查詢歷史）
+
+### Phase 3: AI 聊天升級
+- [ ] 多輪對話上下文管理
+- [ ] 語音輸入支援（手機端）
+- [ ] 情感分析（偵測用戶需求緊急度）
+
+### Phase 4: 商業化
+- [ ] 付費專業版（無限查詢次數）
+- [ ] 地產代理合作 API
+- [ ] 白標解決方案（White-label SaaS）
+
+---
+
+## 📞 支援資訊
+- **技術支援郵箱**: michaelmorningthrees@gmail.com
+- **官方網站**: https://www.hk-valuation.com
+- **私隱政策**: https://www.hk-valuation.com/privacy
+- **免責聲明**: https://www.hk-valuation.com/disclaimer
+
+---
+
+## 📝 文檔維護記錄
+| 版本 | 日期 | 作者 | 變更摘要 |
+|------|------|------|----------|
+| v1.0 | 2026-03-26 | AI Assistant | 初始版本，基於最近 20 次 Git 提交分析 |
+
+**更新週期**: 建議每月或重大功能更新後更新此文檔
+
+---
+
+**最後更新時間**: 2026年3月26日  
+**Git Commit Hash**: 897672b update  
+**文檔狀態**: ✅ 已驗證與生產環境同步
