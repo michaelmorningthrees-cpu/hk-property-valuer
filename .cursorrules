@@ -8,7 +8,7 @@ HK Property Valuer 是一個香港房地產估價比較平台，提供四大銀�
 - **樣式**: Tailwind CSS 3.4.0 + Custom Design System
 - **AI**: Google Gemini 2.5 Flash API (@google/generative-ai ^0.24.1)
 - **數據抓取（HSBC / Hang Seng / DBS）**: Playwright + playwright-extra + puppeteer-extra-plugin-stealth
-- **數據抓取（Citibank）**: rebrowser-puppeteer-core + puppeteer-extra (addExtra) + ghost-cursor（成功繞過 Akamai Bot Manager）
+- **數據抓取（Citibank）**: rebrowser-puppeteer（非 core，自動管理 Chrome）+ puppeteer-extra (addExtra) + ghost-cursor（成功繞過 Akamai Bot Manager，兼容 GitHub Actions）
 - **分析**: Vercel Analytics, Google Analytics (AW-17861479339), Microsoft Clarity (v0unm481lh)
 - **語言處理**: opencc-js (繁簡轉換)
 
@@ -148,7 +148,7 @@ NEXT_PUBLIC_ENABLE_CHAT=false  # 聊天功能預設關閉
 - **解決方案**: `rebrowser-puppeteer-core` + `ghost-cursor` 雙重對策
 - **關鍵設定**: `process.env.REBROWSER_PATCHES_RUNTIME_FIX_MODE = 'alwaysIsolated'` 必須在 require puppeteer 之前設定
 - **維護風險**: Akamai 定期更新偵測規則，如再次失敗需重新評估方案
-- **executablePath**: 已移除硬編碼路徑，由 Puppeteer 自動偵測（支援本地 Mac 及 GitHub Actions Linux 環境）
+- **executablePath**: 已移除，改用 `rebrowser-puppeteer`（非 core）自動管理 Chrome，本地及 GitHub Actions 均無需手動指定路徑
 - **isCIEnv 判斷**: `headless`、`--no-sandbox`、`defaultViewport` 均根據 `isCIEnv` 動態設定
 
 ### 2. 聊天功能維護

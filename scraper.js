@@ -5,11 +5,12 @@ const os = require('os');
 const path = require('path');
 const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-// 用 rebrowser-puppeteer-core 取代原生 puppeteer，修復 Runtime.enable CDP 洩漏
+// 用 rebrowser-puppeteer 取代原生 puppeteer，修復 Runtime.enable CDP 洩漏
+// 非 core 版本，自動管理 Chrome 下載，兼容 GitHub Actions
 // 參考：https://github.com/rebrowser/rebrowser-patches
 process.env.REBROWSER_PATCHES_RUNTIME_FIX_MODE = 'alwaysIsolated';
 const { addExtra } = require('puppeteer-extra');
-const rebrowserPuppeteer = require('rebrowser-puppeteer-core');
+const rebrowserPuppeteer = require('rebrowser-puppeteer');
 const PuppeteerStealth = require('puppeteer-extra-plugin-stealth');
 const { createCursor } = require('ghost-cursor');
 const puppeteer = addExtra(rebrowserPuppeteer);
