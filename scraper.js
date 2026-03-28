@@ -964,6 +964,14 @@ async function scrapeCitibankValuation(propertyData) {
 
     const delay = (ms) => new Promise(r => setTimeout(r, ms));
 
+    // 設定真實 User-Agent（與 Chrome 124 相符，避免 Akamai UA 指紋偵測）
+    await page.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+    );
+    await page.setExtraHTTPHeaders({
+      'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+    });
+
     // 建立 ghost-cursor，模擬真人貝塞爾曲線滑鼠軌跡
     const cursor = createCursor(page);
 
@@ -1193,12 +1201,29 @@ async function scrapeCitibankValuation(propertyData) {
 
         const apiResp = await respPromise;
         if (apiResp) {
-          console.log(`   📥 propValuation 回應: ${apiResp.status()}`);
+          const status = apiResp.status();
+          console.log(`   📥 propValuation 回應: ${status}`);
           try {
             const respBody = await apiResp.text();
             console.log(`   📥 回應長度: ${respBody.length} chars`);
-            if (respBody.length < 50) console.log(`   📥 回應內容: ${respBody}`);
+            if (respBody.length < 200) console.log(`   📥 回應內容: ${respBody}`);
           } catch (e) {}
+
+          // 403 時 dump 頁面內容方便除錯
+          if (status === 403) {
+            console.error('   🚫 [Citi] 403 Forbidden — Akamai 封鎖，正在 dump 頁面內容...');
+            try {
+              const html = await page.content();
+              const dumpPath = `citi-403-debug-${Date.now()}.html`;
+              fs.writeFileSync(dumpPath, html);
+              console.error(`   💾 頁面已儲存至 ${dumpPath} (${html.length} chars)`);
+              // 同時印出 body 文字前 500 字供快速診斷
+              const bodyText = await page.evaluate(() => document.body?.innerText?.substring(0, 500) || '');
+              console.error(`   📄 頁面文字預覽:\n${bodyText}`);
+            } catch (dumpErr) {
+              console.error(`   ⚠️ dump 失敗: ${dumpErr.message}`);
+            }
+          }
         } else {
           console.log('   ⚠️ 未攔截到 propValuation 回應 (timeout)');
         }
