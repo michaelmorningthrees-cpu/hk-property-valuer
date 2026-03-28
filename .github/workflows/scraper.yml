@@ -25,16 +25,16 @@ jobs:
         # 安裝 package.json 裡面所有嘢
         run: npm ci
 
-        # 加入這一步來確保 Chrome 被安裝
       - name: Install Puppeteer browsers
-       run: npx puppeteer browsers install chrome
+        # 加入這一步來確保 Chrome 被安裝
+        run: npx puppeteer browsers install chrome
 
       - name: Install Playwright Browsers
         # 只安裝 Chromium 以節省時間
         run: npx playwright install chromium --with-deps
 
-      # 👇 1. 新增這一步：安裝虛擬螢幕 XVFB (解決 Missing X server 問題)
       - name: Install XVFB
+        # 安裝虛擬螢幕 XVFB (解決 Missing X server 問題)
         run: sudo apt-get install -y xvfb
 
       - name: Run Scraper Script
@@ -42,6 +42,6 @@ jobs:
           # 讀取 GitHub Secrets
           GOOGLE_SCRIPT_URL: ${{ secrets.GOOGLE_SCRIPT_URL }}
           GS_SECRET_TOKEN: ${{ secrets.GS_SECRET_TOKEN }}
-          CI: true 
-        # 👇 2. 修改這一步：使用 xvfb-run 來執行 node，模擬有一個 1280x960 的螢幕
+          CI: true
+        # 使用 xvfb-run 來執行 node，模擬有一個 1280x960 的螢幕
         run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" node scraper.js
