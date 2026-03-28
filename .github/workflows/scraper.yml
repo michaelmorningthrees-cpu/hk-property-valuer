@@ -26,7 +26,7 @@ jobs:
         run: npm ci
 
         # 加入這一步來確保 Chrome 被安裝
-       - name: Install Puppeteer browsers
+      - name: Install Puppeteer browsers
        run: npx puppeteer browsers install chrome
 
       - name: Install Playwright Browsers
