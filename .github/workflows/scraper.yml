@@ -25,6 +25,10 @@ jobs:
         # 安裝 package.json 裡面所有嘢
         run: npm ci
 
+        # 加入這一步來確保 Chrome 被安裝
+       - name: Install Puppeteer browsers
+       run: npx puppeteer browsers install chrome
+
       - name: Install Playwright Browsers
         # 只安裝 Chromium 以節省時間
         run: npx playwright install chromium --with-deps
