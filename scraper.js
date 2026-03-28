@@ -945,11 +945,12 @@ async function scrapeCitibankValuation(propertyData) {
 
     browser = await puppeteer.launch({
       headless: isCIEnv,
+      ...(process.env.GITHUB_ACTIONS ? { executablePath: '/usr/bin/google-chrome' } : {}),
       userDataDir,
       args: [
-        ...(isCIEnv
-          ? ['--no-sandbox', '--disable-setuid-sandbox']
-          : ['--start-maximized']),
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        ...(isCIEnv ? [] : ['--start-maximized']),
         '--disable-blink-features=AutomationControlled',
         '--disable-infobars',
         '--window-size=1440,900',
