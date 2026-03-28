@@ -148,7 +148,8 @@ NEXT_PUBLIC_ENABLE_CHAT=false  # 聊天功能預設關閉
 - **解決方案**: `rebrowser-puppeteer-core` + `ghost-cursor` 雙重對策
 - **關鍵設定**: `process.env.REBROWSER_PATCHES_RUNTIME_FIX_MODE = 'alwaysIsolated'` 必須在 require puppeteer 之前設定
 - **維護風險**: Akamai 定期更新偵測規則，如再次失敗需重新評估方案
-- **executablePath**: 明確指定 Chrome for Testing 路徑 `/Users/derekchantak/.cache/puppeteer/chrome/mac_arm-146.0.7680.153/...`
+- **executablePath**: 已移除硬編碼路徑，由 Puppeteer 自動偵測（支援本地 Mac 及 GitHub Actions Linux 環境）
+- **isCIEnv 判斷**: `headless`、`--no-sandbox`、`defaultViewport` 均根據 `isCIEnv` 動態設定
 
 ### 2. 聊天功能維護
 - **當前狀態**: 停用（`_app.js` 中 `showChat` 檢查環境變數）

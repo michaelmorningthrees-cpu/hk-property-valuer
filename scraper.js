@@ -943,18 +943,19 @@ async function scrapeCitibankValuation(propertyData) {
     if (!fs.existsSync(userDataDir)) fs.mkdirSync(userDataDir, { recursive: true });
 
     browser = await puppeteer.launch({
-      headless: false,
-      executablePath: '/Users/derekchantak/.cache/puppeteer/chrome/mac_arm-146.0.7680.153/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+      headless: isCIEnv,
       userDataDir,
       args: [
-        '--start-maximized',
+        ...(isCIEnv
+          ? ['--no-sandbox', '--disable-setuid-sandbox']
+          : ['--start-maximized']),
         '--disable-blink-features=AutomationControlled',
         '--disable-infobars',
         '--window-size=1440,900',
         '--no-first-run',
         '--no-default-browser-check',
       ],
-      defaultViewport: null,
+      defaultViewport: isCIEnv ? { width: 1440, height: 900 } : null,
     });
 
     const page = (await browser.pages())[0] || await browser.newPage();
