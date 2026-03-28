@@ -1,9 +1,12 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 // import EstateAutocomplete from '../components/EstateAutocomplete' // 移除舊組件引用
 
 const MAX_QUOTA = 10
+
+const fetcher = (url) => fetch(url).then((res) => res.json())
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -29,6 +32,8 @@ export default function Home() {
   const [purposeError, setPurposeError] = useState('')
   const [remainingQuota, setRemainingQuota] = useState(MAX_QUOTA)
 
+  const { data: counterData } = useSWR('/api/counter', fetcher, { refreshInterval: 60000 })
+
   // Initialize daily quota
   useEffect(() => {
     const initializeQuota = () => {
@@ -46,6 +51,15 @@ export default function Home() {
       }
     }
     initializeQuota()
+  }, [])
+
+  // 首次訪問計數
+  useEffect(() => {
+    if (!localStorage.getItem('hasVisited')) {
+      fetch('/api/counter', { method: 'POST' })
+        .then(() => localStorage.setItem('hasVisited', 'true'))
+        .catch(console.error)
+    }
   }, [])
 
   // Check Service Status
@@ -225,6 +239,11 @@ export default function Home() {
               <p className="text-gray-600 text-base sm:text-lg lg:text-xl max-w-xl mx-auto">
                 只需輸入地址，30 分鐘內收到估價報告。
               </p>
+              <div className="text-center my-4 text-deep-navy">
+                <p className="text-sm">
+                  ✨ 已為 <span className="font-bold text-emerald-green text-lg">{counterData?.count?.toLocaleString() || '3,000+'}</span> 位準買家/賣家服務
+                </p>
+              </div>
             </div>
 
             <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 lg:p-10 relative">

@@ -1,7 +1,7 @@
 # HK Valuation 系統上下文文檔
-**文檔版本**: v1.0 (2026-03-26)  
-**最後 Git Commit**: 897672b update  
-**系統狀態**: Production Ready (Chat 功能停用中)
+**文檔版本**: v1.1 (2026-03-27)  
+**最後 Git Commit**: 1e7357c (scraper.js 有本地未提交改動)  
+**系統狀態**: Production Ready | Citibank 爬蟲問題已解決 ✅
 
 ---
 
@@ -13,7 +13,7 @@ HK Property Valuer 是香港首個一站式房地產估價比較平台，整合 
 
 ---
 
-## 📊 當前系統狀態（2026-03-26）
+## 📊 當前系統狀態（2026-03-27）
 
 ### 生產環境配置
 | 功能模塊 | 狀態 | 說明 |
@@ -23,6 +23,7 @@ HK Property Valuer 是香港首個一站式房地產估價比較平台，整合 
 | Google Sheets 整合 | ✅ 運行中 | 自動記錄用戶提交 |
 | 數據 API (屋苑/座數) | ✅ 運行中 | 智能去重 + 異體字處理 |
 | 分析追蹤 | ✅ 運行中 | GA + Clarity + Vercel Analytics |
+| **Citibank 爬蟲** | ✅ **已修復** | rebrowser-puppeteer-core + ghost-cursor 成功繞過 Akamai |
 
 ### 數據覆蓋範圍
 - **銀行數據**: HSBC, Hang Seng, Citibank, DBS
@@ -31,7 +32,7 @@ HK Property Valuer 是香港首個一站式房地產估價比較平台，整合 
   - HSBC: 2024-01-28
   - Hang Seng: 2024-01-24
   - DBS: 2024-01-24
-  - Citibank: 2024-01-23
+  - Citibank: 2024-01-23（數據文件舊，但爬蟲現已可正常運行取得即時估價）
 
 ---
 
@@ -78,13 +79,37 @@ data/
 }
 ```
 
-### 爬蟲系統 (`scraper.js` - 1,690 行)
-**技術棧**: Playwright + puppeteer-extra-plugin-stealth  
-**功能**:
-1. 自動化登入銀行估價系統（模擬真實用戶行為）
-2. 提取地區、屋苑、座數結構化數據
-3. 地址標準化處理（繁簡轉換 + 異體字統一）
-4. 反爬蟲對策（Stealth 模式 + 隨機延遲）
+### 爬蟲系統 (`scraper.js` - 1,721 行)
+
+#### 各銀行技術棧（重要：各銀行使用不同方案）
+
+| 銀行 | 框架 | 反偵測方案 | 狀態 |
+|------|------|-----------|------|
+| HSBC | Playwright | playwright-extra + stealth plugin | ✅ 正常 |
+| Hang Seng | Playwright | playwright-extra + stealth plugin | ✅ 正常 |
+| DBS | Playwright | playwright-extra + stealth plugin | ✅ 正常 |
+| **Citibank** | **Puppeteer** | **rebrowser-puppeteer-core + ghost-cursor** | ✅ **已修復** |
+
+#### Citibank 爬蟲技術詳解（2026-03-27 解決）
+
+**問題根源**: Akamai Bot Manager 雙重偵測
+1. **CDP 層**: `Runtime.enable` 指令洩漏 → 用 `rebrowser-puppeteer-core` + `REBROWSER_PATCHES_RUNTIME_FIX_MODE=alwaysIsolated` 修復
+2. **行為層**: 機械滑鼠軌跡 → 用 `ghost-cursor` 貝塞爾曲線模擬修復
+
+**關鍵 imports（第 8-16 行）**:
+```javascript
+process.env.REBROWSER_PATCHES_RUNTIME_FIX_MODE = 'alwaysIsolated'; // 必須在 require 前
+const { addExtra } = require('puppeteer-extra');
+const rebrowserPuppeteer = require('rebrowser-puppeteer-core');
+const { createCursor } = require('ghost-cursor');
+const puppeteer = addExtra(rebrowserPuppeteer);
+puppeteer.use(PuppeteerStealth());
+```
+
+**ghost-cursor 三個應用點**:
+1. 預熱期（6-10秒）：持續隨機貝塞爾曲線移動
+2. 每次表單選擇後：隨機移動滑鼠
+3. 點擊估價按鈕：`cursor.click(btnEl.asElement())`
 
 **執行週期**: 建議每月更新一次數據
 
@@ -410,6 +435,12 @@ curl http://localhost:3000/api/debug  # 後端調試端點
 
 ## 🔮 未來規劃建議
 
+### Phase 0: 爬蟲穩定化（當前階段）
+- [x] ~~Citibank 爬蟲 Akamai 403 問題~~ ✅ 已解決（2026-03-27）
+- [ ] 執行 `node scraper.js` 全銀行數據更新（預計需時 ~30 分鐘）
+- [ ] 驗證更新後四大銀行 data/*.json 數據完整性
+- [ ] 提交 scraper.js 改動到 Git（當前仍未提交）
+
 ### Phase 1: 穩定性強化
 - [ ] 實作 Server-side Rate Limiting（Redis 或 Vercel KV）
 - [ ] 添加 reCAPTCHA v3（防機器人）
@@ -444,11 +475,12 @@ curl http://localhost:3000/api/debug  # 後端調試端點
 | 版本 | 日期 | 作者 | 變更摘要 |
 |------|------|------|----------|
 | v1.0 | 2026-03-26 | AI Assistant | 初始版本，基於最近 20 次 Git 提交分析 |
+| v1.1 | 2026-03-27 | AI Assistant | 記錄 Citibank Akamai 爬蟲突破：rebrowser-puppeteer-core + ghost-cursor 解決方案 |
 
 **更新週期**: 建議每月或重大功能更新後更新此文檔
 
 ---
 
-**最後更新時間**: 2026年3月26日  
-**Git Commit Hash**: 897672b update  
-**文檔狀態**: ✅ 已驗證與生產環境同步
+**最後更新時間**: 2026年3月27日  
+**Git Commit Hash**: 1e7357c（scraper.js 有本地未提交改動）  
+**文檔狀態**: ✅ 已驗證與當前本地開發環境同步

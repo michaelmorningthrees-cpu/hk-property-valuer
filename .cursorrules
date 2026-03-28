@@ -7,7 +7,8 @@ HK Property Valuer 是一個香港房地產估價比較平台，提供四大銀�
 - **框架**: Next.js 14.0.4 (React 18.2.0)
 - **樣式**: Tailwind CSS 3.4.0 + Custom Design System
 - **AI**: Google Gemini 2.5 Flash API (@google/generative-ai ^0.24.1)
-- **數據抓取**: Playwright + Stealth Plugin (puppeteer-extra)
+- **數據抓取（HSBC / Hang Seng / DBS）**: Playwright + playwright-extra + puppeteer-extra-plugin-stealth
+- **數據抓取（Citibank）**: rebrowser-puppeteer-core + puppeteer-extra (addExtra) + ghost-cursor（成功繞過 Akamai Bot Manager）
 - **分析**: Vercel Analytics, Google Analytics (AW-17861479339), Microsoft Clarity (v0unm481lh)
 - **語言處理**: opencc-js (繁簡轉換)
 
@@ -32,10 +33,14 @@ HK Property Valuer 是一個香港房地產估價比較平台，提供四大銀�
    - `/api/blocks` - 座數列表（智能提取 + 單幢檢測）
    - 數據來源：`data/{hsbc,hangseng,citi,dbs}.json`（共 ~5.8MB）
 
-4. **數據抓取器** (`scraper.js`)
+4. **數據抓取器** (`scraper.js` - 1,721 行)
    - 自動化爬取四大銀行估價數據
    - 地址標準化（繁簡轉換 + 異體字統一）
-   - Stealth 模式繞過反爬蟲機制
+   - **HSBC / Hang Seng / DBS**: Playwright + stealth plugin
+   - **Citibank（已解決）**: rebrowser-puppeteer-core + ghost-cursor 雙重反偵測
+     - `REBROWSER_PATCHES_RUNTIME_FIX_MODE=alwaysIsolated`（修復 CDP Runtime.enable 洩漏）
+     - `createCursor(page)` 預熱期間 + 表單填寫 + 按鈕點擊全程貝塞爾曲線滑鼠軌跡
+   - ⚠️ `npm install` 後需確認 rebrowser-puppeteer-core 仍在 node_modules
 
 ### 數據處理策略
 - **異體字統一表** (`HK_VARIANTS_MAP`)：峯→峰、滙→匯、台→臺 等
@@ -134,8 +139,16 @@ NEXT_PUBLIC_ENABLE_CHAT=false  # 聊天功能預設關閉
 
 ### 1. 數據完整性
 - **HSBC 數據**: 最後更新 2024-01-28（需定期執行 `scraper.js` 更新）
+- **Hang Seng / DBS / Citi 數據**: 最後更新 2024-01（需定期執行 `scraper.js` 更新）
 - **缺失區域**: 部分偏遠地區屋苑可能未收錄
 - **異體字問題**: 必須使用 `unifyCharacters()` 函數處理用戶輸入
+
+### 1b. Citibank 爬蟲維護（重要）
+- **問題歷史**: Akamai Bot Manager 從 CDP 協議層（Runtime.enable）及滑鼠行為兩個層面偵測自動化，導致 propValuation API 持續返回 403
+- **解決方案**: `rebrowser-puppeteer-core` + `ghost-cursor` 雙重對策
+- **關鍵設定**: `process.env.REBROWSER_PATCHES_RUNTIME_FIX_MODE = 'alwaysIsolated'` 必須在 require puppeteer 之前設定
+- **維護風險**: Akamai 定期更新偵測規則，如再次失敗需重新評估方案
+- **executablePath**: 明確指定 Chrome for Testing 路徑 `/Users/derekchantak/.cache/puppeteer/chrome/mac_arm-146.0.7680.153/...`
 
 ### 2. 聊天功能維護
 - **當前狀態**: 停用（`_app.js` 中 `showChat` 檢查環境變數）
@@ -199,4 +212,5 @@ node scraper.js    # 執行爬蟲（需時 ~30 分鐘）
 
 ## 文檔更新日誌
 - 2026-03-26: 初始版本（基於最近20次提交分析）
-- 最後更新 Git commit: `897672b update`
+- 2026-03-27: 更新 Citibank 爬蟲技術棧（rebrowser-puppeteer-core + ghost-cursor 成功繞過 Akamai）
+- 最後更新 Git commit: `1e7357c` (pre-debugging backup)；scraper.js 本地未提交改動

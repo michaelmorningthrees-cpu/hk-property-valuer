@@ -1,9 +1,19 @@
 require('dotenv').config({ path: '.env.local' });
 const axios = require('axios');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+// 用 rebrowser-puppeteer-core 取代原生 puppeteer，修復 Runtime.enable CDP 洩漏
+// 參考：https://github.com/rebrowser/rebrowser-patches
+process.env.REBROWSER_PATCHES_RUNTIME_FIX_MODE = 'alwaysIsolated';
+const { addExtra } = require('puppeteer-extra');
+const rebrowserPuppeteer = require('rebrowser-puppeteer-core');
+const PuppeteerStealth = require('puppeteer-extra-plugin-stealth');
+const { createCursor } = require('ghost-cursor');
+const puppeteer = addExtra(rebrowserPuppeteer);
+puppeteer.use(PuppeteerStealth());
 
 chromium.use(StealthPlugin());
 const isCIEnv = !!process.env.CI || !!process.env.GITHUB_ACTIONS;
@@ -927,45 +937,48 @@ async function scrapeDBSValuation(page, propertyData) {
 async function scrapeCitibankValuation(propertyData) {
   let browser = null;
   try {
-    console.log('🚀 [Citi] 啟動瀏覽器 (精確點擊模式)...');
+    console.log('🚀 [Citi] 啟動瀏覽器 (Puppeteer stealth 模式)...');
 
-    browser = await chromium.launch({
-      headless: false, // 必須顯示視窗
-      slowMo: 50,
+    const userDataDir = path.join(os.tmpdir(), 'citi-pptr-profile');
+    if (!fs.existsSync(userDataDir)) fs.mkdirSync(userDataDir, { recursive: true });
+
+    browser = await puppeteer.launch({
+      headless: false,
+      executablePath: '/Users/derekchantak/.cache/puppeteer/chrome/mac_arm-146.0.7680.153/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+      userDataDir,
       args: [
         '--start-maximized',
-        '--disable-blink-features=AutomationControlled'
-      ]
+        '--disable-blink-features=AutomationControlled',
+        '--disable-infobars',
+        '--window-size=1440,900',
+        '--no-first-run',
+        '--no-default-browser-check',
+      ],
+      defaultViewport: null,
     });
 
-    const context = await browser.newContext({
-      viewport: null,
-      locale: 'zh-HK',
-      timezoneId: 'Asia/Hong_Kong',
-    });
+    const page = (await browser.pages())[0] || await browser.newPage();
 
-    const page = await context.newPage();
+    const delay = (ms) => new Promise(r => setTimeout(r, ms));
 
-    // --- 🏆 API 劫持 ---
-    let capturedPrice = null;
-    page.on('response', async response => {
-      // 監聽所有可能的估價 API
-      if (response.url().includes('propValuation') && response.status() === 200) {
-        try {
-          const json = await response.json();
-          // Citi API 回傳格式可能變動，這裡做多重檢查
-          if (json.propertyValuationPrice) {
-            capturedPrice = Number(json.propertyValuationPrice);
-            console.log(`   💰 [API] 攔截成功: ${capturedPrice}`);
-          }
-        } catch (e) {}
-      }
-    });
+    // 建立 ghost-cursor，模擬真人貝塞爾曲線滑鼠軌跡
+    const cursor = createCursor(page);
 
     const targetUrl = 'https://www.citibank.com.hk/acquisition/mortgage/index.html?locale=zh_HK';
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
 
-    // --- 🛠️ 穩健選擇函數 (加入回傳值) ---
+    // 預熱：隨機滑鼠移動模擬真人瀏覽行為，讓 Akamai sensor 建立信任
+    const warmup = 6000 + Math.random() * 4000;
+    console.log(`⏳ [Citi] 預熱等待 ${Math.round(warmup / 1000)}s，模擬真人瀏覽...`);
+    const warmupEnd = Date.now() + warmup;
+    while (Date.now() < warmupEnd) {
+      const x = 200 + Math.random() * 900;
+      const y = 100 + Math.random() * 600;
+      await cursor.moveTo({ x, y });
+      await delay(400 + Math.random() * 800);
+    }
+
+    // --- Puppeteer 版穩健選擇函數 ---
     const safeSelect = async (selector, label, text) => {
       if (!text) return false;
       console.log(`👇 正在選擇 ${label}: "${text}"...`);
@@ -973,159 +986,148 @@ async function scrapeCitibankValuation(propertyData) {
       try {
         await page.waitForSelector(`${selector}:not([disabled])`, { timeout: 10000 });
         await page.waitForFunction((s) => {
-            const el = document.querySelector(s);
-            return el && el.options && el.options.length > 1;
-        }, selector, { timeout: 10000 });
+          const el = document.querySelector(s);
+          return el && el.options && el.options.length > 1;
+        }, { timeout: 10000 }, selector);
       } catch (e) {
         console.error(`   ❌ 失敗: ${label} 選單未載入或無選項`);
         return false;
       }
 
-      const options = await page.$$eval(`${selector} option`, opts => 
+      const options = await page.$$eval(`${selector} option`, opts =>
         opts.map(o => ({ val: o.value, txt: (o.textContent || '').trim() }))
       );
-      
+
       let match = options.find(o => o.txt === text);
       if (!match) match = options.find(o => o.txt.startsWith(text));
       if (!match) match = options.find(o => o.txt.includes(text) || text.includes(o.txt));
 
       if (match) {
-        await page.selectOption(selector, match.val);
+        await page.select(selector, match.val);
         await page.evaluate((s) => {
-            const el = document.querySelector(s);
-            el.dispatchEvent(new Event('change', { bubbles: true }));
-            el.dispatchEvent(new Event('blur', { bubbles: true }));
+          const el = document.querySelector(s);
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+          el.dispatchEvent(new Event('blur', { bubbles: true }));
         }, selector);
-        
+
         console.log(`   ✅ 已選: "${match.txt}"`);
-        await page.waitForTimeout(1000); 
-        return true; // 成功回傳 true
+        // 每次選擇後隨機移動滑鼠，模擬真人操作
+        await cursor.moveTo({ x: 300 + Math.random() * 600, y: 300 + Math.random() * 300 });
+        await delay(800 + Math.random() * 600);
+        return true;
       } else {
         console.warn(`   ⚠️ 找不到選項: "${text}"`);
-        return false; // 失敗回傳 false
+        return false;
       }
     };
 
-    // --- 填寫流程 ---
+    // --- 填寫流程 (logic 完全保留) ---
     const d = propertyData.bankMap?.citi;
     const region = (d?.region === '新界' ? '新界/離島' : d?.region) || '新界/離島';
-    
+
     await safeSelect('#zone', '區域', region);
     await safeSelect('#district', '地區', toTraditional(d?.district || propertyData.district));
-    
-    // 🛑 [STOP] 嚴格檢查：屋苑
+
     const estateSuccess = await safeSelect('#estName', '屋苑', toTraditional(d?.estate || propertyData.estate));
     if (!estateSuccess) {
-        console.warn(`❌ [Citi] 屋苑匹配失敗！停止估價。`);
-        await browser.close();
-        return null;
+      console.warn(`❌ [Citi] 屋苑匹配失敗！停止估價。`);
+      await browser.close();
+      return null;
     }
-    
-    if (await page.isVisible('#phase')) {
-        await page.waitForTimeout(500);
-        const opts = await page.$$eval('#phase option', o => o.length);
-        if (opts > 1) {
-            await page.selectOption('#phase', { index: 1 });
-            await page.waitForTimeout(500);
-        }
-    }
-    
-// ============================================================
-    // 1. 處理期數 (Phase) - 優化：加入 N/A 兼容
-    // ============================================================
-    if (await page.isVisible('#phase')) {
-      await page.waitForTimeout(500);
 
-      // 嘗試從輸入 (e.g. "第1期") 提取期數數字
+    // 處理期數 (Phase)
+    const phaseExists = await page.$('#phase');
+    const phaseVisible = phaseExists && await page.evaluate(el => {
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    }, phaseExists);
+
+    if (phaseVisible) {
+      await delay(500);
+      const opts = await page.$$eval('#phase option', o => o.length);
+      if (opts > 1) {
+        await page.select('#phase', (await page.$$eval('#phase option', o => o[1]?.value)).toString());
+        await delay(500);
+      }
+    }
+
+    if (phaseVisible) {
+      await delay(500);
+
       const inputStr = String(propertyData.block || '');
       const phaseMatch = inputStr.match(/(?:Phase|期|P)\s*([0-9A-Z]+)/i);
       const targetPhase = phaseMatch ? phaseMatch[1] : null;
 
-      // 獲取網頁上所有期數選項
       const phaseOptions = await page.$$eval('#phase option', opts =>
         opts.map(o => ({ val: o.value, text: o.innerText.trim() }))
       );
 
       let phaseSelected = false;
 
-      // 策略 A: 嘗試匹配輸入的期數 (e.g. "1" -> "Phase 1")
       if (targetPhase) {
         const match = phaseOptions.find(o => o.text.includes(targetPhase));
         if (match) {
-          await page.selectOption('#phase', match.val);
+          await page.select('#phase', match.val);
           phaseSelected = true;
         }
       }
 
-      // 策略 B: (優化部分) 如果找不到，試下選 "N/A" (針對太湖花園等)
       if (!phaseSelected) {
         const naOption = phaseOptions.find(o => o.text === 'N/A' || o.text === 'n/a');
         if (naOption) {
           console.log(`      ⚠️ [Citi] 找不到期數，但發現 "N/A"，強制選取...`);
-          await page.selectOption('#phase', naOption.val);
+          await page.select('#phase', naOption.val);
           phaseSelected = true;
         }
       }
 
-      // 策略 C: 盲選第一項
       if (!phaseSelected && phaseOptions.length > 1) {
-        await page.selectOption('#phase', { index: 1 });
+        await page.select('#phase', phaseOptions[1].val);
         phaseSelected = true;
       }
 
-      // 觸發刷新
       if (phaseSelected) {
         await page.evaluate(() => {
           const el = document.querySelector('#phase');
           el.dispatchEvent(new Event('change', { bubbles: true }));
           el.dispatchEvent(new Event('blur', { bubbles: true }));
         });
-        await page.waitForTimeout(2000); // 等待座數載入
+        await delay(2000);
       }
     }
 
-    // ============================================================
-    // 2. 處理座數 (Block) - 保留 Match ID 優先
-    // ============================================================
+    // 處理座數 (Block)
     if (propertyData.block) {
-      const citiBlockId = d?.blockValue; // 從 JSON 獲取 ID
+      const citiBlockId = d?.blockValue;
       let blockSuccess = false;
 
-      // 策略 A: (保留原邏輯) 優先嘗試用 JSON ID 選擇
       if (citiBlockId && citiBlockId !== 'null' && citiBlockId !== 'N/A') {
         try {
           console.log(`   🎯 [Citi] 嘗試使用 JSON ID: ${citiBlockId}`);
-          await page.selectOption('#bckBuilding', citiBlockId);
-          await page.evaluate(() => document.querySelector('#bckBuilding').dispatchEvent(new Event('change', { bubbles: true })));
-          blockSuccess = true;
-          console.log(`   ✅ [Citi] ID 命中座數`);
+          // 用 Puppeteer 原生 select（會觸發瀏覽器級別的 change/input 事件）
+          const selected = await page.select('#bckBuilding', citiBlockId);
+          if (selected.length > 0) {
+            blockSuccess = true;
+            console.log(`   ✅ [Citi] ID 命中座數 (selected: ${selected[0]})`);
+            await delay(2000);
+          } else {
+            console.warn(`   ⚠️ page.select 返回空，ID ${citiBlockId} 可能不匹配，轉用文字匹配`);
+          }
         } catch (e) {
           console.warn('      ...JSON ID 選擇失敗，轉用文字匹配');
         }
       }
 
-      // 策略 B: (優化部分) 文字匹配 - 徹底清洗期數
       if (!blockSuccess) {
         let cleanBlock = String(propertyData.block);
-        
-        // 🔥 步驟 1: 先剷除中文格式 "第X期" (e.g. "第1期")
         cleanBlock = cleanBlock.replace(/第\s*[0-9A-Z]+\s*期/gi, '');
-        
-        // 🔥 步驟 2: 再剷除英文格式 "Phase X" 或 "P X"
         cleanBlock = cleanBlock.replace(/(?:Phase|P)\s*[0-9A-Z]+/gi, '');
-        
-        // 步驟 3: 清理頭尾空白及連接符
         cleanBlock = cleanBlock.replace(/[\-\s]+/, '').trim();
-
-        // 提取核心數字 (e.g. "第5座" -> "5")
         const coreBlock = cleanBlock.replace(/[^0-9A-Z]/g, '');
 
         console.log(`   👇 [Citi] 嘗試文字匹配座數: "${cleanBlock}" (Core: "${coreBlock}")`);
-
-        // 試 1: 完整中文 "第5座"
         blockSuccess = await safeSelect('#bckBuilding', '座數', cleanBlock);
 
-        // 試 2: 核心數字 "5" (Citi 列表通常係 "1", "2", "3" 或 "Block 1")
         if (!blockSuccess && coreBlock) {
           blockSuccess = await safeSelect('#bckBuilding', '座數', coreBlock);
         }
@@ -1137,7 +1139,6 @@ async function scrapeCitibankValuation(propertyData) {
         return null;
       }
     }
-    
 
     await safeSelect('#floor', '樓層', propertyData.floor);
 
@@ -1145,90 +1146,120 @@ async function scrapeCitibankValuation(propertyData) {
       const unitVal = String(propertyData.unit).toUpperCase();
       console.log(`👇 正在選擇 單位: "${unitVal}"...`);
       await page.waitForSelector('#flatUnit:not([disabled])');
-      
+
       try {
-        await page.selectOption('#flatUnit', { index: 1 }); 
-        await page.evaluate(() => document.querySelector('#flatUnit').dispatchEvent(new Event('change', {bubbles:true})));
-        await page.waitForTimeout(800);
-      } catch(e) {}
-      
+        const firstOptVal = await page.$eval('#flatUnit option:nth-child(2)', o => o.value);
+        await page.select('#flatUnit', firstOptVal);
+        await page.evaluate(() => document.querySelector('#flatUnit').dispatchEvent(new Event('change', { bubbles: true })));
+        await delay(800);
+      } catch (e) {}
+
       await safeSelect('#flatUnit', '單位', unitVal);
     }
 
-    // --- 準備點擊 (核心修正部分) ---
     console.log('🔘 [Citi] 準備點擊 (Human Click)...');
-    
-    // 1. 強力移除遮擋 (Header, Footer, Chat, Cookie Banner)
+
     await page.evaluate(() => {
-        const selectors = [
-            '#onetrust-banner-sdk', 'footer', 'header', '.navbar', '.cmp-container', 
-            '.chat-widget', '#LP_DIV_1686906236357', '[id^="lp-chat"]'
-        ];
-        selectors.forEach(sel => {
-            document.querySelectorAll(sel).forEach(el => el.remove());
-        });
+      const selectors = ['#onetrust-banner-sdk', 'footer', 'header', '.navbar', '.cmp-container', '.chat-widget', '[id^="lp-chat"]'];
+      selectors.forEach(sel => document.querySelectorAll(sel).forEach(el => el.remove()));
     });
-    
-    // 2. 重新定位按鈕
-    const btnSelector = 'a.btn.btn-primary'; // 這是 Citi 常用的按鈕 class
-    // 有時候按鈕上面會有文字 "立即估價" 或 "Get Valuation"
-    const btn = page.locator(btnSelector).filter({ hasText: /估價|Valuation/ }).first();
 
-    if (await btn.count() > 0) {
-        // 確保按鈕在視窗中間，避免被上下邊緣遮擋
-        await btn.scrollIntoViewIfNeeded();
-        await page.evaluate(() => window.scrollBy(0, -100)); // 往上捲一點點，避開可能的底欄
+    const btnEl = await page.evaluateHandle(() => {
+      const links = [...document.querySelectorAll('a.btn.btn-primary')];
+      return links.find(a => /估價|Valuation/.test(a.textContent));
+    });
 
-        const box = await btn.boundingBox();
+    if (btnEl && btnEl.asElement()) {
+      await btnEl.asElement().evaluate(el => el.scrollIntoView({ block: 'center' }));
+      await delay(1500 + Math.random() * 1000);
+
+      const box = await btnEl.asElement().boundingBox();
         if (box) {
-             // 隨機化座標，但在按鈕範圍內
-             const targetX = box.x + box.width / 2;
-             const targetY = box.y + box.height / 2;
-             
-             console.log(`   🐭 滑鼠移動到 (${Math.round(targetX)}, ${Math.round(targetY)})`);
-             
-             await page.mouse.move(targetX, targetY, { steps: 10 });
-             await page.waitForTimeout(200);
-             await page.mouse.down();
-             await page.waitForTimeout(150); // 真實的按壓時間
-             await page.mouse.up();
+        // 用 ghost-cursor 移動到按鈕附近（先移到旁邊再移到按鈕，模擬真人）
+        await cursor.moveTo({ x: box.x + box.width * 0.3, y: box.y - 40 });
+        await delay(200 + Math.random() * 300);
+
+        const respPromise = page.waitForResponse(
+          resp => resp.url().includes('/propValuation'),
+          { timeout: 30000 }
+        ).catch(() => null);
+
+        // ghost-cursor click：自動以貝塞爾曲線移動到目標再點擊
+        await cursor.click(btnEl.asElement());
+        console.log('   ✅ 已點擊估價按鈕（ghost-cursor），等待 API 回應...');
+
+        const apiResp = await respPromise;
+        if (apiResp) {
+          console.log(`   📥 propValuation 回應: ${apiResp.status()}`);
+          try {
+            const respBody = await apiResp.text();
+            console.log(`   📥 回應長度: ${respBody.length} chars`);
+            if (respBody.length < 50) console.log(`   📥 回應內容: ${respBody}`);
+          } catch (e) {}
         } else {
-             // Fallback
-             await btn.click({ force: true });
+          console.log('   ⚠️ 未攔截到 propValuation 回應 (timeout)');
         }
-    } else {
-        console.error('❌ 找不到按鈕！嘗試備用 Selector...');
-        // 備用方案：直接找 form 裡的 submit 按鈕
-        const altBtn = page.locator('button[type="submit"], input[type="submit"]').first();
-        if (await altBtn.isVisible()) await altBtn.click();
+      } else {
+        await btnEl.asElement().click();
+      }
     }
 
-    console.log('⏳ [Citi] 等待 API 回傳...');
+    await delay(3000);
+    console.log('⏳ [Citi] 等待價格出現...');
 
+    let finalPrice = null;
     const startTime = Date.now();
-    // 延長等待時間到 20 秒，因為有時候 API 真的很慢
-    while (!capturedPrice && Date.now() - startTime < 20000) {
-        await page.waitForTimeout(200);
-        // 補按邏輯：如果 5 秒沒反應，再按一次
-        if (Date.now() - startTime > 5000 && Date.now() - startTime < 5200) {
-            console.log('   🔄 無反應，補按一次...');
-            if (await btn.isVisible()) {
-                await btn.click({ force: true });
-            }
+
+    while (!finalPrice && Date.now() - startTime < 25000) {
+      await delay(1000);
+      const elapsed = Math.round((Date.now() - startTime) / 1000);
+
+      finalPrice = await page.evaluate(() => {
+        const allTds = document.querySelectorAll('td, dd, span, div, p');
+        for (const el of allTds) {
+          const text = (el.innerText || '').trim();
+          if (/^\$?\s*\d{1,3}(,\d{3}){1,3}$/.test(text.replace(/\s/g, ''))) {
+            const num = Number(text.replace(/[$,\s]/g, ''));
+            if (num >= 100000 && num <= 999999999) return num;
+          }
         }
+        const bodyText = document.body.innerText;
+        const matches = bodyText.match(/\d{1,3}(?:,\d{3}){1,2}/g);
+        if (matches) {
+          for (const m of matches) {
+            const num = Number(m.replace(/,/g, ''));
+            if (num >= 100000 && num <= 999999999) return num;
+          }
+        }
+        return null;
+      });
+
+      if (!finalPrice) {
+        const debugInfo = await page.evaluate(() => {
+          const resultArea = document.querySelector('.result, .valuation-result, #result, [class*="result"]');
+          const errEl = document.querySelector('.error-message, .alert-danger, .error, .alert');
+          return {
+            resultHTML: resultArea ? resultArea.innerText.substring(0, 200) : null,
+            errorMsg: errEl ? errEl.innerText.trim() : null,
+            bodyLen: document.body.innerText.length
+          };
+        });
+        if (elapsed <= 3 || elapsed % 5 === 0) {
+          console.log(`   ⏳ (${elapsed}s) bodyLen=${debugInfo.bodyLen}${debugInfo.errorMsg ? ' ERR=' + debugInfo.errorMsg : ''}`);
+        }
+      }
     }
 
-    if (capturedPrice) {
-        console.log(`✅ [Citi] 最終估價: ${capturedPrice}`);
-        await browser.close();
-        return capturedPrice;
+    if (finalPrice) {
+      console.log(`✅ [Citi] 最終估價: ${finalPrice}`);
+      await browser.close();
+      return finalPrice;
     } else {
-        console.log('⚠️ [Citi] 失敗：API 未回傳數據');
-        await page.screenshot({ path: 'citi-form-debug.png', fullPage: true });
+      console.log('⚠️ [Citi] 失敗：無法讀取價格');
+      await page.screenshot({ path: 'citi-final-fail.png', fullPage: true });
+      await browser.close();
+      return null;
     }
-
-    await browser.close();
-    return null;
 
   } catch (error) {
     console.error('❌ [Citi] 錯誤:', error.message);
