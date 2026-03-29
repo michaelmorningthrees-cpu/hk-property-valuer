@@ -978,6 +978,29 @@ async function scrapeCitibankValuation(propertyData) {
     const targetUrl = 'https://www.citibank.com.hk/acquisition/mortgage/index.html?locale=zh_HK';
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
 
+    // ── 診斷日誌：比對本地 vs GitHub Actions 的瀏覽器指紋 ──────────────────
+    const diagnostics = await page.evaluate(() => {
+      const gl = document.createElement('canvas').getContext('webgl');
+      const debugInfo = gl ? gl.getExtension('WEBGL_debug_renderer_info') : null;
+      return {
+        userAgent:   navigator.userAgent,
+        platform:    navigator.platform,
+        webdriver:   navigator.webdriver,
+        screenW:     screen.width,
+        screenH:     screen.height,
+        webglRenderer: debugInfo
+          ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+          : '(WebGL unavailable)',
+      };
+    });
+    console.log('🔬 [Citi] 瀏覽器指紋診斷:');
+    console.log(`   userAgent   : ${diagnostics.userAgent}`);
+    console.log(`   platform    : ${diagnostics.platform}`);
+    console.log(`   webdriver   : ${diagnostics.webdriver}`);
+    console.log(`   screen      : ${diagnostics.screenW}x${diagnostics.screenH}`);
+    console.log(`   WebGL RENDERER: ${diagnostics.webglRenderer}`);
+    // ────────────────────────────────────────────────────────────────────────
+
     // 預熱：隨機滑鼠移動模擬真人瀏覽行為，讓 Akamai sensor 建立信任
     const warmup = 6000 + Math.random() * 4000;
     console.log(`⏳ [Citi] 預熱等待 ${Math.round(warmup / 1000)}s，模擬真人瀏覽...`);
