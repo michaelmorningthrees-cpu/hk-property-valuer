@@ -115,6 +115,22 @@ export default function Privacy() {
                     </p>
                   </section>
 
+                  {/* Google AdSense 及廣告技術 */}
+                  <section className="mb-8">
+                    <h3 className="text-deep-navy text-xl sm:text-2xl font-semibold mb-4">
+                      Google AdSense 及廣告技術
+                    </h3>
+                    <p className="text-gray-700 leading-relaxed mb-4">
+                      本網站使用 Google AdSense 顯示廣告。Google 及其他第三方廣告供應商可能使用 Cookie、網絡信標（Web Beacons）、IP 地址及其他識別技術，以提供、衡量及改善廣告，並可能根據用戶過往瀏覽本網站或其他網站的活動顯示個人化廣告或非個人化廣告。
+                    </p>
+                    <p className="text-gray-700 leading-relaxed mb-4">
+                      用戶可以透過 <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-emerald-green hover:text-emerald-700 font-medium">Google 廣告設定</a> 管理個人化廣告偏好，亦可以透過瀏覽器設定限制或停用 Cookie。停用 Cookie 後，本網站部分功能或廣告體驗可能受到影響。
+                    </p>
+                    <p className="text-gray-700 leading-relaxed">
+                      如欲了解更多有關 Google 如何使用廣告數據，請參閱 <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" className="text-emerald-green hover:text-emerald-700 font-medium">Google 私隱權政策</a>。
+                    </p>
+                  </section>
+
                   {/* 資料披露 */}
                   <section className="mb-8">
                     <h3 className="text-deep-navy text-xl sm:text-2xl font-semibold mb-4">

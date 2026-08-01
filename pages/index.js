@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import useSWR from 'swr'
-// import EstateAutocomplete from '../components/EstateAutocomplete' // 移除舊組件引用
+import AdSenseAd from '../components/AdSenseAd'
 
 const MAX_QUOTA = 10
 
@@ -573,6 +573,15 @@ export default function Home() {
             </div>
           </div>
         </main>
+
+        {process.env.NEXT_PUBLIC_ADSENSE_LANDING_SLOT ? (
+          <section
+            aria-label="Advertisement"
+            className="mx-auto my-8 w-full max-w-2xl px-4 sm:px-6 lg:px-8"
+          >
+            <AdSenseAd adSlot={process.env.NEXT_PUBLIC_ADSENSE_LANDING_SLOT} />
+          </section>
+        ) : null}
 
         {/* Footer */}
         <footer className="w-full py-6 px-4 sm:px-6 lg:px-8 bg-white border-t border-gray-100 mt-auto">

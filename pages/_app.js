@@ -40,6 +40,14 @@ export default function App({ Component, pageProps }) {
           `,
         }}
       />
+      {/* Google AdSense */}
+      <Script
+        id="google-adsense-script"
+        async
+        strategy="afterInteractive"
+        crossOrigin="anonymous"
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9064903152751202"
+      />
       <Component {...pageProps} />
       <Analytics />
       {/* 👇 只有當變數係 true 時先顯示 */}
